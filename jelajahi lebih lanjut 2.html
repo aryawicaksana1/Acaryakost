@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACARYA KOST 2 - Lokasi Strategis Singaraja</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
+        
+        body { font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+
+        /* Custom Scrollbar Hide */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Styling Kartu Fasilitas */
+        .facility-card {
+            min-width: 280px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .facility-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(79, 70, 229, 0.9), transparent);
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .facility-card.active .facility-info {
+            transform: translateY(0);
+        }
+
+        /* Review Card Styles */
+        .review-card {
+            min-width: 320px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .review-card.active {
+            transform: scale(1.05);
+            border-color: #4f46e5;
+            background-color: #f8fafc;
+        }
+
+        .price-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .price-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        #facilitySlider, #reviewSlider {
+            scroll-behavior: smooth;
+        }
+
+        /* Map & Location Styles */
+        #map {
+            height: 100%;
+            min-height: 450px;
+            width: 100%;
+            z-index: 1;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .map-container {
+            position: relative;
+            overflow: hidden;
+        }
+        .leaflet-container {
+            font-family: inherit;
+        }
+        .custom-button {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .custom-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Animation Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Background Pattern */
+        .pattern-dots {
+            background-image: radial-gradient(#f97316 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 top-0 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 py-4">
+            <div class="glass border border-white/20 rounded-2xl px-6 py-3 flex justify-between items-center shadow-lg relative">
+                <div class="flex items-center gap-2">
+                    <img src="gambar/logo kost.png" alt="Logo" class="h-10 w-auto object-contain">
+                    <span class="text-xl font-extrabold tracking-tight text-slate-800">Kost<span class="text-orange-600">Acarya</span></span>
+                </div>
+                <div class="hidden min-[824px]:flex space-x-10">
+                    <a href="index.html" class="text-sm font-semibold hover:text-orange-600 transition">Home</a>
+                    <a href="booking.html" class="text-sm font-semibold hover:text-orange-600 transition">Booking</a>
+                    <a href="#fasilitas" class="text-sm font-semibold hover:text-orange-600 transition">Fasilitas</a>
+                    <a href="#testimoni" class="text-sm font-semibold hover:text-orange-600 transition">Testimoni</a>
+                </div>
+                <a href="sosial.html" class="hidden min-[824px]:inline-block bg-slate-900 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-orange-700 transition-all shadow-md active:scale-95">Hubungi Kami</a>
+
+                <!-- Mobile Hamburger -->
+                <div class="min-[824px]:hidden flex items-center">
+                    <button id="mobileMenuButton" onclick="toggleMobileMenu()" class="text-slate-800 hover:text-orange-600 focus:outline-none p-2">
+                        <i id="menuOpen" class="fa-solid fa-bars text-xl"></i>
+                        <i id="menuClose" class="fa-solid fa-xmark text-xl hidden"></i>
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Dropdown -->
+                <div id="mobileMenu" class="min-[824px]:hidden hidden absolute right-6 top-full mt-2 w-64 rounded-2xl bg-white/95 border border-slate-100 shadow-xl overflow-hidden z-50" style="backdrop-filter: blur(10px);">
+                    <div class="px-4 py-3 space-y-2">
+                        <a href="index.html" class="block text-slate-900 font-semibold py-2 px-3 rounded-lg hover:bg-slate-50 transition">Home</a>
+                        <a href="booking.html" class="block text-slate-900 font-semibold py-2 px-3 rounded-lg hover:bg-slate-50 transition">Booking</a>
+                        <a href="#fasilitas" class="block text-slate-900 font-semibold py-2 px-3 rounded-lg hover:bg-slate-50 transition">Fasilitas</a>
+                        <a href="#testimoni" class="block text-slate-900 font-semibold py-2 px-3 rounded-lg hover:bg-slate-50 transition">Testimoni</a>
+                        <a href="sosial.html" class="block text-white bg-orange-600 text-center rounded-lg py-3 font-bold mt-2 hover:bg-orange-700 transition">Hubungi Kami</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content Wrapper -->
+    <main class="pt-20">
+        
+        <!-- SECTION LOKASI 1 -->
+        <section id="lokasi1" class="relative py-24 bg-white reveal">
+            <div class="absolute inset-0 opacity-[0.03] pattern-dots pointer-events-none"></div>
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="flex flex-col md:flex-row gap-16 items-center mb-12">
+                    <div class="md:w-1/2 rounded-3xl overflow-hidden shadow-2xl">
+                        <img src="gambar/acarya 2 sore.png" alt="Kost Lokasi 1 Singaraja" class="w-full h-[400px] object-cover">
+                    </div>
+                    <div class="md:w-1/2">
+                        <h2 class="text-orange-600 font-bold tracking-widest uppercase text-sm mb-2">Desa Padang keling</h2>
+                        <h3 class="text-4xl font-extrabold mb-2">ACARYA KOST 2 - <span class="text-orange-600">Premium Center</span></h3>
+                        
+                        <!-- Rating 4.5 Bintang -->
+                        <div class="flex items-center gap-2 mb-6">
+                            <div class="flex text-yellow-400 text-sm">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <span class="text-slate-500 font-bold text-sm">4.5/5.0</span>
+                            <span class="text-slate-400 text-xs font-medium ml-1">(120+ Ulasan Terverifikasi)</span>
+                        </div>
+
+                        <p class="text-slate-600 mb-8 text-lg leading-relaxed">Terletak di area premium yang sangat dekat dengan **Kampus Pusat Undiksha** dan **STAH Mpu Kuturan**. Lokasi ini dikelilingi oleh berbagai pusat kuliner, cafe, dan tempat makan.</p>
+                        <div class="grid grid-cols-2 gap-4 text-sm font-semibold">
+                            <div class="flex items-center gap-2"><i class="fas fa-university text-orange-500"></i> Dekat Undiksha & STAH</div>
+                            <div class="flex items-center gap-2"><i class="fas fa-utensils text-orange-500"></i> Area Pusat Kuliner</div>
+                            <div class="flex items-center gap-2"><i class="fas fa-bolt text-orange-500"></i> Listrik Token 1300W</div>
+                            <div class="flex items-center gap-2"><i class="fas fa-video text-orange-500"></i> CCTV 24/7</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide Galeri Fasilitas -->
+                <div id="fasilitas" class="mb-20 relative group reveal">
+                    <div class="mb-8">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex flex-col">
+                                <h4 class="text-xl font-bold italic text-slate-400 uppercase tracking-widest">Fasilitas Detail</h4>
+                                <div class="h-1 w-20 bg-orange-600 mt-1 rounded-full"></div>
+                            </div>
+                        </div>
+                        <!-- Deskripsi Menarik -->
+                        <div class="max-w-2xl">
+                            <p class="text-slate-600 leading-relaxed">
+                                Kami memahami bahwa kenyamanan adalah kunci produktivitas Anda sebagai mahasiswa atau pekerja profesional. Nikmati fasilitas modern mulai dari <span class="text-orange-600 font-semibold">Smart Bedroom</span> yang estetik hingga <span class="text-orange-600 font-semibold">High-Speed Wi-Fi</span> yang stabil untuk menunjang segala aktivitas digital Anda.
+                            </p>
+                            <p class="text-xs text-orange-500 font-bold mt-2 animate-pulse uppercase tracking-tighter">
+                                <i class="fas fa-info-circle mr-1"></i> Klik kartu di bawah untuk melihat detail interior
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="relative">
+                        <button onclick="slide('facilitySlider', 'left')" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/90 shadow-lg border border-slate-100 flex items-center justify-center text-orange-600 hover:bg-orange-600 hover:text-white transition -ml-4 md:-ml-6 hidden md:flex">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+
+                        <div id="facilitySlider" class="flex overflow-x-auto gap-6 no-scrollbar pb-4 px-1">
+                        <div class="facility-card bg-slate-100 rounded-3xl shadow-sm" onclick="toggleText(this)">
+                            <img src="gambar/interior acarya 2/edit/kasur.png" class="w-full h-64 object-cover object-[50%_75%]" alt="Kamar Tidur">
+                            <div class="facility-info">
+                                <div class="text-white font-bold text-lg">Kamar Tidur Lux</div>
+                                <p class="text-orange-100 text-xs">Nyaman & ber-AC</p>
+                            </div>
+                        </div>
+                        <div class="facility-card bg-slate-100 rounded-3xl shadow-sm" onclick="toggleText(this)">
+                            <img src="gambar/interior acarya 2/edit/kamar mandi 3.png" class="w-full h-64 object-cover" alt="Kamar Mandi">
+                            <div class="facility-info">
+                                <div class="text-white font-bold text-lg">Kamar Mandi Dalam</div>
+                                <p class="text-orange-100 text-xs">Bersih & higienis</p>
+                            </div>
+                        </div>
+                        <div class="facility-card bg-slate-100 rounded-3xl shadow-sm" onclick="toggleText(this)">
+                            <img src="gambar/interior acarya 2/edit/meja belajar.png" class="w-full h-64 object-cover" alt="Ruang Kerja">
+                            <div class="facility-info">
+                                <div class="text-white font-bold text-lg">Meja Belajar & Kerja</div>
+                                <p class="text-orange-100 text-xs">Fokus belajar maksimal</p>
+                            </div>
+                        </div>
+                        <div class="facility-card bg-slate-100 rounded-3xl shadow-sm" onclick="toggleText(this)">
+                            <img src="gambar/interior acarya 2/edit/nongkrong.png" class="w-full h-64 object-cover" alt="Area Parkir">
+                            <div class="facility-info">
+                                <div class="text-white font-bold text-lg">Tempat nongkrong</div>
+                                <p class="text-orange-100 text-xs">cocok untuk diskusi</p>
+                            </div>
+                        </div>
+                        <div class="facility-card bg-slate-100 rounded-3xl shadow-sm" onclick="toggleText(this)">
+                            <img src="gambar/interior acarya 2/edit/lemari tangga.png" class="w-full h-64 object-cover" alt="Area Parkir">
+                            <div class="facility-info">
+                                <div class="text-white font-bold text-lg">Lemari</div>
+                                <p class="text-orange-100 text-xs">cukup untuk pakaiyan sehari-hari</p>
+                            </div>
+                        </div>
+                        <div class="facility-card bg-slate-100 rounded-3xl shadow-sm" onclick="toggleText(this)">
+                            <img src="gambar/interior acarya 2/edit/dapur edit.png" class="w-full h-64 object-cover" alt="Area Parkir">
+                            <div class="facility-info">
+                                <div class="text-white font-bold text-lg">Dapur</div>
+                                <p class="text-orange-100 text-xs">cukup untuk memasak sehari-hari</p>
+                            </div>
+                        </div>
+                      
+                        <button onclick="slide('facilitySlider', 'right')" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/90 shadow-lg border border-slate-100 flex items-center justify-center text-orange-600 hover:bg-orange-600 hover:text-white transition -mr-4 md:-mr-6 hidden md:flex">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Harga Kamar -->
+                <div class="mb-24 mt-24 reveal">
+                    <h4 class="text-2xl font-bold mb-4 text-center uppercase tracking-widest text-slate-400 italic">Pilihan Kamar</h4>
+                    
+                    <!-- Deskripsi Bawah Judul Pilihan Kamar -->
+                    <div class="max-w-4xl mx-auto bg-white p-8 rounded-[2rem] shadow-sm text-center mb-10">
+                        <div class="flex flex-wrap justify-center gap-6 mb-4 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                            <span><i class="fas fa-shield-alt text-green-500 mr-1"></i> Transaksi Aman</span>
+                            <span><i class="fas fa-clock text-orange-500 mr-1"></i> Konfirmasi Cepat</span>
+                            <span><i class="fas fa-user-check text-orange-500 mr-1"></i> Admin Ramah</span>
+                        </div>
+                        <p class="text-slate-600 leading-relaxed text-sm md:text-base">
+                            Jangan lewatkan kesempatan untuk tinggal di hunian impian dengan lokasi paling strategis di Singaraja. Kamar kami <span class="text-red-500 font-bold italic">cepat penuh</span> terutama saat memasuki semester baru. 
+                            <span class="block mt-2 font-semibold text-slate-800">Booking sekarang cukup dengan DP ringan dan amankan posisi Anda sebelum kehabisan!</span>
+                        </p>
+                    </div>
+                    
+                    <div class="flex flex-wrap justify-center gap-6">
+                        <div class="price-card w-full md:max-w-sm bg-slate-50 p-6 rounded-3xl border border-slate-200 flex flex-col justify-between shadow-sm">
+                            <div>
+                                <h4 class="text-lg font-bold mb-2">Tipe Gold</h4>
+                                <div class="text-2xl font-extrabold text-orange-600 mb-4">Rp 2.500.000 <span class="text-xs font-normal text-slate-400">/bln</span></div>
+                                <ul class="space-y-3 text-slate-600 mb-6 text-sm">
+                                </ul>
+                            </div>
+                            <a href="https://wa.me/6281234567890" class="block text-center bg-orange-600 text-white py-2 rounded-xl font-bold hover:bg-orange-700 transition">Pesan Sekarang</a>
+                        </div>
+                        <div class="price-card w-full md:max-w-sm bg-orange-50 p-6 rounded-3xl border-2 border-orange-500 flex flex-col justify-between relative overflow-hidden shadow-lg">
+                            <div class="absolute top-0 right-0 bg-orange-500 text-white text-[10px] px-3 py-1 font-bold rounded-bl-xl">BEST SELLER</div>
+                            <div>
+                                <h4 class="text-lg font-bold mb-2">Tipe Executive</h4>
+                                <div class="text-2xl font-extrabold text-orange-700 mb-4">Rp 3.200.000 <span class="text-xs font-normal text-slate-400">/thun</span></div>
+                                <ul class="space-y-3 text-slate-600 mb-6 text-sm">
+                                    <li><i class="fas fa-check text-orange-500 mr-2"></i> Diskon 1 bulan</li>
+                                </ul>
+                            </div>
+                            <a href="https://wa.me/6281234567890" class="block text-center bg-orange-600 text-white py-2 rounded-xl font-bold hover:bg-orange-700 transition">Pesan Sekarang</a>
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <!-- Header Detail Lokasi (Bawah) -->
+                <div class="text-center mt-16 mb-8 reveal">
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="flex flex-col items-center">
+                            <h4 class="text-xl font-bold italic text-slate-400 uppercase tracking-widest">Detail lokasi</h4>
+                            <div class="h-1 w-20 bg-orange-600 mt-1 rounded-full"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Deskripsi Detail Lokasi -->
+                <div class="max-w-2xl mx-auto mb-4 reveal">
+                    <p class="text-slate-600 leading-relaxed text-center">
+                        Lokasi kami dirancang dengan cermat untuk memberikan <span class="text-orange-600 font-semibold">aksesibilitas maksimal</span> dan <span class="text-orange-600 font-semibold">kenyamanan strategis</span>. Dengan posisi yang berada di jantung area berkembang, Anda dapat dengan mudah menjangkau institusi pendidikan, pusat bisnis, dan berbagai fasilitas publik lainnya untuk mendukung aktivitas sehari-hari.
+                    </p>
+                    <p class="text-xs text-orange-500 font-bold mt-2 animate-pulse uppercase tracking-tighter text-center">
+                        <i class="fas fa-map-marker-alt mr-1"></i> Lihat peta interaktif di atas untuk titik lokasi yang presisi
+                    </p>
+                </div>
+
+                <div class="max-w-6xl mx-auto px-6 py-12 mb-24 reveal">
+                    <!-- Main Content Card -->
+                    <div class="glass-card rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col lg:flex-row border border-white/50">
+                        
+                        <!-- Map Side -->
+                        <div class="w-full lg:w-3/5 map-container order-2 lg:order-1 flex flex-col">
+                            <div id="map"></div>
+                            <!-- Badge on Map -->
+                            <div class="absolute top-6 left-6 z-[400] bg-white/90 backdrop-blur px-4 py-2 rounded-xl shadow-lg border border-white flex items-center gap-2">
+                                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Titik Presisi</span>
+                            </div>
+
+                            <!-- Mobile Buttons (Visible < 1024px) -->
+                            <div class="p-6 flex flex-col gap-4 lg:hidden bg-white border-t border-slate-100">
+                                <button onclick="openGoogleMaps()" class="custom-button w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-3">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
+                                    Petunjuk Arah
+                                </button>
+                                <button onclick="shareLocation(this)" class="custom-button w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-3">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+                                    Bagikan Lokasi
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Detail Side -->
+                        <div class="w-full lg:w-2/5 p-8 md:p-12 flex flex-col justify-between bg-white order-1 lg:order-2">
+                            <div>
+                                <h2 id="place-name" class="text-3xl font-bold mb-6 text-slate-900 leading-tight">Nama Tempat</h2>
+                                
+                                <div class="space-y-6">
+                                    <!-- Address Item -->
+                                    <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                                        <div class="bg-orange-600 p-2.5 rounded-xl text-white shadow-lg shadow-orange-200">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Alamat</h3>
+                                            <p id="place-address" class="text-slate-600 font-medium leading-relaxed">Jl. Merdeka No. 45, Menteng, Jakarta Pusat</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Hours Item -->
+                                    <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                                        <div class="bg-orange-600 p-2.5 rounded-xl text-white shadow-lg shadow-orange-200">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Jam Operasional</h3>
+                                            <p class="text-slate-600 font-medium">09.00 — 21.00 WIB</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-8">
+                                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Tentang Lokasi</h3>
+                                    <p class="text-slate-500 leading-relaxed italic">
+                                        "Ruang inspiratif yang dirancang untuk memberikan pengalaman terbaik bagi setiap pengunjung. Strategis, nyaman, dan mudah dijangkau."
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="mt-12 hidden lg:flex flex-col gap-4">
+                                <button onclick="openGoogleMaps()" class="custom-button w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-3">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
+                                    Petunjuk Arah
+                                </button>
+                                <button onclick="shareLocation(this)" id="share-btn" class="custom-button w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-3">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+                                    Bagikan Lokasi
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                        <!-- Leaflet JS -->
+                        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+                        <script>
+                            const locationData = {
+                                name: "Acarya Kost 2",
+                                lat: -8.122944,
+                                lng: 115.111056,
+                                address: "Desa Padang Keling, Singaraja, Bali, Indonesia"
+                            };
+
+                            // Update UI Content
+                            document.getElementById('place-name').innerText = locationData.name;
+                            document.getElementById('place-address').innerText = locationData.address;
+
+                            // Init Map
+                            const map = L.map('map', {
+                                zoomControl: false // Memindahkan kontrol zoom ke posisi lebih baik
+                            }).setView([locationData.lat, locationData.lng], 16);
+
+                            L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+                            // Google Maps Satellite (Hybrid)
+                            L.tileLayer('https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+                                maxZoom: 20,
+                                subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+                                attribution: '&copy; Google Maps'
+                            }).addTo(map);
+
+                            // Marker Custom
+                            const marker = L.marker([locationData.lat, locationData.lng]).addTo(map);
+                            marker.bindPopup(`
+                                <div class="p-2 text-center">
+                                    <strong class="text-blue-600 block mb-1">${locationData.name}</strong>
+                                    <span class="text-xs text-slate-500 italic">Kami di sini!</span>
+                                </div>
+                            `).openPopup();
+
+                            function openGoogleMaps() {
+                                window.open(`https://www.google.com/maps?q=${locationData.lat},${locationData.lng}`, '_blank');
+                            }
+
+                            function shareLocation(btn) {
+                                if (!btn) btn = document.getElementById('share-btn');
+                                // Mencegah spam klik yang merusak tombol
+                                if (btn.innerText.includes('Tersalin')) return;
+
+                                const text = `Cek lokasi ${locationData.name} di sini: ${locationData.address}`;
+                                const el = document.createElement('textarea');
+                                el.value = text;
+                                el.style.position = 'absolute';
+                                el.style.left = '-9999px';
+                                document.body.appendChild(el);
+                                el.select();
+                                document.execCommand('copy');
+                                document.body.removeChild(el);
+
+                                const originalContent = btn.innerHTML;
+                                btn.innerHTML = `<span>Tersalin!</span>`;
+                                btn.classList.replace('bg-slate-900', 'bg-green-600');
+                                
+                                setTimeout(() => {
+                                    btn.innerHTML = originalContent;
+                                    btn.classList.replace('bg-green-600', 'bg-slate-900');
+                                }, 2000);
+                            }
+
+                            window.addEventListener('resize', () => map.invalidateSize());
+                        </script>
+
+                <!-- SECTION ULASAN PENGHUNI SLIDER -->
+                <div id="testimoni" class="bg-slate-50 rounded-[3rem] p-10 md:p-16 border border-slate-100 overflow-hidden relative reveal z-0">
+                    <div class="absolute inset-0 opacity-[0.05] pattern-dots pointer-events-none -z-10"></div>
+                    <div class="text-center mb-12">
+                        <h4 class="text-orange-600 font-bold uppercase tracking-widest text-sm mb-2">Apa Kata Mereka?</h4>
+                        <h3 class="text-3xl font-extrabold">Ulasan Penghuni Kost</h3>
+                        
+                        <!-- Deskripsi Menarik Di Bawah Judul Ulasan -->
+                        <div class="max-w-2xl mx-auto mt-4">
+                            <p class="text-slate-500 text-sm md:text-base leading-relaxed">
+                                Kepercayaan Anda adalah prioritas kami. Lebih dari <span class="text-orange-600 font-bold">500+ mahasiswa dan pekerja</span> telah merasakan kenyamanan tinggal di Kost Acarya. Bergabunglah dengan komunitas penghuni kami yang solid dan nikmati pengalaman kost yang sesungguhnya.
+                            </p>
+                        </div>
+                        
+                        <p class="text-xs text-indigo-400 mt-4 italic font-medium">Ketuk ulasan untuk melihat animasi detail</p>
+                    </div>
+
+                    <!-- Review Slider Controls -->
+                    <div class="absolute top-1/2 left-4 right-4 -translate-y-1/2 flex justify-between pointer-events-none z-10 hidden md:flex">
+                        <button onclick="slide('reviewSlider', 'left')" class="w-12 h-12 rounded-full bg-white/80 shadow-lg border border-slate-100 flex items-center justify-center text-orange-600 hover:bg-orange-600 hover:text-white transition pointer-events-auto">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button onclick="slide('reviewSlider', 'right')" class="w-12 h-12 rounded-full bg-white/80 shadow-lg border border-slate-100 flex items-center justify-center text-orange-600 hover:bg-orange-600 hover:text-white transition pointer-events-auto">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+
+                    <div id="reviewSlider" class="flex overflow-x-auto gap-8 no-scrollbar pb-8 pt-4">
+                        <!-- Review 1 -->
+                        <div class="review-card bg-white p-8 rounded-3xl shadow-sm border border-slate-100" onclick="toggleReview(this)">
+                            <div class="flex text-yellow-400 mb-4">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <p class="text-slate-600 italic mb-6">"Kamarnya sangat bersih dan fasilitasnya sesuai dengan yang diiklankan. Lokasi sangat dekat dengan kampus Undiksha."</p>
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 font-bold">BP</div>
+                                <div>
+                                    <div class="font-bold">Budi Pratama</div>
+                                    <div class="text-xs text-slate-400">Penghuni Tipe Gold</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Review 2 -->
+                        <div class="review-card bg-white p-8 rounded-3xl shadow-sm border border-slate-100" onclick="toggleReview(this)">
+                            <div class="flex text-yellow-400 mb-4">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <p class="text-slate-600 italic mb-6">"Suasana kost sangat tenang untuk belajar. Internetnya kencang dan lobi bawah asik buat diskusi bareng teman."</p>
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 font-bold">AS</div>
+                                <div>
+                                    <div class="font-bold">Anisa Sari</div>
+                                    <div class="text-xs text-slate-400">Penghuni Tipe Executive</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Review 3 -->
+                        <div class="review-card bg-white p-8 rounded-3xl shadow-sm border border-slate-100" onclick="toggleReview(this)">
+                            <div class="flex text-yellow-400 mb-4">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <p class="text-slate-600 italic mb-6">"Harga terjangkau tapi fasilitas jempolan. Parkirannya luas banget, gak perlu khawatir bawa mobil."</p>
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 font-bold">RH</div>
+                                <div>
+                                    <div class="font-bold">Rizky Hakim</div>
+                                    <div class="text-xs text-slate-400">Penghuni Tipe Silver</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Review 4 -->
+                        <div class="review-card bg-white p-8 rounded-3xl shadow-sm border border-slate-100" onclick="toggleReview(this)">
+                            <div class="flex text-yellow-400 mb-4">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <p class="text-slate-600 italic mb-6">"Adminnya ramah dan fast respon kalau ada masalah di kamar. Sangat recomended!"</p>
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold">ML</div>
+                                <div>
+                                    <div class="font-bold">Maya Lestari</div>
+                                    <div class="text-xs text-slate-400">Penghuni Tipe Gold</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-white pt-24 pb-12 px-6">
+            <div class="pt-8 border-t border-white/10 text-center text-slate-500 text-sm">
+                &copy; 2026 Acarya Kost Management. Crafted for your comfort.
+            </div>
+    </footer>
+
+    <script>
+        // Simple navbar interaction on scroll
+        window.onscroll = function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('py-2');
+                nav.querySelector('.glass').classList.remove('bg-white/70');
+                nav.querySelector('.glass').classList.add('bg-white/95');
+            } else {
+                nav.classList.remove('py-2');
+                nav.querySelector('.glass').classList.add('bg-white/70');
+                nav.querySelector('.glass').classList.remove('bg-white/95');
+            }
+        };
+
+        const facilitySlider = document.getElementById('facilitySlider');
+        const reviewSlider = document.getElementById('reviewSlider');
+        let isAutoSliding = true;
+        let isDragging = false;
+
+        // Fungsi Umum untuk Slide
+        function slide(sliderId, direction) {
+            const slider = document.getElementById(sliderId);
+            const scrollAmount = 350;
+            if (direction === 'left') {
+                slider.scrollLeft -= scrollAmount;
+            } else {
+                if (slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 10) {
+                    slider.scrollLeft = 0;
+                } else {
+                    slider.scrollLeft += scrollAmount;
+                }
+            }
+            // Interupsi auto-slide sesaat jika manual digerakkan
+            isAutoSliding = false;
+            setTimeout(() => isAutoSliding = true, 5000);
+        }
+
+        // Toggle Efek pada Fasilitas
+        function toggleText(card) {
+            if (isDragging) return;
+            document.querySelectorAll('.facility-card').forEach(c => {
+                if (c !== card) c.classList.remove('active');
+            });
+            card.classList.toggle('active');
+        }
+
+        // Toggle Efek Animasi pada Ulasan (Pop-up/Scale)
+        function toggleReview(card) {
+            if (isDragging) return;
+            document.querySelectorAll('.review-card').forEach(c => {
+                if (c !== card) c.classList.remove('active');
+            });
+            card.classList.toggle('active');
+        }
+
+        // Interval Auto Slide untuk Fasilitas & Ulasan
+        setInterval(() => {
+            if (isAutoSliding) {
+                // Slide Fasilitas
+                if (facilitySlider.scrollLeft + facilitySlider.clientWidth >= facilitySlider.scrollWidth - 10) {
+                    facilitySlider.scrollTo({ left: 0, behavior: 'smooth' });
+                } else {
+                    facilitySlider.scrollBy({ left: 300, behavior: 'smooth' });
+                }
+
+                // Slide Ulasan
+                if (reviewSlider.scrollLeft + reviewSlider.clientWidth >= reviewSlider.scrollWidth - 10) {
+                    reviewSlider.scrollTo({ left: 0, behavior: 'smooth' });
+                } else {
+                    reviewSlider.scrollBy({ left: 350, behavior: 'smooth' });
+                }
+            }
+        }, 4000);
+
+        // Berhenti slide saat kursor di atas slider
+        [facilitySlider, reviewSlider].forEach(s => {
+            s.addEventListener('mouseenter', () => isAutoSliding = false);
+            s.addEventListener('mouseleave', () => isAutoSliding = true);
+        });
+
+        // Enable Drag Scroll Function (Klik dan Geser)
+        function enableDragScroll(slider) {
+            if (!slider) return;
+            slider.style.cursor = 'grab';
+            slider.style.userSelect = 'none';
+            
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            slider.addEventListener('mousedown', (e) => {
+                isDown = true;
+                isDragging = false;
+                slider.classList.add('active');
+                startX = e.pageX - slider.offsetLeft;
+                scrollLeft = slider.scrollLeft;
+                slider.style.cursor = 'grabbing';
+                isAutoSliding = false;
+            });
+
+            slider.addEventListener('mouseleave', () => {
+                isDown = false;
+                slider.style.cursor = 'grab';
+                setTimeout(() => isAutoSliding = true, 1000);
+            });
+
+            slider.addEventListener('mouseup', () => {
+                isDown = false;
+                slider.style.cursor = 'grab';
+                setTimeout(() => { isAutoSliding = true; isDragging = false; }, 100);
+            });
+
+            slider.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - slider.offsetLeft;
+                const walk = (x - startX) * 2; // Kecepatan geser
+                slider.scrollLeft = scrollLeft - walk;
+                if (Math.abs(walk) > 5) isDragging = true;
+            });
+        }
+
+        enableDragScroll(facilitySlider);
+        enableDragScroll(reviewSlider);
+
+        // Mobile Menu Logic
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const openIcon = document.getElementById('menuOpen');
+            const closeIcon = document.getElementById('menuClose');
+            
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                openIcon.classList.add('hidden');
+                closeIcon.classList.remove('hidden');
+            } else {
+                menu.classList.add('hidden');
+                openIcon.classList.remove('hidden');
+                closeIcon.classList.add('hidden');
+            }
+        }
+
+        // Close menu when clicking a link
+        document.querySelectorAll('#mobileMenu a').forEach(link => {
+            link.addEventListener('click', toggleMobileMenu);
+        });
+
+        // Scroll Animation Logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const reveals = document.querySelectorAll('.reveal');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    } else {
+                        entry.target.classList.remove('active');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            reveals.forEach(el => observer.observe(el));
+        });
+    </script>
+
+</body>
+</html>

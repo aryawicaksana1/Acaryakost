@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACARYA KOST</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Custom scrollbar hiding for cleaner look */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Smooth transition for the slider */
+        #slider-track {
+            transition: transform 0.5s ease-in-out;
+        }
+
+        body { font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
+        .hero-gradient { 
+            /* Gradien 3 Warna (Hijau Tua -> Putih -> Hijau Muda) transparan 85% */
+            background: linear-gradient(to bottom, rgba(22, 101, 52, 0.85), rgba(255, 255, 255, 0.85), rgba(74, 222, 128, 0.85)); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px); 
+        }
+        .hero-gradient::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 200px; background: linear-gradient(to bottom, transparent, rgba(241, 245, 249, 0.3)); }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .card-hover { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover { transform: translateY(-10px); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); }
+        .image-accent { position: relative; }
+        .image-accent::before { content: ''; position: absolute; top: -15px; left: -15px; right: 15px; bottom: 15px; border: 2px solid #16a34a; border-radius: 1.5rem; z-index: -1; }
+        
+        /* Animation Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Animasi Melayang untuk Ornamen */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-float-delayed { animation: float 6s ease-in-out 3s infinite; }
+
+        /* Background Pattern */
+        .pattern-dots {
+            background-image: radial-gradient(#16a34a 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+        }
+    </style>
+   
+</head>
+<body class="bg-[#F8FAFC] text-slate-900 leading-relaxed">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 top-0 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 py-4">
+            <div class="glass border border-white/20 rounded-2xl px-6 py-3 flex justify-between items-center shadow-lg">
+                <div class="flex items-center gap-2">
+                    <img src="gambar/logo kost.png" alt="KostKu logo" class="w-auto h-10 rounded-md object-contain">
+                    <span class="text-xl font-extrabold tracking-tight text-slate-800">Acarya<span class="text-green-600">kost</span></span>
+                </div>
+                <div class="hidden min-[1136px]:flex space-x-10">
+                    <a href="#" class="text-sm font-semibold text-slate-900 hover:text-green-600 transition">Home</a>
+                    <a href="booking.html" class="text-sm font-semibold text-slate-900 hover:text-green-600 transition">Booking</a>
+                    <a href="#pemilik-kost" class="text-sm font-semibold text-slate-900 hover:text-green-600 transition">Pemilik Kost</a>
+                    <a href="#visi-misi" class="text-sm font-semibold text-slate-900 hover:text-green-600 transition">Visi &amp; Misi</a>
+                    <a href="aturan&etika.html" class="text-sm font-semibold text-slate-900 hover:text-green-600 transition">Aturan &amp; Etika</a>
+                    <a href="#testimoni" class="text-sm font-semibold text-slate-900 hover:text-green-600 transition">Testimoni</a>
+                </div>
+
+                <!-- Mobile hamburger button -->
+                <button id="mobileMenuButton" onclick="toggleMobileMenu()" class="min-[1136px]:hidden p-2 rounded-lg text-slate-800 hover:bg-slate-100 transition mr-3" aria-label="Toggle menu">
+                    <svg id="menuOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    <svg id="menuClose" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+
+                <a href="sosial.html" class="hidden min-[1136px]:inline-block bg-slate-900 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-green-700 transition-all shadow-md active:scale-95">Hubungi Kami</a>
+            </div>
+            <!-- Mobile dropdown menu (rounded, translucent, blurred) -->
+                <div id="mobileMenu" class="min-[1136px]:hidden hidden absolute right-6 top-full mt-2 w-64 rounded-2xl bg-white/95 border border-slate-100 shadow-xl overflow-hidden z-50" style="backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
+                <div class="px-4 py-3 space-y-2">
+                    <a href="#" class="block text-slate-900 font-semibold py-3 px-3 rounded-lg hover:bg-green-50 hover:text-green-700 transition">Home</a>
+                    <a href="booking.html" class="block text-slate-900 font-semibold py-3 px-3 rounded-lg hover:bg-green-50 hover:text-green-700 transition">Booking</a>
+                    <a href="#pemilik-kost" class="block text-slate-900 font-semibold py-3 px-3 rounded-lg hover:bg-green-50 hover:text-green-700 transition">Pemilik Kost</a>
+                    <a href="#visi-misi" class="block text-slate-900 font-semibold py-3 px-3 rounded-lg hover:bg-green-50 hover:text-green-700 transition">Visi &amp; Misi</a>
+                    <a href="aturan&etika.html" class="block text-slate-900 font-semibold py-3 px-3 rounded-lg hover:bg-green-50 hover:text-green-700 transition">Aturan &amp; Etika</a>
+                    <a href="#testimoni" class="block text-slate-900 font-semibold py-3 px-3 rounded-lg hover:bg-green-50 hover:text-green-700 transition">Testimoni</a>
+                    <a href="sosial.html" class="block text-white bg-green-600 text-center rounded-lg py-3 font-bold mt-2 hover:bg-green-700 transition">Hubungi Kami</a>
+                </div>
+            </div>
+            </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative pt-44 pb-32 px-6 overflow-hidden reveal">
+        <div class="hero-gradient absolute inset-0 -z-10"></div>
+        <div class="max-w-6xl mx-auto text-center">
+            <div class="inline-block px-4 py-1.5 bg-white/10 backdrop-blur-md rounded-full text-white text-xs font-bold tracking-widest uppercase mb-8 border border-white/20">
+                Hunian Premium Tahun 2025/2026
+            </div>
+            <h1 class="text-5xl md:text-7xl font-extrabold text-slate-900 mb-8 tracking-tight leading-[1.1]">
+                Temukan Kenyamanan <br> <span class="text-green-700">Rumah Kedua Anda</span>
+            </h1>
+            <p class="text-lg md:text-xl text-slate-700 mb-12 max-w-2xl mx-auto font-medium leading-relaxed">
+                Menghadirkan kost eksklusif dengan fasilitas lengkap di dua lokasi paling strategis untuk mendukung gaya hidup produktif Anda.
+            <p class="text-lg md:text-xl text-slate-600 mb-12 max-w-2xl mx-auto font-medium leading-relaxed">
+                Menghadirkan pengalaman hunian eksklusif dengan fasilitas premium di lokasi strategis, dirancang khusus untuk menyempurnakan gaya hidup produktif Anda.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-5">
+                <a href="#kost-lokasi-1" class="bg-white text-green-800 px-10 py-4 rounded-2xl font-bold hover:shadow-2xl transition-all flex items-center justify-center gap-2 group">
+                    Eksplor Lokasi 1
+                    <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                </a>
+                <a href="#kost-lokasi-2" class="bg-green-900/40 backdrop-blur-md text-white border border-white/30 px-10 py-4 rounded-2xl font-bold hover:bg-white/20 transition-all">
+                    Eksplor Lokasi 2
+                </a>
+            </div>
+        </div>
+        <!-- Decorative blobs -->
+        <div class="absolute top-1/2 left-0 w-64 h-64 bg-green-400/20 blur-[100px] rounded-full animate-float"></div>
+        <div class="absolute bottom-0 right-0 w-96 h-96 bg-green-500/20 blur-[120px] rounded-full animate-float-delayed"></div>
+    </header>
+
+    <!-- Floating Features Box (Tengah Header & Section Selanjutnya) -->
+    <div class="relative z-20 -mt-20 max-w-5xl mx-auto px-6 reveal">
+        <div class="bg-white rounded-[2rem] shadow-xl p-8 lg:p-10 flex flex-col md:flex-row justify-between items-center gap-8 border border-slate-100">
+            
+            <!-- Item 1 -->
+            <div class="flex items-center gap-5 w-full md:w-auto group cursor-default hover:-translate-y-1 transition-all duration-300">
+                <div class="w-14 h-14 bg-green-50 rounded-full flex items-center justify-center text-green-600 flex-shrink-0 group-hover:scale-110 group-hover:bg-green-100 transition-all duration-300">
+                    <i class="fas fa-map-marker-alt text-2xl group-hover:animate-bounce"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-slate-900 text-lg">Lokasi Strategis</h3>
+                    <p class="text-sm text-slate-500">Akses mudah ke kampus & kota</p>
+                </div>
+            </div>
+
+            <div class="hidden md:block w-px h-16 bg-slate-100"></div>
+
+            <!-- Item 2 -->
+            <div class="flex items-center gap-5 w-full md:w-auto group cursor-default hover:-translate-y-1 transition-all duration-300">
+                <div class="w-14 h-14 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600 flex-shrink-0 group-hover:scale-110 group-hover:bg-emerald-100 transition-all duration-300">
+                    <i class="fas fa-star text-2xl group-hover:rotate-180 transition-transform duration-500"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-slate-900 text-lg">Fasilitas Premium</h3>
+                    <p class="text-sm text-slate-500">Kamar luas & full furnished</p>
+                </div>
+            </div>
+
+            <div class="hidden md:block w-px h-16 bg-slate-100"></div>
+
+            <!-- Item 3 -->
+            <div class="flex items-center gap-5 w-full md:w-auto group cursor-default hover:-translate-y-1 transition-all duration-300">
+                <div class="w-14 h-14 bg-teal-50 rounded-full flex items-center justify-center text-teal-600 flex-shrink-0 group-hover:scale-110 group-hover:bg-teal-100 transition-all duration-300">
+                    <i class="fas fa-shield-alt text-2xl group-hover:-rotate-12 transition-transform duration-300"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-slate-900 text-lg">Keamanan 24/7</h3>
+                    <p class="text-sm text-slate-500">CCTV & Akses terpantau</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Lokasi 1 -->
+    <section id="kost-lokasi-1" class="relative py-24 px-6 bg-gradient-to-b from-green-50/50 to-white overflow-hidden reveal">
+        <div class="absolute inset-0 opacity-[0.03] pattern-dots pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col min-[1025px]:flex-row items-start min-[1025px]:items-center gap-0 min-[1025px]:gap-20">
+                <div class="w-full min-[1025px]:w-1/2 image-accent order-2 min-[1025px]:order-none mb-8 min-[1025px]:mb-0 group/card">
+                    <div class="rounded-[2.5rem] overflow-hidden shadow-2xl bg-slate-100 aspect-[4/3] flex items-center justify-center group-hover/card:shadow-green-900/20 transition-all duration-500">
+                        <img src="gambar/interior acarya 1/editan/keseluruhan kost 2.png" alt="Acarya Kost 1" class="w-full h-full object-cover scale-125 group-hover/card:scale-[1.35] transition-transform duration-700">
+                    </div>
+                </div>
+                <div class="contents min-[1025px]:block w-full min-[1025px]:w-1/2">
+                    <div class="order-1 min-[1025px]:order-none inline-flex items-center gap-2 px-3 py-1 bg-green-50 text-green-700 rounded-full text-xs font-bold uppercase tracking-wider mb-6">
+                        <span class="w-2 h-2 bg-green-600 rounded-full animate-pulse"></span>
+                        Lokasi 1: Kawasan Pemukiman Strategis
+                    </div>
+                    <h2 class="order-1 min-[1025px]:order-none text-4xl font-extrabold text-slate-900 mb-6 leading-tight">ACARYA KOST 1 - BTN BANYUNING LESTARI</h2>
+                    <p class="order-3 min-[1025px]:order-none text-lg text-slate-600 mb-8">Hunian yang ramai dengan fasilitas yang lengkap. Kami menghadirkan konsep hunian yang dinamis di mana privasi kamar Anda berpadu sempurna dengan ruang sosial yang hidup. Tata ruang kami memaksimalkan interaksi. Bagi Anda yang mencintai diskusi, haus akan wawasan baru, dan menikmati energi lingkungan yang ramai, inilah ekosistem yang tepat untuk tumbuh dan memperluas jaringan. .</p>
+                    <p class="order-3 min-[1025px]:order-none text-lg text-slate-500 leading-relaxed mb-8">Mengusung konsep hunian dinamis yang memadukan privasi eksklusif dengan ruang sosial yang interaktif. Sebuah ekosistem yang dirancang khusus bagi Anda yang menyukai kolaborasi, diskusi, dan gaya hidup produktif.</p>
+                    
+                    <div class="order-3 min-[1025px]:order-none grid grid-cols-2 gap-4 mb-10">
+                        <div class="flex items-center gap-3 text-slate-700">
+                            <div class="p-2 bg-slate-50 rounded-lg text-green-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <span class="font-medium">AC</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-slate-700">
+                            <div class="p-2 bg-slate-50 rounded-lg text-green-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <span class="font-medium">KM Dalam lengkap</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-slate-700">
+                            <div class="p-2 bg-slate-50 rounded-lg text-green-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <span class="font-medium">Free Wifi</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-slate-700">
+                            <div class="p-2 bg-slate-50 rounded-lg text-green-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <span class="font-medium">hangout place</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-slate-700">
+                            <div class="p-2 bg-slate-50 rounded-lg text-green-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <span class="font-medium">Inside Kitchen</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-slate-700">
+                            <div class="p-2 bg-slate-50 rounded-lg text-green-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <span class="font-medium">Double bed </span>
+                        </div>
+                        <div class="flex items-center gap-3 text-slate-700">
+                            <div class="p-2 bg-slate-50 rounded-lg text-green-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <span class="font-medium">Study desk </span>
+                        </div>
+                        <div class="flex items-center gap-3 text-slate-700">
+                            <div class="p-2 bg-slate-50 rounded-lg text-green-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <span class="font-medium">Cupboard  </span>
+                        </div>
+                    </div>
+                    
+                    <button onclick="window.location.href='jelajahi lebih lanjut 1.html'" class="order-3 min-[1025px]:order-none group bg-green-600 text-white px-10 py-4 rounded-2xl font-bold hover:bg-green-700 transition-all shadow-lg hover:shadow-green-200/50 flex items-center justify-center gap-3 w-full sm:w-auto">
+                        Jelajahi kost 1 lebih lanjut
+                        <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Separator: Promo Menarik -->
+    <div class="relative z-20 -mt-12 mb-12 max-w-4xl mx-auto px-6 reveal">
+        <div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-[2rem] shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-8 flex flex-col md:flex-row items-center justify-between gap-6 text-white border border-emerald-400 group">
+            <div class="flex items-center gap-5 w-full md:w-auto">
+                <div class="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white flex-shrink-0">
+                    <i class="fas fa-bullhorn text-3xl animate-bounce group-hover:scale-110 transition-transform"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-xl">Promo Harga Spesial!</h3>
+                    <p class="text-emerald-100 mt-1 text-sm md:text-base">Dapatkan potongan harga eksklusif untuk pembayaran langsung 1 Tahun.</p>
+                </div>
+            </div>
+            <a href="booking.html" class="w-full md:w-auto px-6 py-3 bg-white text-emerald-600 font-bold rounded-xl hover:bg-emerald-50 transition shadow-lg whitespace-nowrap text-center">
+                Klaim Promo
+            </a>
+        </div>
+    </div>
+
+    <!-- Lokasi 2 -->
+    <section id="kost-lokasi-2" class="relative py-24 px-6 bg-gradient-to-b from-green-50/50 to-white overflow-hidden reveal">
+        <div class="absolute inset-0 opacity-[0.03] pattern-dots pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col min-[1025px]:flex-row-reverse items-start min-[1025px]:items-center gap-0 min-[1025px]:gap-20">
+                <div class="w-full min-[1025px]:w-1/2 image-accent order-2 min-[1025px]:order-none mb-8 min-[1025px]:mb-0 group/card">
+                    <div class="rounded-[2.5rem] overflow-hidden shadow-2xl bg-white aspect-[4/3] flex items-center justify-center group-hover/card:shadow-green-900/20 transition-all duration-500">
+                        <img src="gambar/acarya 2 sore.png" alt="Acarya Kost 2" class="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-700">
+                    </div>
+                </div>
+                <div class="contents min-[1025px]:block w-full min-[1025px]:w-1/2">
+                    <div class="order-1 min-[1025px]:order-none inline-flex items-center gap-2 px-3 py-1 bg-green-50 text-green-700 rounded-full text-xs font-bold uppercase tracking-wider mb-6">
+                        <span class="w-2 h-2 bg-green-600 rounded-full animate-pulse"></span>
+                        Lokasi 2: kawasan semi pedesaan
+                    </div>
+                    <h2 class="order-1 min-[1025px]:order-none text-4xl font-extrabold text-slate-900 mb-6 leading-tight">ACARYA KOST 2 - DESA PADANG KELING</h2>
+                    <p class="order-3 min-[1025px]:order-none text-lg text-slate-600 mb-8">Kami menghadirkan konsep Compact Luxury Apartment yang revolusioner. Setiap unit didesain secara efisien dengan interior mewah, menciptakan ruang yang intim namun berkelas. Keunggulan utama kami terletak pada lokasinya: tersembunyi jauh dari hiruk-pikuk pemukiman padat. Di sini, Anda tidak akan mendengar kebisingan tetangga atau keramaian jalanan. Yang ada hanyalah suasana hening yang kondusif untuk memaksimalkan konsentrasi belajar Anda dan menjamin kualitas tidur yang sempurna.</p>
+                    <p class="order-3 min-[1025px]:order-none text-lg text-slate-500 leading-relaxed mb-8">Menghadirkan konsep <span class="italic font-medium text-slate-700">Compact Luxury</span> dengan tingkat privasi absolut. Tersembunyi dari hiruk-pikuk kota, lokasi ini menawarkan ketenangan sejati yang ideal untuk memaksimalkan konsentrasi dan kualitas istirahat Anda.</p>
+                    
+                    <div class="order-3 min-[1025px]:order-none grid grid-cols-2 gap-4 mb-10">
+                        <div class="flex items-center gap-3 text-slate-700">
+                            <div class="p-2 bg-white rounded-lg text-green-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <span class="font-medium">Parkir Luas & Aman</span>
+                        </div>
+                         <div class="flex items-center gap-3 text-slate-700">
+                            <div class="p-2 bg-slate-50 rounded-lg text-green-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <span class="font-medium">Inside Kitchen</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-slate-700">
+                            <div class="p-2 bg-slate-50 rounded-lg text-green-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <span class="font-medium">Study desk </span>
+                        </div>
+                        <div class="flex items-center gap-3 text-slate-700">
+                            <div class="p-2 bg-white rounded-lg text-green-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <span class="font-medium">Free Wifi</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-slate-700">
+                            <div class="p-2 bg-white rounded-lg text-green-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <span class="font-medium">Double Bed</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-slate-700">
+                            <div class="p-2 bg-white rounded-lg text-green-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <span class="font-medium">refrigerator</span>
+                        </div>
+                    </div>
+                    
+                    <button onclick="window.location.href='jelajahi lebih lanjut 2.html'" class="order-3 min-[1025px]:order-none group bg-green-600 text-white px-10 py-4 rounded-2xl font-bold hover:bg-green-700 transition-all shadow-lg hover:shadow-green-200/50 flex items-center justify-center gap-3 w-full sm:w-auto">
+                        Jelajahi kost 2 lebih lanjut
+                        <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Separator: Event & Kegiatan Warga -->
+    <div class="relative z-20 -mt-12 max-w-4xl mx-auto px-6 reveal">
+        <div class="bg-white rounded-[2rem] shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-8 flex flex-col md:flex-row items-center justify-between gap-6 border border-slate-100 group">
+            <div class="flex items-center gap-5 w-full md:w-auto">
+                <div class="w-16 h-16 bg-teal-50 rounded-full flex items-center justify-center text-teal-600 flex-shrink-0">
+                    <i class="fas fa-calendar-check text-3xl group-hover:scale-110 group-hover:rotate-12 transition-transform"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-slate-900 text-xl">Kegiatan Kekeluargaan</h3>
+                    <p class="text-slate-500 mt-1 text-sm md:text-base">Nonton bareng & acara bakar-bakar rutin warga kost setiap bulan.</p>
+                </div>
+            </div>
+            <a href="aturan&etika.html" class="w-full md:w-auto px-6 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition shadow-lg whitespace-nowrap text-center">
+                Lihat Jadwal
+            </a>
+        </div>
+    </div>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .section-title {
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 4px;
+            background-color: #16a34a;
+            border-radius: 2px;
+        }
+
+        .peraturan-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .peraturan-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+    </style>
+
+    <main class="max-w-6xl mx-auto px-6 py-20 space-y-32">
+
+        <!-- Pemilik Kost Ayah-->
+        <section id="pemilik-kost" class="relative reveal">
+            <div class="absolute -inset-10 opacity-[0.05] pattern-dots pointer-events-none -z-10"></div>
+            <div class="flex flex-col min-[1025px]:flex-row gap-8 min-[1025px]:gap-16 items-center justify-between">
+                <!-- Minimalist Profile Card -->
+                <div class="w-full min-[1025px]:w-auto flex justify-center px-4 sm:px-0 order-2 min-[1025px]:order-none">
+                    <div class="group relative w-full h-96 sm:h-[28rem] md:h-[32rem] min-[1025px]:w-[40rem] min-[1025px]:h-[30rem] perspective-1000 cursor-pointer">
+                        <!-- KARTU FOTO UTAMA (Foto Profil) - kartu info belakang dihapus agar tidak menumpuk -->
+                        <div class="card-transition relative w-full h-full bg-white rounded-[1.5rem] sm:rounded-[2rem] md:rounded-[2.5rem] shadow-[0_30px_70px_rgba(0,0,0,0.08)] group-hover:shadow-[0_40px_80px_rgba(22,163,74,0.2)] border-3 sm:border-4 border-white overflow-hidden z-30 transition-all duration-500 group-hover:-translate-y-2">
+                            <div class="w-full h-full relative">
+                                <img src="gambar/ajik%20ibu.png" 
+                                    alt="Ajik Ibu" 
+                                    class="w-full h-full object-cover" 
+                                    style="object-position:50% 18%;">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60"></div>
+                                <div class="absolute bottom-0 left-0 right-0 p-4 sm:p-5 md:p-6 text-white">
+                                    <h3 class="text-xl sm:text-2xl md:text-3xl font-bold">Bapak Anom dan Ibu Sri</h3>
+                                    <p class="text-xs sm:text-sm md:text-base text-green-300 font-semibold">Pemilik Acarya</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contents min-[1025px]:block w-full min-[1025px]:w-auto space-y-0 min-[1025px]:space-y-8">
+                    <div class="order-1 min-[1025px]:order-none w-full px-4 sm:px-0">
+                        
+                        <span class="text-green-600 font-bold tracking-widest uppercase text-xs">Pesan dari Pemilik</span>
+                        <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900 mt-2">MENGENAL BAPAK ANOM DAN BU SRI.</h2>
+                    </div>
+                    <p class="order-3 min-[1025px]:order-none text-base sm:text-lg md:text-xl text-slate-600 leading-relaxed font-light px-4 sm:px-0">
+                        "Rumah bukan hanya tentang bangunan, tapi tentang siapa yang ada di dalamnya. Di sini, kami memastikan setiap penghuni merasa didengar, nyaman, diperhatikan dll."
+                        <br> <br> "Rumah bukan hanya tentang seberapa kokoh bangunan berdiri, tapi tentang kehangatan jiwa-jiwa yang ada di dalamnya. Di sini, kami berkomitmen menciptakan lebih dari sekadar tempat berteduh. Kami membangun sebuah sanctuary (tempat perlindungan) di mana setiap penghuni tidak hanya sekadar tinggal, tetapi benar-benar merasa pulang. 
+                    <p class="order-3 min-[1025px]:order-none text-lg md:text-xl text-slate-500 leading-relaxed font-light px-4 sm:px-0 italic">
+                        "Lebih dari sekadar tempat berteduh, kami berkomitmen membangun sebuah <span class="font-medium text-slate-700">sanctuary</span> yang hangat. Di sini, setiap penghuni tidak sekadar tinggal, tetapi benar-benar merasa pulang, didengar, dan diperhatikan."
+                    </p>
+                    
+                </div>
+            </div>
+        </section>
+
+        <!-- Visi & Misi -->
+        <section id="visi-misi" class="relative reveal">
+            <div class="absolute -inset-10 opacity-[0.05] pattern-dots pointer-events-none -z-10"></div>
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <h2 class="text-3xl font-extrabold text-slate-900 section-title mb-6">Visi & Misi</h2>
+                    <p class="text-slate-500">Landasan kami dalam memberikan pelayanan terbaik bagi setiap penghuni Kost Nyaman.</p>
+                    
+            </div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="group bg-white p-10 rounded-[2.5rem] shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-slate-100 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <i class="fas fa-eye text-9xl"></i>
+                    </div>
+                    <div class="w-14 h-14 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-eye text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-slate-900">Visi Utama</h3>
+                    <p class="text-slate-600 leading-relaxed text-lg">Menciptakan standar baru hunian kost yang modern, bersih, dan inklusif, di mana setiap individu dapat bertumbuh dengan tenang.</p>
+                    <p class="text-slate-500 mt-4">Visi kami adalah menjadi pilihan utama bagi pencari hunian dengan menghadirkan lingkungan yang aman, nyaman, dan mendukung perkembangan pribadi melalui fasilitas berkualitas, layanan profesional, dan komunitas yang ramah.</p>
+                </div>
+
+                <div class="group bg-slate-900 p-10 rounded-[2.5rem] shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 text-white relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-8 opacity-10">
+                        <i class="fas fa-rocket text-8xl text-green-500"></i>
+                    </div>
+                    <div class="w-14 h-14 bg-green-500/20 text-green-400 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-rocket text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Misi Layanan</h3>
+                    <p class="text-green-200 mb-4">Misi kami fokus pada pelayanan yang responsif dan konsisten: menjaga kebersihan dan keamanan, menyediakan fasilitas yang mendukung produktivitas, serta membangun komunikasi yang transparan dengan penghuni.</p>
+                    <ul class="space-y-4 opacity-90">
+                        <li class="flex items-center space-x-3">
+                            <i class="fas fa-check text-green-400"></i>
+                            <span>Respon cepat dalam perbaikan fasilitas.</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <i class="fas fa-check text-green-400"></i>
+                            <span>Sistem keamanan digital dan terpantau.</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <i class="fas fa-check text-green-400"></i>
+                            <span>Kebersihan area publik setiap hari.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Separator: Update Info / Fitur Baru -->
+    <div class="relative z-20 -mt-10 mb-10 max-w-4xl mx-auto px-6 reveal">
+        <div class="bg-gradient-to-r from-green-600 to-emerald-500 rounded-[2rem] shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-8 flex flex-col md:flex-row items-center justify-between gap-6 text-white border border-green-400 group">
+            <div class="flex items-center gap-5 w-full md:w-auto">
+                <div class="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white flex-shrink-0">
+                    <i class="fas fa-laptop-code text-3xl group-hover:scale-110 group-hover:-rotate-12 transition-transform"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-xl">Pusat Informasi Digital</h3>
+                    <p class="text-green-50 mt-1 text-sm md:text-base">Akses aturan kost, laporan, dan info lainnya di portal digital kami.</p>
+                </div>
+            </div>
+            <a href="aturan&etika.html" class="w-full md:w-auto px-6 py-3 bg-white text-green-700 font-bold rounded-xl hover:bg-green-50 transition shadow-lg whitespace-nowrap text-center">
+                Akses Portal
+            </a>
+        </div>
+    </div>
+
+    <!-- Testimoni -->
+
+    <!-- Section Container -->
+    <section id="testimoni" class="py-16 px-4 md:px-8 max-w-7xl mx-auto relative group reveal overflow-hidden">
+        <div class="absolute inset-0 opacity-[0.03] pattern-dots pointer-events-none -z-10"></div>
+        
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-green-900 mb-4">Kata Mereka Tentang Kost Kami</h2>
+            <p class="text-slate-600 max-w-2xl mx-auto">
+                Dengar langsung pengalaman nyaman dari para penghuni yang sudah tinggal bersama kami.
+            </p>
+        </div>
+
+        <!-- Slider Container -->
+        <div class="relative overflow-hidden p-4">
+            
+            <!-- Navigation Buttons (Hidden by default, shown on hover/desktop) -->
+            <button onclick="prevSlide()" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg text-green-600 p-3 rounded-full hover:bg-green-600 hover:text-white transition-all hidden md:flex items-center justify-center w-12 h-12 border border-slate-100 group-hover:flex">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button onclick="nextSlide()" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg text-green-600 p-3 rounded-full hover:bg-green-600 hover:text-white transition-all hidden md:flex items-center justify-center w-12 h-12 border border-slate-100 group-hover:flex">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+
+            <!-- The Track -->
+            <!-- Gradient Fade Mask Kiri & Kanan -->
+            <div class="absolute top-0 bottom-0 left-0 w-8 md:w-16 bg-gradient-to-r from-[#f8fafc] to-transparent z-10 pointer-events-none"></div>
+            <div class="absolute top-0 bottom-0 right-0 w-8 md:w-16 bg-gradient-to-l from-[#f8fafc] to-transparent z-10 pointer-events-none"></div>
+            
+            <div id="slider-container" class="overflow-hidden py-4 px-0 md:px-4">
+                <div id="slider-track" class="flex">
+                    <!-- Cards will be inserted here by JS -->
+                </div>
+            </div>
+
+            <!-- Dots Indicators -->
+            <div class="flex justify-center mt-8 gap-2" id="dots-container">
+                <!-- Dots injected by JS -->
+            </div>
+        </div>
+
+    </section>
+
+    <script>
+        // Data Testimoni (7 Orang Penghuni)
+        const testimonials = [
+            {
+                name: "Andi Saputra",
+                role: "Mahasiswa Tingkat Akhir",
+                image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Andi",
+                text: "Wi-Fi di sini kenceng banget, ngebantu banget buat ngerjain skripsi sampai malam. Ibu kostnya juga ramah, sering ngasih makanan kalau ada acara.",
+                rating: 5,
+                stayDuration: "2 Tahun"
+            },
+            {
+                name: "Siti Aminah",
+                role: "Karyawati Bank",
+                image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Siti&gender=female",
+                text: "Keamanan 24 jam dan ada CCTV bikin aku merasa aman pulang kerja malam. Lingkungannya tenang, pas banget buat istirahat.",
+                rating: 5,
+                stayDuration: "1 Tahun"
+            },
+            {
+                name: "Budi Santoso",
+                role: "Freelancer Desain",
+                image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Budi",
+                text: "Listrik stabil jarang mati lampu, penting banget buat kerjaanku. Parkiran motor juga luas dan ada atapnya, jadi motor nggak kehujanan.",
+                rating: 4,
+                stayDuration: "8 Bulan"
+            },
+            {
+                name: "Rina Wijaya",
+                role: "Mahasiswi Baru",
+                image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Rina&gender=female",
+                text: "Lokasinya strategis banget, cuma 5 menit jalan kaki ke kampus. Banyak tempat makan murah di sekitar kost, cocok buat kantong mahasiswa.",
+                rating: 5,
+                stayDuration: "6 Bulan"
+            },
+            {
+                name: "Dimas Anggara",
+                role: "Gamer / Streamer",
+                image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Dimas",
+                text: "Sirkulasi udara di kamar bagus, nggak pengap. Kamar mandinya juga bersih banget karena rutin dibersihkan penjaga kost.",
+                rating: 5,
+                stayDuration: "1.5 Tahun"
+            },
+            {
+                name: "Putri Larasati",
+                role: "Nakes (Perawat)",
+                image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Putri&gender=female",
+                text: "Air bersih dan lancar, nggak pernah kekeringan walaupun musim kemarau. Tetangga kamar juga sopan-sopan dan nggak berisik.",
+                rating: 4,
+                stayDuration: "1 Tahun"
+            },
+            {
+                name: "Joko Anwar",
+                role: "Karyawan Swasta",
+                image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Joko",
+                text: "Harga sewa sangat worth it dengan fasilitas yang didapat. Ada dapur umum yang bersih jadi bisa masak mie instan kapan aja.",
+                rating: 5,
+                stayDuration: "3 Tahun"
+            }
+        ];
+
+        const track = document.getElementById('slider-track');
+        const sliderContainer = document.getElementById('slider-container');
+        const dotsContainer = document.getElementById('dots-container');
+        let currentIndex = 0;
+        let cardsToShow = 3;
+        let autoPlayInterval;
+
+        // Function to generate stars
+        const getStars = (rating) => {
+            let starsHtml = '';
+            for (let i = 0; i < 5; i++) {
+                if (i < rating) {
+                    starsHtml += '<i class="fas fa-star text-yellow-400 text-sm"></i>';
+                } else {
+                    starsHtml += '<i class="far fa-star text-gray-300 text-sm"></i>';
+                }
+            }
+            return starsHtml;
+        };
+
+        // Render Cards
+        const renderCards = () => {
+            track.innerHTML = testimonials.map((t) => `
+                <div class="testimonial-card-wrapper flex-shrink-0 p-3" style="box-sizing: border-box;">
+                    <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-100 h-full flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                        <div>
+                            <div class="flex items-center gap-4 mb-4">
+                                <img src="${t.image}" alt="${t.name}" class="w-14 h-14 rounded-full bg-green-50 border-2 border-green-100">
+                                <div>
+                                    <h4 class="font-bold text-slate-900">${t.name}</h4>
+                                    <p class="text-xs text-green-600 font-semibold">${t.role}</p>
+                                </div>
+                            </div>
+                            <div class="mb-3">${getStars(t.rating)}</div>
+                            <p class="text-slate-600 text-sm leading-relaxed italic">"${t.text}"</p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+                            <span class="text-xs text-slate-400"><i class="fas fa-clock mr-1"></i> Penghuni ${t.stayDuration}</span>
+                            <i class="fas fa-quote-right text-slate-200 text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        // Render Dots
+        const renderDots = () => {
+            const totalDots = Math.ceil(testimonials.length - cardsToShow + 1); // Logic adjusted for sliding window
+            // Simplified dots logic for infinite loop feel: Just show total items or chunks
+            // Let's make dots correspond to the starting index
+            dotsContainer.innerHTML = testimonials.map((_, idx) => {
+                // Only show dots that serve as valid starting points if we wanted pagination
+                // For simplicity, we show fewer dots or map to index
+                if(idx > testimonials.length - cardsToShow) return '';
+                return `<button onclick="goToSlide(${idx})" class="w-3 h-3 rounded-full transition-colors duration-300 ${idx === 0 ? 'bg-green-600' : 'bg-slate-300 hover:bg-green-400'}"></button>`;
+            }).join('');
+        };
+
+        const updateResponsive = () => {
+            const width = window.innerWidth;
+            if (width < 768) {
+                cardsToShow = 1;
+            } else if (width < 1024) {
+                cardsToShow = 2;
+            } else {
+                cardsToShow = 3;
+            }
+            
+            // Calculate precise width in pixels to prevent cutting off
+            const containerWidth = sliderContainer.clientWidth;
+            const cardWidth = containerWidth / cardsToShow;
+            
+            // Apply width to all cards
+            const cards = document.querySelectorAll('.testimonial-card-wrapper');
+            cards.forEach(card => {
+                card.style.width = `${cardWidth}px`;
+            });
+
+            updateSliderPosition();
+            renderDots();
+            updateDots();
+        };
+
+        const updateSliderPosition = () => {
+            // Move by pixels for precision
+            const containerWidth = sliderContainer.clientWidth;
+            const cardWidth = containerWidth / cardsToShow;
+            const moveAmount = currentIndex * cardWidth;
+            track.style.transform = `translateX(-${moveAmount}px)`;
+            
+            updateDots();
+        };
+
+        const updateDots = () => {
+            const dots = dotsContainer.querySelectorAll('button');
+            dots.forEach((dot, idx) => {
+                if (idx === currentIndex) {
+                    dot.classList.remove('bg-slate-300', 'hover:bg-green-400');
+                    dot.classList.add('bg-green-600');
+                } else {
+                    dot.classList.add('bg-slate-300', 'hover:bg-green-400');
+                    dot.classList.remove('bg-green-600');
+                }
+            });
+        };
+
+        const nextSlide = () => {
+            const maxIndex = testimonials.length - cardsToShow;
+            if (currentIndex < maxIndex) {
+                currentIndex++;
+            } else {
+                currentIndex = 0; // Loop back to start
+            }
+            updateSliderPosition();
+        };
+
+        const prevSlide = () => {
+            const maxIndex = testimonials.length - cardsToShow;
+            if (currentIndex > 0) {
+                currentIndex--;
+            } else {
+                currentIndex = maxIndex; // Loop to end
+            }
+            updateSliderPosition();
+        };
+
+        const goToSlide = (index) => {
+            currentIndex = index;
+            updateSliderPosition();
+        };
+
+        const startAutoPlay = () => {
+            stopAutoPlay(); // Clear existing to prevent duplicates
+            autoPlayInterval = setInterval(nextSlide, 3000); // 3 seconds (sedikit lebih cepat)
+        };
+
+        const stopAutoPlay = () => {
+            clearInterval(autoPlayInterval);
+        };
+
+        // Initialize
+        renderCards();
+        updateResponsive();
+        startAutoPlay();
+
+        // Event Listeners
+        window.addEventListener('resize', updateResponsive);
+        
+        // Pause on hover
+        const section = document.querySelector('section');
+        section.addEventListener('mouseenter', stopAutoPlay);
+        section.addEventListener('mouseleave', startAutoPlay);
+
+        // Touch support for swipe (Simple implementation)
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        section.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+        
+        section.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        const handleSwipe = () => {
+            if (touchEndX < touchStartX - 50) nextSlide();
+            if (touchEndX > touchStartX + 50) prevSlide();
+        };
+
+        // Scroll Animation Logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const reveals = document.querySelectorAll('.reveal');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    } else {
+                        entry.target.classList.remove('active');
+                    }
+                });
+            }, { threshold: 0.1 }); // Trigger when 10% visible
+
+            reveals.forEach(el => observer.observe(el));
+        });
+
+    </script>
+</body>
+
+
+    <!-- Footer -->
+    <footer class=" text-white pt-24 pb-12 px-6">
+            <div class="pt-8 border-t border-white/10 text-center text-slate-500 text-sm">
+                &copy; 2026 Acarya Kost Management. Crafted for your comfort.
+            </div>
+    </footer>
+
+    <script>
+        // Simple navbar interaction on scroll
+        window.onscroll = function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('py-2');
+                nav.querySelector('.glass').classList.remove('bg-white/70');
+                nav.querySelector('.glass').classList.add('bg-white/95');
+            } else {
+                nav.classList.remove('py-2');
+                nav.querySelector('.glass').classList.add('bg-white/70');
+                nav.querySelector('.glass').classList.remove('bg-white/95');
+            }
+        };
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const open = document.getElementById('menuOpen');
+            const close = document.getElementById('menuClose');
+            if (!menu) return;
+            menu.classList.toggle('hidden');
+            open.classList.toggle('hidden');
+            close.classList.toggle('hidden');
+        }
+
+        // Close mobile menu when resizing to desktop
+        window.addEventListener('resize', () => {
+            const menu = document.getElementById('mobileMenu');
+            const open = document.getElementById('menuOpen');
+            const close = document.getElementById('menuClose');
+            if (window.innerWidth >= 1136 && menu && !menu.classList.contains('hidden')) {
+                menu.classList.add('hidden');
+                open.classList.remove('hidden');
+                close.classList.add('hidden');
+            }
+        });
+
+        // Menutup menu mobile secara otomatis saat salah satu link diklik
+        document.querySelectorAll('#mobileMenu a').forEach(link => {
+            link.addEventListener('click', () => {
+                // Paksa tutup menu (bukan toggle) untuk memastikan menu tertutup
+                const menu = document.getElementById('mobileMenu');
+                const open = document.getElementById('menuOpen');
+                const close = document.getElementById('menuClose');
+                if (menu) menu.classList.add('hidden');
+                if (open) open.classList.remove('hidden');
+                if (close) close.classList.add('hidden');
+            });
+        });
+    </script>
+
+    <!-- Floating Quick Action (Speed Dial) -->
+    <div class="fixed bottom-6 right-6 z-[100] flex flex-col items-end gap-3 group">
+        <!-- Secondary Buttons (Hidden by default, show on hover) -->
+        <div class="flex flex-col gap-3 items-end origin-bottom scale-0 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-300 pointer-events-none group-hover:pointer-events-auto">
+            <a href="https://wa.me/6281234567890" target="_blank" class="flex items-center gap-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg hover:shadow-xl hover:bg-white border border-slate-100 transition-all transform hover:-translate-x-1">
+                <span class="text-sm font-bold text-slate-700">Chat Admin</span>
+                <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white"><i class="fab fa-whatsapp"></i></div>
+            </a>
+            <a href="booking.html" class="flex items-center gap-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg hover:shadow-xl hover:bg-white border border-slate-100 transition-all transform hover:-translate-x-1">
+                <span class="text-sm font-bold text-slate-700">Pesan Kamar</span>
+                <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white"><i class="fas fa-bed"></i></div>
+            </a>
+            <a href="aturan&etika.html" class="flex items-center gap-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg hover:shadow-xl hover:bg-white border border-slate-100 transition-all transform hover:-translate-x-1">
+                <span class="text-sm font-bold text-slate-700">Pusat Info</span>
+                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white"><i class="fas fa-info"></i></div>
+            </a>
+        </div>
+        <!-- Main Button -->
+        <button class="w-14 h-14 bg-slate-900 text-white rounded-full shadow-2xl flex items-center justify-center text-2xl hover:bg-slate-800 hover:scale-110 transition-all focus:outline-none border-2 border-white/20">
+            <i class="fas fa-bolt group-hover:hidden"></i>
+            <i class="fas fa-times hidden group-hover:block transition-transform duration-300 rotate-90 group-hover:rotate-0"></i>
+        </button>
+    </div>
+
+    <!-- Live Social Proof Notification -->
+    <div id="liveToast" class="fixed bottom-6 left-6 z-[100] bg-white/90 backdrop-blur-md border border-slate-100 p-4 rounded-2xl shadow-2xl flex items-center gap-4 max-w-xs transition-all duration-500 transform translate-y-10 opacity-0 pointer-events-none hidden">
+        <div id="toastIcon" class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0">
+            <!-- Icon inserted via JS -->
+        </div>
+        <div>
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5" id="toastTime">Baru Saja</p>
+            <p id="toastMsg" class="text-sm font-bold text-slate-800 leading-tight">Seseorang sedang melihat tipe Executive</p>
+        </div>
+        <button onclick="hideToast()" class="pointer-events-auto absolute -top-2 -right-2 w-6 h-6 bg-white border border-slate-200 hover:bg-slate-100 text-slate-500 rounded-full flex items-center justify-center text-[10px] shadow-sm transition">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <!-- Landscape Suggestion Modal -->
+    <div id="landscapeModal" class="fixed inset-0 z-[9999] hidden flex items-center justify-center bg-slate-900/90 backdrop-blur-sm px-4 transition-all duration-300">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-green-400 to-green-600"></div>
+            <div class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-exclamation-triangle text-4xl text-yellow-500 animate-bounce"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-900 mb-3">Saran Tampilan</h3>
+            <p class="text-slate-500 mb-8 leading-relaxed">
+                Untuk kenyamanan melihat detail kamar, disarankan untuk mengaktifkan mode <span class="font-bold text-green-600">situs desktop</span>.
+            </p>
+            <button onclick="document.getElementById('landscapeModal').classList.add('hidden')" class="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl transition-all shadow-lg active:scale-95">
+                Lanjutkan
+            </button>
+        </div>
+    </div>
+    <script>
+        function checkOrientation() {
+            const modal = document.getElementById('landscapeModal');
+            if (!modal) return;            
+
+            // Logika: Muncul jika lebar < 768px (Ukuran HP) DAN Tinggi > Lebar (Portrait)
+            if (window.innerWidth < 768 && window.innerHeight > window.innerWidth) {
+                // Cek apakah modal sudah pernah ditampilkan sebelumnya
+                if (!sessionStorage.getItem('landscapeModalShown')) {
+                    modal.classList.remove('hidden');
+                    // Set item di sessionStorage (muncul 1 kali per sesi tab)
+                    sessionStorage.setItem('landscapeModalShown', 'true');
+                }
+            } else {
+                // Sembunyikan jika layar dilebarkan kembali
+                modal.classList.add('hidden');
+            }
+        }
+
+        // Panggil langsung dengan delay 1.5 detik (lebih stabil dari event 'load')
+        setTimeout(checkOrientation, 1500);
+        window.addEventListener('resize', checkOrientation);
+
+        // ==========================================
+        // LOGIKA LIVE SOCIAL PROOF NOTIFICATION
+        // ==========================================
+        const toastData = [
+            { icon: '<i class="fas fa-eye"></i>', bg: 'bg-blue-100', color: 'text-blue-600', msg: 'Seseorang dari Denpasar sedang melihat kamar', time: 'Baru Saja' },
+            { icon: '<i class="fas fa-check"></i>', bg: 'bg-green-100', color: 'text-green-600', msg: 'Budi baru saja mengamankan Kamar Gold!', time: '2 Menit Lalu' },
+            { icon: '<i class="fas fa-fire"></i>', bg: 'bg-orange-100', color: 'text-orange-600', msg: 'Tipe Executive sisa 2 unit lagi bulan ini.', time: 'Hot Info' },
+            { icon: '<i class="fas fa-star"></i>', bg: 'bg-yellow-100', color: 'text-yellow-600', msg: 'Acarya Kost mendapat ulasan 5 bintang baru.', time: '1 Jam Lalu' }
+        ];
+
+        let toastIndex = 0;
+        const liveToast = document.getElementById('liveToast');
+        
+        function showNextToast() {
+            if(!liveToast) return;
+            const data = toastData[toastIndex];
+            
+            document.getElementById('toastIcon').className = `w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${data.bg} ${data.color}`;
+            document.getElementById('toastIcon').innerHTML = data.icon;
+            document.getElementById('toastMsg').textContent = data.msg;
+            document.getElementById('toastTime').textContent = data.time;
+
+            liveToast.classList.remove('hidden');
+            setTimeout(() => liveToast.classList.remove('translate-y-10', 'opacity-0'), 50);
+
+            // Auto hide setelah 5 detik
+            setTimeout(hideToast, 5000);
+            toastIndex = (toastIndex + 1) % toastData.length;
+        }
+
+        function hideToast() {
+            if(!liveToast) return;
+            liveToast.classList.add('translate-y-10', 'opacity-0');
+            setTimeout(() => liveToast.classList.add('hidden'), 500);
+        }
+
+        // Memulai loop notifikasi secara acak setelah 4 detik halaman dibuka
+        setTimeout(() => { showNextToast(); setInterval(showNextToast, 14000); }, 4000);
+    </script>
+</body>
+</html>

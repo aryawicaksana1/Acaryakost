@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pusat Informasi Kost</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #16a34a 0%, #059669 100%);
+        }
+        .glass { 
+            background: rgba(255, 255, 255, 0.7); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px); 
+        }
+    </style>
+</head>
+<body class="text-gray-800 min-h-screen relative overflow-x-hidden">
+
+    <!-- Decorative Background Blobs -->
+    <div class="fixed top-40 left-[-10%] w-96 h-96 bg-green-400/10 rounded-full blur-[100px] pointer-events-none z-0"></div>
+    <div class="fixed bottom-20 right-[-5%] w-96 h-96 bg-blue-400/10 rounded-full blur-[100px] pointer-events-none z-0"></div>
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 top-0 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 py-4 relative">
+            <div class="glass border border-white/20 rounded-2xl px-6 py-3 flex justify-between items-center shadow-lg">
+                <div class="flex items-center gap-2">
+                    <img src="gambar/logo kost.png" alt="Logo" class="h-10 w-auto rounded-md object-contain mr-2">
+                    <span class="font-bold text-xl tracking-tight text-gray-900">Kost<span class="text-green-600">Acarya</span></span>
+                </div>
+                <div class="hidden min-[1136px]:flex space-x-10">
+                    <a href="index.html" class="text-sm font-semibold text-slate-900 hover:text-green-600 transition">Beranda</a>
+                </div>
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuButton" onclick="toggleMobileMenu()" class="min-[1136px]:hidden p-2 rounded-lg text-slate-800 hover:bg-slate-100 transition mr-3" aria-label="Toggle menu">
+                    <svg id="menuOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    <svg id="menuClose" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- Mobile Dropdown Menu -->
+            <div id="mobileMenu" class="min-[1136px]:hidden hidden absolute right-6 top-full mt-2 w-64 rounded-2xl bg-white/95 border border-slate-100 shadow-xl overflow-hidden z-50" style="backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
+                <div class="px-4 py-3 space-y-2">
+                    <a href="index.html" class="block text-slate-900 font-semibold py-3 px-3 rounded-lg hover:bg-green-50 hover:text-green-700 transition">Beranda</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <header class="gradient-bg text-white pt-32 pb-24 px-4 rounded-b-[2.5rem] shadow-lg relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full opacity-10">
+            <i class="fas fa-building text-9xl absolute -right-10 -top-10 transform rotate-12"></i>
+            <div class="absolute top-10 left-10 w-32 h-32 bg-white rounded-full blur-3xl opacity-30 animate-pulse"></div>
+            <div class="absolute bottom-10 right-20 w-48 h-48 bg-white rounded-full blur-3xl opacity-20 animate-pulse" style="animation-delay: 1s;"></div>
+        </div>
+        <div class="max-w-5xl mx-auto relative z-10 text-center">
+            <div class="w-24 h-24 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-white/30 shadow-xl">
+                <i class="fas fa-info text-4xl"></i>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-3 tracking-tight">Pusat Informasi Digital</h1>
+            <p class="text-green-100 text-lg max-w-xl mx-auto font-medium">Akses seluruh dokumen penting, tata tertib, hingga kalender kegiatan warga kost dalam satu pintu.</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-6 -mt-16 relative z-20 mb-20">
+
+        <!-- Grid Container: 3 Columns on desktop -->
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            
+            <!-- Card 1: Google Drive (Aturan) -->
+            <div class="group bg-white/90 backdrop-blur-sm rounded-[2.5rem] p-8 shadow-sm hover:shadow-2xl border border-white hover:border-green-200 text-center flex flex-col h-full transition-all duration-500 relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-b from-green-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                <div class="w-20 h-20 bg-green-50 group-hover:bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 transition-colors duration-300">
+                    <i class="fab fa-google-drive text-4xl text-green-600 group-hover:scale-110 transition-transform duration-300"></i>
+                </div>
+                <h2 class="text-xl font-bold text-gray-800 mb-3 group-hover:text-green-700 transition-colors">Aturan Kost</h2>
+                <p class="text-gray-500 text-sm mb-8 flex-grow leading-relaxed">
+                    Baca tata tertib dan etika tinggal di kost ini secara lengkap.
+                </p>
+                
+                <a href="drive.html" class="block w-full bg-green-50 text-green-700 font-bold py-3.5 rounded-xl group-hover:bg-green-600 group-hover:text-white transition-all duration-300 flex items-center justify-center gap-2 shadow-sm">
+                    <span>Buka Dokumen</span>
+                    <i class="fas fa-external-link-alt text-sm"></i>
+                </a>
+            </div>
+
+            <!-- Card 2: Google Form (Isi Data/Laporan) -->
+            <div class="group bg-white/90 backdrop-blur-sm rounded-[2.5rem] p-8 shadow-sm hover:shadow-2xl border border-white hover:border-purple-200 text-center flex flex-col h-full transition-all duration-500 relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-b from-purple-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                <div class="w-20 h-20 bg-purple-50 group-hover:bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6 transition-colors duration-300">
+                    <i class="fas fa-file-signature text-4xl text-purple-600 group-hover:scale-110 transition-transform duration-300"></i>
+                </div>
+                <h2 class="text-xl font-bold text-gray-800 mb-3 group-hover:text-purple-700 transition-colors">Isi Formulir</h2>
+                <p class="text-gray-500 text-sm mb-8 flex-grow leading-relaxed">
+                    Formulir data diri penghuni baru atau pelaporan keluhan.
+                </p>
+                
+                <a href="form.html" class="block w-full bg-purple-50 text-purple-700 font-bold py-3.5 rounded-xl group-hover:bg-purple-600 group-hover:text-white transition-all duration-300 flex items-center justify-center gap-2 shadow-sm">
+                    <span>Buka Formulir</span>
+                    <i class="fas fa-arrow-right text-sm"></i>
+                </a>
+            </div>
+
+            <!-- Card 3: Program Kekeluargaan -->
+            <div class="group bg-white/90 backdrop-blur-sm rounded-[2.5rem] p-8 shadow-sm hover:shadow-2xl border border-white hover:border-blue-200 text-center flex flex-col h-full transition-all duration-500 relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-b from-blue-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                <div class="w-20 h-20 bg-blue-50 group-hover:bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6 transition-colors duration-300">
+                    <i class="fas fa-users text-4xl text-blue-600 group-hover:scale-110 transition-transform duration-300"></i>
+                </div>
+                <h2 class="text-xl font-bold text-gray-800 mb-3 group-hover:text-blue-700 transition-colors">Kekeluargaan</h2>
+                <p class="text-gray-500 text-sm mb-8 flex-grow leading-relaxed">
+                    Jadwal kegiatan bersama, bakti sosial, dan acara kumpul warga kost.
+                </p>
+                
+                <a href="#" onclick="alert('Fitur ini akan segera hadir!')" class="block w-full bg-blue-50 text-blue-700 font-bold py-3.5 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 flex items-center justify-center gap-2 shadow-sm">
+                    <span>Lihat Kegiatan</span>
+                    <i class="fas fa-calendar-alt text-sm"></i>
+                </a>
+            </div>
+
+            <!-- Card 4: Foto Kenangan -->
+            <div class="group bg-white/90 backdrop-blur-sm rounded-[2.5rem] p-8 shadow-sm hover:shadow-2xl border border-white hover:border-pink-200 text-center flex flex-col h-full transition-all duration-500 relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-b from-pink-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                <div class="w-20 h-20 bg-pink-50 group-hover:bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-6 transition-colors duration-300">
+                    <i class="fas fa-camera-retro text-4xl text-pink-600 group-hover:scale-110 transition-transform duration-300"></i>
+                </div>
+                <h2 class="text-xl font-bold text-gray-800 mb-3 group-hover:text-pink-700 transition-colors">Foto Kenangan</h2>
+                <p class="text-gray-500 text-sm mb-8 flex-grow leading-relaxed">
+                    Bagikan momen seru dan kenangan indah selama tinggal di sini.
+                </p>
+                
+                <a href="#" onclick="alert('Fitur upload foto akan segera hadir!')" class="block w-full bg-pink-50 text-pink-700 font-bold py-3.5 rounded-xl group-hover:bg-pink-600 group-hover:text-white transition-all duration-300 flex items-center justify-center gap-2 shadow-sm">
+                    <span>Upload Foto</span>
+                    <i class="fas fa-cloud-upload-alt text-sm"></i>
+                </a>
+            </div>
+
+        </div>
+
+        <!-- Emergency Contact Section -->
+        <div class="mt-16 bg-white rounded-[2.5rem] p-8 md:p-12 shadow-lg border border-slate-100 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
+            <div class="absolute right-0 top-0 w-64 h-64 bg-red-50 rounded-full blur-[80px] -z-10 pointer-events-none"></div>
+            <div class="flex-1 text-center md:text-left">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-red-50 text-red-600 rounded-full text-xs font-bold uppercase tracking-wider mb-4 border border-red-100 shadow-sm">
+                    <span class="w-2 h-2 bg-red-600 rounded-full animate-pulse"></span>
+                    Kontak Darurat
+                </div>
+                <h3 class="text-2xl md:text-3xl font-extrabold text-slate-800 mb-3">Butuh Bantuan Segera?</h3>
+                <p class="text-slate-500 leading-relaxed max-w-2xl">Jika terjadi keadaan darurat (listrik bermasalah, air mati, atau indikasi gangguan keamanan), jangan ragu untuk langsung menghubungi pengelola kost yang standby 24/7.</p>
+            </div>
+            <div class="flex-shrink-0 w-full md:w-auto">
+                <a href="https://wa.me/6281234567890" target="_blank" class="w-full flex items-center justify-center gap-3 bg-red-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-200 hover:-translate-y-1 active:scale-95">
+                    <i class="fab fa-whatsapp text-2xl"></i>
+                    Lapor Sekarang
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 pt-16 pb-8 px-6 mt-24 rounded-t-[3rem] relative overflow-hidden">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1 bg-gradient-to-r from-transparent via-green-500 to-transparent opacity-50"></div>
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 relative z-10">
+            <div class="flex items-center gap-3">
+                <div class="bg-white p-2 rounded-xl">
+                    <img src="gambar/logo kost.png" alt="Logo" class="h-8 w-auto object-contain">
+                </div>
+                <span class="font-bold text-2xl tracking-tight text-white">Kost<span class="text-green-500">Acarya</span></span>
+            </div>
+            <div class="text-slate-400 text-sm font-medium">
+                &copy; 2026 Acarya Kost Management. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating Quick Action (Speed Dial) -->
+    <div class="fixed bottom-6 right-6 z-[100] flex flex-col items-end gap-3 group">
+        <!-- Secondary Buttons (Hidden by default, show on hover) -->
+        <div class="flex flex-col gap-3 items-end origin-bottom scale-0 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-300 pointer-events-none group-hover:pointer-events-auto">
+            <a href="https://wa.me/6281234567890" target="_blank" class="flex items-center gap-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg hover:shadow-xl hover:bg-white border border-slate-100 transition-all transform hover:-translate-x-1">
+                <span class="text-sm font-bold text-slate-700">Chat Admin</span>
+                <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white"><i class="fab fa-whatsapp"></i></div>
+            </a>
+            <a href="index.html" class="flex items-center gap-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg hover:shadow-xl hover:bg-white border border-slate-100 transition-all transform hover:-translate-x-1">
+                <span class="text-sm font-bold text-slate-700">Kembali</span>
+                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white"><i class="fas fa-home"></i></div>
+            </a>
+        </div>
+        <!-- Main Button -->
+        <button class="w-14 h-14 bg-slate-900 text-white rounded-full shadow-2xl flex items-center justify-center text-2xl hover:bg-slate-800 hover:scale-110 transition-all focus:outline-none border-2 border-white/20">
+            <i class="fas fa-bolt group-hover:hidden"></i>
+            <i class="fas fa-times hidden group-hover:block transition-transform duration-300 rotate-90 group-hover:rotate-0"></i>
+        </button>
+    </div>
+
+    <!-- Notification Modal -->
+    <div id="accessModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-3xl p-8 max-w-md w-full mx-4 text-center shadow-2xl transform scale-95 transition-transform duration-300" id="modalContent">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-user-lock text-3xl text-green-600"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-3">Info Penting</h3>
+            <p class="text-gray-600 mb-8 leading-relaxed">
+                Mohon diperhatikan bahwa pengisian formulir dan akses dokumen di halaman ini hanya diperuntukkan bagi Anda yang sudah resmi menjadi bagian dari <span class="font-bold text-green-600">Keluarga Kost</span>.
+            </p>
+            <button onclick="closeAccessModal()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg hover:shadow-green-200 active:scale-95">
+                Saya Mengerti
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('accessModal');
+            const content = document.getElementById('modalContent');
+            
+            // Show modal with animation
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+                content.classList.add('scale-100');
+            }, 100);
+        });
+
+        function closeAccessModal() {
+            const modal = document.getElementById('accessModal');
+            const content = document.getElementById('modalContent');
+            
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // Simple navbar interaction on scroll
+        window.onscroll = function() {
+            const nav = document.querySelector('nav');
+            const glass = nav.querySelector('.glass');
+            if (window.scrollY > 50) {
+                nav.classList.add('py-2');
+                if (glass) { glass.classList.remove('bg-white/70'); glass.classList.add('bg-white/95'); }
+            } else {
+                nav.classList.remove('py-2');
+                if (glass) { glass.classList.add('bg-white/70'); glass.classList.remove('bg-white/95'); }
+            }
+        };
+
+        // Mobile Menu Logic
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const openIcon = document.getElementById('menuOpen');
+            const closeIcon = document.getElementById('menuClose');
+            
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                openIcon.classList.add('hidden');
+                closeIcon.classList.remove('hidden');
+            } else {
+                menu.classList.add('hidden');
+                openIcon.classList.remove('hidden');
+                closeIcon.classList.add('hidden');
+            }
+        }
+
+        // Close menu when clicking a link
+        document.querySelectorAll('#mobileMenu a').forEach(link => {
+            link.addEventListener('click', toggleMobileMenu);
+        });
+
+        // Close mobile menu when resizing to desktop
+        window.addEventListener('resize', () => {
+            const menu = document.getElementById('mobileMenu');
+            const openIcon = document.getElementById('menuOpen');
+            const closeIcon = document.getElementById('menuClose');
+            if (window.innerWidth >= 1136 && menu && !menu.classList.contains('hidden')) {
+                menu.classList.add('hidden');
+                openIcon.classList.remove('hidden');
+                closeIcon.classList.add('hidden');
+            }
+        });
+    </script>
+
+</body>
+</html>

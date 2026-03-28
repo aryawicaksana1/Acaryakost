@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeri Link Google Drive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+        .search-focus:focus-within { ring: 2px solid #3b82f6; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-slate-800">
+
+    <!-- Hero Section / Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg" alt="Logo" class="w-10 h-10">
+                    <div>
+                        <h1 class="text-xl font-bold text-slate-800">Repository Saya</h1>
+                        <p class="text-xs text-slate-500">Kumpulan Dokumen & File Penting</p>
+                    </div>
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="w-full md:w-96 relative search-focus rounded-lg group">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-search text-slate-400 group-focus-within:text-blue-500"></i>
+                    </div>
+                    <input type="text" id="search-input" onkeyup="filterResources()" 
+                        class="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg leading-5 bg-slate-50 placeholder-slate-400 focus:outline-none focus:bg-white transition duration-150 ease-in-out sm:text-sm"
+                        placeholder="Cari dokumen, foto, atau folder...">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Grid Content -->
+    <main class="flex-1 max-w-7xl mx-auto w-full p-4 sm:p-6 lg:p-8">
+        
+        <!-- Filter Categories (Optional tags) -->
+        <div class="flex flex-wrap gap-2 mb-8 justify-center md:justify-start">
+            <button onclick="filterType('all')" class="filter-btn active px-4 py-1.5 rounded-full text-sm font-medium bg-blue-600 text-white shadow-sm hover:bg-blue-700 transition">Semua</button>
+            <button onclick="filterType('folder')" class="filter-btn px-4 py-1.5 rounded-full text-sm font-medium bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition">Folder</button>
+            <button onclick="filterType('document')" class="filter-btn px-4 py-1.5 rounded-full text-sm font-medium bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition">Dokumen</button>
+            <button onclick="filterType('media')" class="filter-btn px-4 py-1.5 rounded-full text-sm font-medium bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition">Foto/Video</button>
+        </div>
+
+        <!-- Grid Container -->
+        <div id="resource-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Cards will be injected here via JavaScript -->
+        </div>
+
+        <!-- Empty State (Hidden by default) -->
+        <div id="empty-state" class="hidden flex flex-col items-center justify-center py-12 text-center">
+            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+                <i class="fas fa-search text-slate-400 text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-medium text-slate-900">Tidak ditemukan</h3>
+            <p class="text-slate-500">Coba kata kunci pencarian lain.</p>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 py-6 text-center text-sm text-slate-500">
+            &copy; 2024 Galeri Dokumen Pribadi. Dibuat untuk berbagi.
+        </div>
+    </footer>
+
+    <script>
+        // ==========================================
+        // DATA LINK (SILAKAN EDIT DI SINI)
+        // ==========================================
+        const resources = [
+            {
+                title: "Materi Kuliah Semester 1",
+                description: "Kumpulan PDF dan PPT mata kuliah dasar pemrograman.",
+                url: "https://drive.google.com/drive/folders/example1",
+                type: "folder", // folder, document, media
+                date: "Jan 2024"
+            },
+            {
+                title: "Foto Dokumentasi Event",
+                description: "Galeri foto kegiatan gathering tahun baru.",
+                url: "https://drive.google.com/drive/folders/example2",
+                type: "media",
+                date: "Des 2023"
+            },
+            {
+                title: "Laporan Keuangan Q1",
+                description: "Spreadsheet laporan pengeluaran bulan Januari - Maret.",
+                url: "https://docs.google.com/spreadsheets/d/example3",
+                type: "document",
+                date: "Mar 2024"
+            },
+            {
+                title: "Desain Aset Logo",
+                description: "File mentahan logo (AI, PSD, PNG) untuk keperluan branding.",
+                url: "https://drive.google.com/drive/folders/example4",
+                type: "folder",
+                date: "Feb 2024"
+            },
+            {
+                title: "Proposal Proyek A",
+                description: "Draft proposal final untuk diajukan ke klien.",
+                url: "https://docs.google.com/document/d/example5",
+                type: "document",
+                date: "Apr 2024"
+            },
+            {
+                title: "Video Tutorial",
+                description: "Rekaman layar tutorial penggunaan aplikasi internal.",
+                url: "https://drive.google.com/file/d/example6",
+                type: "media",
+                date: "Mei 2024"
+            }
+        ];
+        // ==========================================
+
+        let currentFilter = 'all';
+
+        function getIcon(type) {
+            switch(type) {
+                case 'folder': return '<i class="fas fa-folder text-yellow-400 text-4xl"></i>';
+                case 'document': return '<i class="fas fa-file-alt text-blue-500 text-4xl"></i>';
+                case 'media': return '<i class="fas fa-images text-red-500 text-4xl"></i>';
+                default: return '<i class="fas fa-link text-gray-400 text-4xl"></i>';
+            }
+        }
+
+        function getButtonText(type) {
+            switch(type) {
+                case 'folder': return 'Buka Folder';
+                case 'media': return 'Lihat Galeri';
+                default: return 'Buka File';
+            }
+        }
+
+        function renderResources(items) {
+            const grid = document.getElementById('resource-grid');
+            const emptyState = document.getElementById('empty-state');
+            
+            grid.innerHTML = '';
+            
+            if (items.length === 0) {
+                grid.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            grid.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card-hover bg-white rounded-xl shadow-sm border border-slate-100 p-5 flex flex-col h-full relative overflow-hidden group';
+                
+                card.innerHTML = `
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                         <i class="fab fa-google-drive text-6xl"></i>
+                    </div>
+                    
+                    <div class="flex items-start justify-between mb-4 z-10">
+                        <div class="bg-slate-50 p-3 rounded-lg shadow-inner">
+                            ${getIcon(item.type)}
+                        </div>
+                        <span class="text-xs font-semibold text-slate-400 bg-slate-100 px-2 py-1 rounded-md uppercase tracking-wide">${item.type}</span>
+                    </div>
+                    
+                    <div class="flex-1 z-10">
+                        <h3 class="text-lg font-bold text-slate-800 mb-2 leading-tight">${item.title}</h3>
+                        <p class="text-sm text-slate-500 mb-4 line-clamp-3">${item.description}</p>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between z-10">
+                        <span class="text-xs text-slate-400 font-medium">${item.date}</span>
+                        <a href="${item.url}" target="_blank" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors">
+                            ${getButtonText(item.type)}
+                            <i class="fas fa-external-link-alt text-xs"></i>
+                        </a>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterResources() {
+            const searchInput = document.getElementById('search-input').value.toLowerCase();
+            
+            const filtered = resources.filter(item => {
+                const matchesSearch = item.title.toLowerCase().includes(searchInput) || item.description.toLowerCase().includes(searchInput);
+                const matchesType = currentFilter === 'all' || item.type === currentFilter;
+                return matchesSearch && matchesType;
+            });
+            
+            renderResources(filtered);
+        }
+
+        function filterType(type) {
+            currentFilter = type;
+            
+            // Update button styles
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => {
+                if(btn.innerText.toLowerCase().includes(type === 'all' ? 'semua' : 
+                   type === 'folder' ? 'folder' : 
+                   type === 'document' ? 'dokumen' : 'foto')) {
+                    // Active state
+                    btn.classList.remove('bg-white', 'text-slate-600', 'border-slate-200');
+                    btn.classList.add('bg-blue-600', 'text-white', 'border-transparent');
+                } else {
+                    // Inactive state
+                    btn.classList.add('bg-white', 'text-slate-600', 'border-slate-200');
+                    btn.classList.remove('bg-blue-600', 'text-white', 'border-transparent');
+                }
+            });
+
+            filterResources();
+        }
+
+        // Initial Render
+        renderResources(resources);
+    </script>
+</body>
+</html>
