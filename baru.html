@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Features Section</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- Reset & Base Styles --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #dfdcd7; /* Warna latar belakang abu-abu kecoklatan pucat */
+            color: #222;
+            padding: 60px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        /* --- Header Section --- */
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-header h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 15px;
+            color: #1a1a1a;
+        }
+
+        .section-header p {
+            font-size: 0.95rem;
+            color: #666;
+            max-width: 650px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        /* --- Bento Grid Layout --- */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            /* Tinggi default untuk baris grid */
+            grid-auto-rows: 320px; 
+        }
+
+        /* Base Card Styling */
+        .card {
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end; /* Memposisikan teks di bawah */
+            text-decoration: none;
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 2; /* Memastikan teks di atas background/overlay */
+        }
+
+        .card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .card p {
+            font-size: 0.85rem;
+            line-height: 1.4;
+            opacity: 0.9;
+        }
+
+        /* --- Specific Cards --- */
+        
+        /* Card 1: Built-In Team Chat (Kiri Atas, Lebar) */
+        .card-1 {
+            grid-column: span 2;
+            background-image: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%), 
+                              url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800');
+            background-size: cover;
+            background-position: center;
+            color: white;
+        }
+
+        /* Card 2: Task Assignment (Kanan Atas, Kecil) */
+        .card-2 {
+            grid-column: span 1;
+            background-color: #cfcac3;
+            color: #1a1a1a;
+        }
+
+        /* Card 3: Real-Time Scheduling (Kiri Bawah, Kecil) */
+        .card-3 {
+            grid-column: span 1;
+            background-color: #b7a99b;
+            color: white;
+        }
+
+        /* Card 4: Progress Tracking (Kanan Bawah, Lebar) */
+        .card-4 {
+            grid-column: span 2;
+            background-color: #5d6e5a;
+            /* Menggunakan gradient overlay agar teks terbaca, plus gambar orang di sebelah kanan */
+            background-image: linear-gradient(to right, rgba(93,110,90,1) 30%, rgba(93,110,90,0) 80%),
+                              url('https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=600');
+            background-size: cover; /* Background warna dasar */
+            background-size: auto 100%; /* Mengatur tinggi gambar full, lebar menyesuaikan */
+            background-position: right bottom;
+            background-repeat: no-repeat;
+            color: white;
+        }
+        
+        /* Membatasi lebar teks pada card ke 4 agar tidak menabrak wajah di gambar */
+        .card-4 .card-content {
+            max-width: 50%;
+        }
+
+        /* --- Responsive Design untuk Mobile --- */
+        @media (max-width: 768px) {
+            .bento-grid {
+                grid-template-columns: 1fr; /* Berubah jadi 1 kolom di HP */
+                grid-auto-rows: auto;
+                min-height: 250px;
+            }
+
+            .card-1, .card-2, .card-3, .card-4 {
+                grid-column: span 1;
+                min-height: 250px;
+            }
+            
+            .card-4 .card-content {
+                max-width: 100%; /* Teks full width di mobile */
+            }
+            
+            .card-4 {
+                background-image: linear-gradient(to top, rgba(93,110,90,0.9) 30%, rgba(93,110,90,0.3) 100%),
+                                  url('https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=600');
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header class="section-header">
+            <h2>Everything Your Team Needs to<br>Work Smarter</h2>
+            <p>From task tracking to real-time chat, our features are built to keep your team connected, organized, and moving forward—together.</p>
+        </header>
+
+        <section class="bento-grid">
+            <div class="card card-1">
+                <div class="card-content">
+                    <h3>Built-In Team Chat</h3>
+                    <p>Communicate instantly within your workflow. No context switching, just seamless collaboration.</p>
+                </div>
+            </div>
+
+            <div class="card card-2">
+                <div class="card-content">
+                    <h3>Task Assignment</h3>
+                    <p>Easily create, assign, and track tasks to keep everyone aligned and accountable.</p>
+                </div>
+            </div>
+
+            <div class="card card-3">
+                <div class="card-content">
+                    <h3>Real-Time Scheduling</h3>
+                    <p>Plan meetings, set deadlines, and sync calendars so your team stays on the same page.</p>
+                </div>
+            </div>
+
+            <div class="card card-4">
+                <div class="card-content">
+                    <h3>Progress Tracking</h3>
+                    <p>Visualize team performance with dashboards that highlight what's done and what's next.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+</body>
+</html>

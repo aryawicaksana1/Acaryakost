@@ -15,8 +15,19 @@
         .card-shadow {
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
         }
-        .gradient-bg {
-            background: linear-gradient(135deg, #16a34a 0%, #059669 100%);
+        
+        /* Background Header sama seperti Index */
+        .hero-gradient { 
+            background: linear-gradient(to bottom, rgba(22, 101, 52, 0.85), rgba(255, 255, 255, 0.85), rgba(74, 222, 128, 0.85)); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px); 
+        }
+        .hero-gradient::after { 
+            content: ''; 
+            position: absolute; 
+            bottom: 0; left: 0; right: 0; 
+            height: 200px; 
+            background: linear-gradient(to bottom, transparent, rgba(241, 245, 249, 0.3)); 
         }
         .glass { 
             background: rgba(255, 255, 255, 0.7); 
@@ -36,7 +47,7 @@
         <div class="max-w-7xl mx-auto px-6 lg:px-12 py-4 relative">
             <div class="glass border border-white/20 rounded-2xl px-6 py-3 flex justify-between items-center shadow-lg">
                 <div class="flex items-center gap-2">
-                    <img src="gambar/logo kost.png" alt="Logo" class="h-10 w-auto rounded-md object-contain mr-2">
+                    <img src="gambar/logo kost hijau.png" alt="Logo" class="h-10 w-auto rounded-md object-contain mr-2">
                     <span class="font-bold text-xl tracking-tight text-gray-900">Kost<span class="text-green-600">Acarya</span></span>
                 </div>
                 <div class="hidden min-[1136px]:flex space-x-10">
@@ -59,19 +70,18 @@
     </nav>
 
     <!-- Header Section -->
-    <header class="gradient-bg text-white pt-32 pb-24 px-4 rounded-b-[2.5rem] shadow-lg relative overflow-hidden">
-        <div class="absolute top-0 left-0 w-full h-full opacity-10">
-            <i class="fas fa-building text-9xl absolute -right-10 -top-10 transform rotate-12"></i>
-            <div class="absolute top-10 left-10 w-32 h-32 bg-white rounded-full blur-3xl opacity-30 animate-pulse"></div>
-            <div class="absolute bottom-10 right-20 w-48 h-48 bg-white rounded-full blur-3xl opacity-20 animate-pulse" style="animation-delay: 1s;"></div>
-        </div>
-        <div class="max-w-5xl mx-auto relative z-10 text-center">
-            <div class="w-24 h-24 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-white/30 shadow-xl">
-                <i class="fas fa-info text-4xl"></i>
+    <header class="relative pt-44 pb-32 px-6 overflow-hidden rounded-b-[2.5rem]">
+        <div class="hero-gradient absolute inset-0 -z-10"></div>
+        <div class="max-w-5xl mx-auto relative z-10 text-center mt-4">
+            <div class="w-24 h-24 bg-white/60 backdrop-blur-md rounded-full flex items-center justify-center mx-auto mb-6 border border-white/80 shadow-xl">
+                <i class="fas fa-info text-4xl text-green-700"></i>
             </div>
-            <h1 class="text-4xl md:text-5xl font-extrabold mb-3 tracking-tight">Pusat Informasi Digital</h1>
-            <p class="text-green-100 text-lg max-w-xl mx-auto font-medium">Akses seluruh dokumen penting, tata tertib, hingga kalender kegiatan warga kost dalam satu pintu.</p>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-3 tracking-tight">Pusat Informasi Digital</h1>
+            <p class="text-slate-700 text-lg max-w-xl mx-auto font-medium">Akses seluruh dokumen penting, tata tertib, hingga kalender kegiatan warga kost dalam satu pintu.</p>
         </div>
+        <!-- Decorative blobs -->
+        <div class="absolute top-1/2 left-0 w-64 h-64 bg-green-400/20 blur-[100px] rounded-full pointer-events-none"></div>
+        <div class="absolute bottom-0 right-0 w-96 h-96 bg-green-500/20 blur-[120px] rounded-full pointer-events-none"></div>
     </header>
 
     <!-- Main Content -->
@@ -115,34 +125,36 @@
             </div>
 
             <!-- Card 3: Program Kekeluargaan -->
-            <div class="group bg-white/90 backdrop-blur-sm rounded-[2.5rem] p-8 shadow-sm hover:shadow-2xl border border-white hover:border-blue-200 text-center flex flex-col h-full transition-all duration-500 relative overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-b from-blue-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-                <div class="w-20 h-20 bg-blue-50 group-hover:bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6 transition-colors duration-300">
-                    <i class="fas fa-users text-4xl text-blue-600 group-hover:scale-110 transition-transform duration-300"></i>
+            <div class="group bg-slate-50/90 backdrop-blur-sm rounded-[2.5rem] p-8 shadow-sm border border-slate-200 text-center flex flex-col h-full transition-all duration-500 relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-b from-slate-200/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                <div class="absolute top-5 right-5 bg-slate-800 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider z-20 shadow-md">Coming Soon</div>
+                <div class="w-20 h-20 bg-slate-200 group-hover:bg-slate-300 rounded-full flex items-center justify-center mx-auto mb-6 transition-colors duration-300">
+                    <i class="fas fa-users text-4xl text-slate-400 group-hover:scale-110 transition-transform duration-300"></i>
                 </div>
-                <h2 class="text-xl font-bold text-gray-800 mb-3 group-hover:text-blue-700 transition-colors">Kekeluargaan</h2>
+                <h2 class="text-xl font-bold text-slate-700 mb-3">Kekeluargaan</h2>
                 <p class="text-gray-500 text-sm mb-8 flex-grow leading-relaxed">
                     Jadwal kegiatan bersama, bakti sosial, dan acara kumpul warga kost.
                 </p>
                 
-                <a href="#" onclick="alert('Fitur ini akan segera hadir!')" class="block w-full bg-blue-50 text-blue-700 font-bold py-3.5 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 flex items-center justify-center gap-2 shadow-sm">
+                <a href="#" onclick="alert('Fitur ini akan segera hadir!')" class="block w-full bg-slate-200 text-slate-500 font-bold py-3.5 rounded-xl group-hover:bg-slate-300 group-hover:text-slate-600 transition-all duration-300 flex items-center justify-center gap-2 shadow-sm cursor-not-allowed">
                     <span>Lihat Kegiatan</span>
                     <i class="fas fa-calendar-alt text-sm"></i>
                 </a>
             </div>
 
             <!-- Card 4: Foto Kenangan -->
-            <div class="group bg-white/90 backdrop-blur-sm rounded-[2.5rem] p-8 shadow-sm hover:shadow-2xl border border-white hover:border-pink-200 text-center flex flex-col h-full transition-all duration-500 relative overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-b from-pink-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-                <div class="w-20 h-20 bg-pink-50 group-hover:bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-6 transition-colors duration-300">
-                    <i class="fas fa-camera-retro text-4xl text-pink-600 group-hover:scale-110 transition-transform duration-300"></i>
+            <div class="group bg-slate-50/90 backdrop-blur-sm rounded-[2.5rem] p-8 shadow-sm border border-slate-200 text-center flex flex-col h-full transition-all duration-500 relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-b from-slate-200/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                <div class="absolute top-5 right-5 bg-slate-800 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider z-20 shadow-md">Coming Soon</div>
+                <div class="w-20 h-20 bg-slate-200 group-hover:bg-slate-300 rounded-full flex items-center justify-center mx-auto mb-6 transition-colors duration-300">
+                    <i class="fas fa-camera-retro text-4xl text-slate-400 group-hover:scale-110 transition-transform duration-300"></i>
                 </div>
-                <h2 class="text-xl font-bold text-gray-800 mb-3 group-hover:text-pink-700 transition-colors">Foto Kenangan</h2>
+                <h2 class="text-xl font-bold text-slate-700 mb-3">Foto Kenangan</h2>
                 <p class="text-gray-500 text-sm mb-8 flex-grow leading-relaxed">
                     Bagikan momen seru dan kenangan indah selama tinggal di sini.
                 </p>
                 
-                <a href="#" onclick="alert('Fitur upload foto akan segera hadir!')" class="block w-full bg-pink-50 text-pink-700 font-bold py-3.5 rounded-xl group-hover:bg-pink-600 group-hover:text-white transition-all duration-300 flex items-center justify-center gap-2 shadow-sm">
+                <a href="#" onclick="alert('Fitur upload foto akan segera hadir!')" class="block w-full bg-slate-200 text-slate-500 font-bold py-3.5 rounded-xl group-hover:bg-slate-300 group-hover:text-slate-600 transition-all duration-300 flex items-center justify-center gap-2 shadow-sm cursor-not-allowed">
                     <span>Upload Foto</span>
                     <i class="fas fa-cloud-upload-alt text-sm"></i>
                 </a>
@@ -159,10 +171,10 @@
                     Kontak Darurat
                 </div>
                 <h3 class="text-2xl md:text-3xl font-extrabold text-slate-800 mb-3">Butuh Bantuan Segera?</h3>
-                <p class="text-slate-500 leading-relaxed max-w-2xl">Jika terjadi keadaan darurat (listrik bermasalah, air mati, atau indikasi gangguan keamanan), jangan ragu untuk langsung menghubungi pengelola kost yang standby 24/7.</p>
+                <p class="text-slate-500 leading-relaxed max-w-2xl text-justify">Jika terjadi keadaan darurat (listrik bermasalah, air mati, atau indikasi gangguan keamanan), jangan ragu untuk langsung menghubungi pengelola kost yang standby 24/7.</p>
             </div>
             <div class="flex-shrink-0 w-full md:w-auto">
-                <a href="https://wa.me/6281234567890" target="_blank" class="w-full flex items-center justify-center gap-3 bg-red-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-200 hover:-translate-y-1 active:scale-95">
+                <a href="https://wa.me/628124671508" target="_blank" class="w-full flex items-center justify-center gap-3 bg-red-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-200 hover:-translate-y-1 active:scale-95">
                     <i class="fab fa-whatsapp text-2xl"></i>
                     Lapor Sekarang
                 </a>
@@ -172,18 +184,9 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-slate-900 pt-16 pb-8 px-6 mt-24 rounded-t-[3rem] relative overflow-hidden">
-        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1 bg-gradient-to-r from-transparent via-green-500 to-transparent opacity-50"></div>
-        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 relative z-10">
-            <div class="flex items-center gap-3">
-                <div class="bg-white p-2 rounded-xl">
-                    <img src="gambar/logo kost.png" alt="Logo" class="h-8 w-auto object-contain">
-                </div>
-                <span class="font-bold text-2xl tracking-tight text-white">Kost<span class="text-green-500">Acarya</span></span>
-            </div>
-            <div class="text-slate-400 text-sm font-medium">
-                &copy; 2026 Acarya Kost Management. All rights reserved.
-            </div>
+    <footer class="text-white pt-24 pb-12 px-6">
+        <div class="pt-8 border-t border-slate-200/50 text-center text-slate-500 text-sm">
+            &copy; 2026 Acarya Kost Management. Crafted for your comfort.
         </div>
     </footer>
 
@@ -191,7 +194,7 @@
     <div class="fixed bottom-6 right-6 z-[100] flex flex-col items-end gap-3 group">
         <!-- Secondary Buttons (Hidden by default, show on hover) -->
         <div class="flex flex-col gap-3 items-end origin-bottom scale-0 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-300 pointer-events-none group-hover:pointer-events-auto">
-            <a href="https://wa.me/6281234567890" target="_blank" class="flex items-center gap-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg hover:shadow-xl hover:bg-white border border-slate-100 transition-all transform hover:-translate-x-1">
+            <a href="https://wa.me/628124671508" target="_blank" class="flex items-center gap-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg hover:shadow-xl hover:bg-white border border-slate-100 transition-all transform hover:-translate-x-1">
                 <span class="text-sm font-bold text-slate-700">Chat Admin</span>
                 <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white"><i class="fab fa-whatsapp"></i></div>
             </a>
@@ -207,49 +210,7 @@
         </button>
     </div>
 
-    <!-- Notification Modal -->
-    <div id="accessModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-3xl p-8 max-w-md w-full mx-4 text-center shadow-2xl transform scale-95 transition-transform duration-300" id="modalContent">
-            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <i class="fas fa-user-lock text-3xl text-green-600"></i>
-            </div>
-            <h3 class="text-2xl font-bold text-gray-900 mb-3">Info Penting</h3>
-            <p class="text-gray-600 mb-8 leading-relaxed">
-                Mohon diperhatikan bahwa pengisian formulir dan akses dokumen di halaman ini hanya diperuntukkan bagi Anda yang sudah resmi menjadi bagian dari <span class="font-bold text-green-600">Keluarga Kost</span>.
-            </p>
-            <button onclick="closeAccessModal()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg hover:shadow-green-200 active:scale-95">
-                Saya Mengerti
-            </button>
-        </div>
-    </div>
-
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const modal = document.getElementById('accessModal');
-            const content = document.getElementById('modalContent');
-            
-            // Show modal with animation
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                content.classList.remove('scale-95');
-                content.classList.add('scale-100');
-            }, 100);
-        });
-
-        function closeAccessModal() {
-            const modal = document.getElementById('accessModal');
-            const content = document.getElementById('modalContent');
-            
-            modal.classList.add('opacity-0');
-            content.classList.remove('scale-100');
-            content.classList.add('scale-95');
-            
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
-        }
-
         // Simple navbar interaction on scroll
         window.onscroll = function() {
             const nav = document.querySelector('nav');

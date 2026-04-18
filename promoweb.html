@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klaim Promo Spesial</title>
+    <!-- Menggunakan Tailwind CSS untuk styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Menggunakan Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* Animasi float halus */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        /* Sembunyikan scrollbar tapi tetap bisa scroll */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Efek Kaca untuk Navbar */
+        .glass { 
+            background: rgba(255, 255, 255, 0.7); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px); 
+        }
+    </style>
+</head>
+<body class="bg-[#f8fafc] min-h-screen p-4 md:p-8 text-slate-800 antialiased selection:bg-indigo-100 selection:text-indigo-900 relative overflow-x-hidden">
+
+    <!-- Dekorasi Background -->
+    <div class="fixed top-[-10%] left-[-10%] w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 z-0"></div>
+    <div class="fixed top-[20%] right-[-5%] w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 z-0 animate-pulse"></div>
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 top-0 left-0 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 py-4 relative">
+            <div class="glass border border-white/20 rounded-2xl px-6 py-3 flex justify-between items-center shadow-lg">
+                <div class="flex items-center gap-2">
+                    <img src="gambar/logo kost hijau.png" alt="Logo" class="h-10 w-auto rounded-md object-contain mr-2">
+                    <span class="font-bold text-xl tracking-tight text-gray-900">Kost<span class="text-green-600">Acarya</span></span>
+                </div>
+                <div class="hidden min-[1136px]:flex space-x-10">
+                    <a href="index.html" class="text-sm font-semibold bg-slate-900 text-white px-5 py-2.5 rounded-xl hover:bg-slate-800 transition shadow-md">Beranda</a>
+                </div>
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuButton" onclick="toggleMobileMenu()" class="min-[1136px]:hidden p-2 rounded-lg text-slate-800 hover:bg-slate-100 transition mr-3" aria-label="Toggle menu">
+                    <svg id="menuOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    <svg id="menuClose" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- Mobile Dropdown Menu -->
+            <div id="mobileMenu" class="min-[1136px]:hidden hidden absolute right-6 top-full mt-2 w-64 rounded-2xl bg-white/95 border border-slate-100 shadow-xl overflow-hidden z-50" style="backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
+                <div class="px-4 py-3 space-y-2">
+                    <a href="index.html" class="block text-center bg-slate-900 text-white font-semibold py-3 px-3 rounded-lg hover:bg-slate-800 transition shadow-md">Beranda</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto relative z-10 pt-20 md:pt-24">
+        <!-- Header Halaman -->
+        <div class="text-center mb-12 mt-4">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-sm font-semibold mb-4">
+                <i class="fa-solid fa-sparkles"></i>
+                <span>Eksklusif Hari Ini</span>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-500 mb-3 tracking-tight">
+                Festival Promo
+            </h1>
+            <p class="text-slate-500 text-lg max-w-lg mx-auto">Pilih dan klaim voucher favoritmu sebelum waktu habis. Jangan sampai terlewat!</p>
+        </div>
+
+        <!-- Kontainer Daftar Card Promo -->
+        <div class="flex flex-col gap-6" id="promo-list">
+            
+            <!-- Card 1: Diskon 50% -->
+            <div class="promo-card group bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] transition-all duration-300 p-2 flex flex-col lg:flex-row border border-slate-100">
+                <!-- Sisi Kiri: Visual Promo -->
+                <div class="bg-gradient-to-br from-indigo-500 to-purple-600 text-white p-8 rounded-3xl lg:w-1/3 flex flex-col justify-center items-center text-center relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                    <div class="absolute bottom-0 left-0 w-32 h-32 bg-black/10 rounded-full blur-xl -ml-10 -mb-10"></div>
+                    <i class="fa-solid fa-tags text-4xl mb-4 animate-float opacity-90"></i>
+                    <h2 class="text-4xl font-black tracking-tight leading-none mb-1">50%</h2>
+                    <p class="text-white/80 font-medium tracking-wide text-sm uppercase">Off All Items</p>
+                </div>
+                
+                <!-- Tengah: Info & Timer -->
+                <div class="p-6 lg:p-8 lg:w-5/12 flex flex-col justify-center">
+                    <h3 class="text-xl font-bold text-slate-800 mb-2 group-hover:text-indigo-600 transition-colors">Diskon Setengah Harga</h3>
+                    <p class="text-slate-500 text-sm mb-5 leading-relaxed">Berlaku untuk semua produk fashion dan elektronik pilihan di toko kami.</p>
+                    
+                    <!-- Timer Minimalis -->
+                    <div class="timer-container">
+                        <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                            <i class="fa-solid fa-hourglass-half text-indigo-400"></i> Berakhir dalam:
+                        </div>
+                        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                            <div class="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 min-w-[3.5rem] flex flex-col items-center justify-center">
+                                <span class="days font-bold text-slate-700 text-lg leading-none mb-0.5">00</span>
+                                <span class="text-[9px] text-slate-400 font-medium uppercase">Hari</span>
+                            </div>
+                            <span class="text-slate-300 font-bold self-center">:</span>
+                            <div class="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 min-w-[3.5rem] flex flex-col items-center justify-center">
+                                <span class="hours font-bold text-slate-700 text-lg leading-none mb-0.5">00</span>
+                                <span class="text-[9px] text-slate-400 font-medium uppercase">Jam</span>
+                            </div>
+                            <span class="text-slate-300 font-bold self-center">:</span>
+                            <div class="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 min-w-[3.5rem] flex flex-col items-center justify-center">
+                                <span class="minutes font-bold text-slate-700 text-lg leading-none mb-0.5">00</span>
+                                <span class="text-[9px] text-slate-400 font-medium uppercase">Menit</span>
+                            </div>
+                            <span class="text-slate-300 font-bold self-center">:</span>
+                            <div class="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 min-w-[3.5rem] flex flex-col items-center justify-center">
+                                <span class="seconds font-bold text-indigo-600 text-lg leading-none mb-0.5">00</span>
+                                <span class="text-[9px] text-indigo-400 font-medium uppercase">Detik</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="expired-msg hidden text-rose-500 font-semibold mt-2 text-sm bg-rose-50 p-2 rounded-lg inline-block w-fit">Promo Berakhir</p>
+                </div>
+
+                <!-- Sisi Kanan: Aksi (Tombol Klaim) -->
+                <div class="p-6 lg:w-1/4 flex flex-col justify-center items-center border-t lg:border-t-0 lg:border-l border-dashed border-slate-200">
+                    <p class="text-[11px] font-medium text-slate-400 mb-4 bg-slate-50 px-3 py-1 rounded-full">S.d 30 Apr 2026</p>
+                    <button onclick="claimPromo('DISC50', 'Diskon Setengah Harga')" class="claim-btn w-full py-3 px-6 bg-slate-900 hover:bg-indigo-600 text-white font-semibold rounded-full shadow-[0_8px_20px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_20px_rgb(79,70,229,0.3)] transition-all duration-300 transform hover:-translate-y-0.5">
+                        Klaim Promo
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card 2: Gratis Ongkir -->
+            <div class="promo-card group bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] transition-all duration-300 p-2 flex flex-col lg:flex-row border border-slate-100">
+                <div class="bg-gradient-to-br from-emerald-400 to-teal-500 text-white p-8 rounded-3xl lg:w-1/3 flex flex-col justify-center items-center text-center relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                    <i class="fa-solid fa-truck-fast text-4xl mb-4 animate-float opacity-90"></i>
+                    <h2 class="text-4xl font-black tracking-tight leading-none mb-1">FREE</h2>
+                    <p class="text-white/80 font-medium tracking-wide text-sm uppercase">Ongkos Kirim</p>
+                </div>
+                
+                <div class="p-6 lg:p-8 lg:w-5/12 flex flex-col justify-center">
+                    <h3 class="text-xl font-bold text-slate-800 mb-2 group-hover:text-teal-600 transition-colors">Bebas Ongkir se-Indonesia</h3>
+                    <p class="text-slate-500 text-sm mb-5 leading-relaxed">Nikmati pengiriman gratis ke seluruh penjuru nusantara tanpa batas kuota.</p>
+                    
+                    <div class="timer-container">
+                        <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                            <i class="fa-solid fa-hourglass-half text-teal-400"></i> Berakhir dalam:
+                        </div>
+                        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                            <div class="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 min-w-[3.5rem] flex flex-col items-center justify-center">
+                                <span class="days font-bold text-slate-700 text-lg leading-none mb-0.5">00</span>
+                                <span class="text-[9px] text-slate-400 font-medium uppercase">Hari</span>
+                            </div>
+                            <span class="text-slate-300 font-bold self-center">:</span>
+                            <div class="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 min-w-[3.5rem] flex flex-col items-center justify-center">
+                                <span class="hours font-bold text-slate-700 text-lg leading-none mb-0.5">00</span>
+                                <span class="text-[9px] text-slate-400 font-medium uppercase">Jam</span>
+                            </div>
+                            <span class="text-slate-300 font-bold self-center">:</span>
+                            <div class="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 min-w-[3.5rem] flex flex-col items-center justify-center">
+                                <span class="minutes font-bold text-slate-700 text-lg leading-none mb-0.5">00</span>
+                                <span class="text-[9px] text-slate-400 font-medium uppercase">Menit</span>
+                            </div>
+                            <span class="text-slate-300 font-bold self-center">:</span>
+                            <div class="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 min-w-[3.5rem] flex flex-col items-center justify-center">
+                                <span class="seconds font-bold text-teal-600 text-lg leading-none mb-0.5">00</span>
+                                <span class="text-[9px] text-teal-400 font-medium uppercase">Detik</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="expired-msg hidden text-rose-500 font-semibold mt-2 text-sm bg-rose-50 p-2 rounded-lg inline-block w-fit">Promo Berakhir</p>
+                </div>
+
+                <div class="p-6 lg:w-1/4 flex flex-col justify-center items-center border-t lg:border-t-0 lg:border-l border-dashed border-slate-200">
+                    <p class="text-[11px] font-medium text-slate-400 mb-4 bg-slate-50 px-3 py-1 rounded-full">S.d 30 Apr 2026</p>
+                    <button onclick="claimPromo('FREESHIP', 'Bebas Ongkir se-Indonesia')" class="claim-btn w-full py-3 px-6 bg-slate-900 hover:bg-teal-500 text-white font-semibold rounded-full shadow-[0_8px_20px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_20px_rgb(20,184,166,0.3)] transition-all duration-300 transform hover:-translate-y-0.5">
+                        Klaim Promo
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card 3: Cashback -->
+            <div class="promo-card group bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] transition-all duration-300 p-2 flex flex-col lg:flex-row border border-slate-100">
+                <div class="bg-gradient-to-br from-amber-400 to-orange-500 text-white p-8 rounded-3xl lg:w-1/3 flex flex-col justify-center items-center text-center relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                    <i class="fa-solid fa-wallet text-4xl mb-4 animate-float opacity-90"></i>
+                    <h2 class="text-4xl font-black tracking-tight leading-none mb-1">CASH<br/>BACK</h2>
+                </div>
+                
+                <div class="p-6 lg:p-8 lg:w-5/12 flex flex-col justify-center">
+                    <div class="inline-block bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-1 rounded mb-2 w-fit uppercase tracking-wider">Hingga Rp 50.000</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2 group-hover:text-orange-500 transition-colors">Cashback Khusus e-Wallet</h3>
+                    <p class="text-slate-500 text-sm mb-5 leading-relaxed">Dapatkan cashback 30% untuk pembayaran menggunakan dompet digital partner.</p>
+                    
+                    <div class="timer-container">
+                        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                            <div class="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 min-w-[3.5rem] flex flex-col items-center justify-center">
+                                <span class="days font-bold text-slate-700 text-lg leading-none mb-0.5">00</span>
+                                <span class="text-[9px] text-slate-400 font-medium uppercase">Hari</span>
+                            </div>
+                            <span class="text-slate-300 font-bold self-center">:</span>
+                            <div class="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 min-w-[3.5rem] flex flex-col items-center justify-center">
+                                <span class="hours font-bold text-slate-700 text-lg leading-none mb-0.5">00</span>
+                                <span class="text-[9px] text-slate-400 font-medium uppercase">Jam</span>
+                            </div>
+                            <span class="text-slate-300 font-bold self-center">:</span>
+                            <div class="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 min-w-[3.5rem] flex flex-col items-center justify-center">
+                                <span class="minutes font-bold text-slate-700 text-lg leading-none mb-0.5">00</span>
+                                <span class="text-[9px] text-slate-400 font-medium uppercase">Menit</span>
+                            </div>
+                            <span class="text-slate-300 font-bold self-center">:</span>
+                            <div class="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 min-w-[3.5rem] flex flex-col items-center justify-center">
+                                <span class="seconds font-bold text-orange-500 text-lg leading-none mb-0.5">00</span>
+                                <span class="text-[9px] text-orange-400 font-medium uppercase">Detik</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="expired-msg hidden text-rose-500 font-semibold mt-2 text-sm bg-rose-50 p-2 rounded-lg inline-block w-fit">Promo Berakhir</p>
+                </div>
+
+                <div class="p-6 lg:w-1/4 flex flex-col justify-center items-center border-t lg:border-t-0 lg:border-l border-dashed border-slate-200">
+                    <p class="text-[11px] font-medium text-slate-400 mb-4 bg-slate-50 px-3 py-1 rounded-full">S.d 30 Apr 2026</p>
+                    <button onclick="claimPromo('CASH30', 'Cashback Khusus e-Wallet')" class="claim-btn w-full py-3 px-6 bg-slate-900 hover:bg-orange-500 text-white font-semibold rounded-full shadow-[0_8px_20px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_20px_rgb(249,115,22,0.3)] transition-all duration-300 transform hover:-translate-y-0.5">
+                        Klaim Promo
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card 4: Potongan Harga Nominal -->
+            <div class="promo-card group bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] transition-all duration-300 p-2 flex flex-col lg:flex-row border border-slate-100">
+                <div class="bg-gradient-to-br from-cyan-400 to-blue-500 text-white p-8 rounded-3xl lg:w-1/3 flex flex-col justify-center items-center text-center relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                    <i class="fa-solid fa-money-bill-wave text-4xl mb-4 animate-float opacity-90"></i>
+                    <h2 class="text-3xl font-black tracking-tight leading-none mb-1">Rp 100<span class="text-2xl">Rb</span></h2>
+                    <p class="text-white/80 font-medium tracking-wide text-sm uppercase mt-1">Potongan Langsung</p>
+                </div>
+                
+                <div class="p-6 lg:p-8 lg:w-5/12 flex flex-col justify-center">
+                    <h3 class="text-xl font-bold text-slate-800 mb-2 group-hover:text-blue-500 transition-colors">Potongan Belanja</h3>
+                    <p class="text-slate-500 text-sm mb-5 leading-relaxed">Diskon langsung Rp 100.000 dengan minimal transaksi Rp 300.000 untuk semua kategori.</p>
+                    
+                    <div class="timer-container">
+                        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                            <div class="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 min-w-[3.5rem] flex flex-col items-center justify-center">
+                                <span class="days font-bold text-slate-700 text-lg leading-none mb-0.5">00</span>
+                                <span class="text-[9px] text-slate-400 font-medium uppercase">Hari</span>
+                            </div>
+                            <span class="text-slate-300 font-bold self-center">:</span>
+                            <div class="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 min-w-[3.5rem] flex flex-col items-center justify-center">
+                                <span class="hours font-bold text-slate-700 text-lg leading-none mb-0.5">00</span>
+                                <span class="text-[9px] text-slate-400 font-medium uppercase">Jam</span>
+                            </div>
+                            <span class="text-slate-300 font-bold self-center">:</span>
+                            <div class="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 min-w-[3.5rem] flex flex-col items-center justify-center">
+                                <span class="minutes font-bold text-slate-700 text-lg leading-none mb-0.5">00</span>
+                                <span class="text-[9px] text-slate-400 font-medium uppercase">Menit</span>
+                            </div>
+                            <span class="text-slate-300 font-bold self-center">:</span>
+                            <div class="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 min-w-[3.5rem] flex flex-col items-center justify-center">
+                                <span class="seconds font-bold text-blue-500 text-lg leading-none mb-0.5">00</span>
+                                <span class="text-[9px] text-blue-400 font-medium uppercase">Detik</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="expired-msg hidden text-rose-500 font-semibold mt-2 text-sm bg-rose-50 p-2 rounded-lg inline-block w-fit">Promo Berakhir</p>
+                </div>
+
+                <div class="p-6 lg:w-1/4 flex flex-col justify-center items-center border-t lg:border-t-0 lg:border-l border-dashed border-slate-200">
+                    <p class="text-[11px] font-medium text-slate-400 mb-4 bg-slate-50 px-3 py-1 rounded-full">S.d 30 Apr 2026</p>
+                    <button onclick="claimPromo('POTONG100', 'Potongan Belanja 100Rb')" class="claim-btn w-full py-3 px-6 bg-slate-900 hover:bg-blue-500 text-white font-semibold rounded-full shadow-[0_8px_20px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_20px_rgb(59,130,246,0.3)] transition-all duration-300 transform hover:-translate-y-0.5">
+                        Klaim Promo
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card 5: Beli 1 Gratis 1 -->
+            <div class="promo-card group bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] transition-all duration-300 p-2 flex flex-col lg:flex-row border border-slate-100">
+                <div class="bg-gradient-to-br from-rose-400 to-pink-500 text-white p-8 rounded-3xl lg:w-1/3 flex flex-col justify-center items-center text-center relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                    <i class="fa-solid fa-bag-shopping text-4xl mb-4 animate-float opacity-90"></i>
+                    <h2 class="text-3xl font-black tracking-tight leading-none mb-1">BUY 1 <br/> GET 1</h2>
+                </div>
+                
+                <div class="p-6 lg:p-8 lg:w-5/12 flex flex-col justify-center">
+                    <div class="inline-block bg-rose-100 text-rose-700 text-[10px] font-bold px-2 py-1 rounded mb-2 w-fit uppercase tracking-wider">Produk Kecantikan</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2 group-hover:text-rose-500 transition-colors">Spesial Bundling Cantik</h3>
+                    <p class="text-slate-500 text-sm mb-5 leading-relaxed">Beli 1 produk kosmetik apa saja, gratis 1 produk dengan harga setara atau lebih rendah.</p>
+                    
+                    <div class="timer-container">
+                        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                            <div class="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 min-w-[3.5rem] flex flex-col items-center justify-center">
+                                <span class="days font-bold text-slate-700 text-lg leading-none mb-0.5">00</span>
+                                <span class="text-[9px] text-slate-400 font-medium uppercase">Hari</span>
+                            </div>
+                            <span class="text-slate-300 font-bold self-center">:</span>
+                            <div class="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 min-w-[3.5rem] flex flex-col items-center justify-center">
+                                <span class="hours font-bold text-slate-700 text-lg leading-none mb-0.5">00</span>
+                                <span class="text-[9px] text-slate-400 font-medium uppercase">Jam</span>
+                            </div>
+                            <span class="text-slate-300 font-bold self-center">:</span>
+                            <div class="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 min-w-[3.5rem] flex flex-col items-center justify-center">
+                                <span class="minutes font-bold text-slate-700 text-lg leading-none mb-0.5">00</span>
+                                <span class="text-[9px] text-slate-400 font-medium uppercase">Menit</span>
+                            </div>
+                            <span class="text-slate-300 font-bold self-center">:</span>
+                            <div class="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 min-w-[3.5rem] flex flex-col items-center justify-center">
+                                <span class="seconds font-bold text-rose-500 text-lg leading-none mb-0.5">00</span>
+                                <span class="text-[9px] text-rose-400 font-medium uppercase">Detik</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="expired-msg hidden text-rose-500 font-semibold mt-2 text-sm bg-rose-50 p-2 rounded-lg inline-block w-fit">Promo Berakhir</p>
+                </div>
+
+                <div class="p-6 lg:w-1/4 flex flex-col justify-center items-center border-t lg:border-t-0 lg:border-l border-dashed border-slate-200">
+                    <p class="text-[11px] font-medium text-slate-400 mb-4 bg-slate-50 px-3 py-1 rounded-full">S.d 30 Apr 2026</p>
+                    <button onclick="claimPromo('BOGO2026', 'Spesial Bundling Cantik')" class="claim-btn w-full py-3 px-6 bg-slate-900 hover:bg-rose-500 text-white font-semibold rounded-full shadow-[0_8px_20px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_20px_rgb(244,63,94,0.3)] transition-all duration-300 transform hover:-translate-y-0.5">
+                        Klaim Promo
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal/Pesan Sukses Modern Glassmorphism -->
+    <div id="success-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white/90 backdrop-blur-xl border border-white/50 shadow-2xl rounded-[2rem] p-8 max-w-sm w-full mx-4 text-center transform scale-95 transition-transform duration-300" id="modal-content">
+            <div class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-5 shadow-inner">
+                <div class="w-14 h-14 bg-emerald-500 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.4)] animate-pulse">
+                    <i class="fa-solid fa-check text-2xl text-white"></i>
+                </div>
+            </div>
+            <h3 class="text-2xl font-extrabold text-slate-800 mb-1" id="modal-title">Yeay, Berhasil!</h3>
+            <p class="text-slate-500 mb-6 text-sm" id="modal-desc">Voucher telah tersimpan di akun Anda.</p>
+            
+            <div class="bg-slate-100/50 rounded-2xl p-4 mb-8 border border-slate-200 relative">
+                <span class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-slate-800 px-3 py-1 rounded-full text-[10px] text-white font-semibold uppercase tracking-wider">Kode Promo</span>
+                <p class="text-2xl font-mono font-bold text-indigo-600 tracking-widest mt-2 select-all cursor-pointer" id="modal-code" title="Klik untuk menyalin">PROMO</p>
+            </div>
+            
+            <button onclick="closeModal()" class="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-full transition-all duration-200 shadow-[0_8px_20px_rgba(0,0,0,0.15)] hover:-translate-y-0.5">
+                Lanjut Belanja
+            </button>
+        </div>
+    </div>
+
+    <!-- Script Logika Timer dan Modal -->
+    <script>
+        // Tanggal target promo berakhir: 30 April 2026, 23:59:59
+        const targetDate = new Date("April 30, 2026 23:59:59").getTime();
+
+        const promoCards = document.querySelectorAll('.promo-card');
+        const modal = document.getElementById("success-modal");
+        const modalContent = document.getElementById("modal-content");
+        const modalCodeDisplay = document.getElementById("modal-code");
+        const modalDescDisplay = document.getElementById("modal-desc");
+
+        // Logika Navbar Scroll
+        window.onscroll = function() {
+            const nav = document.querySelector('nav');
+            const glass = nav.querySelector('.glass');
+            if (window.scrollY > 50) {
+                nav.classList.add('py-2');
+                if (glass) { glass.classList.remove('bg-white/70'); glass.classList.add('bg-white/95'); }
+            } else {
+                nav.classList.remove('py-2');
+                if (glass) { glass.classList.add('bg-white/70'); glass.classList.remove('bg-white/95'); }
+            }
+        };
+
+        // Logika Mobile Menu
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const openIcon = document.getElementById('menuOpen');
+            const closeIcon = document.getElementById('menuClose');
+            
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                openIcon.classList.add('hidden');
+                closeIcon.classList.remove('hidden');
+            } else {
+                menu.classList.add('hidden');
+                openIcon.classList.remove('hidden');
+                closeIcon.classList.add('hidden');
+            }
+        }
+
+        // Tutup menu mobile ketika klik link di dalamnya
+        document.querySelectorAll('#mobileMenu a').forEach(link => {
+            link.addEventListener('click', toggleMobileMenu);
+        });
+
+        function formatTime(time) {
+            return time < 10 ? `0${time}` : time;
+        }
+
+        const timerInterval = setInterval(() => {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance < 0) {
+                clearInterval(timerInterval);
+                
+                promoCards.forEach(card => {
+                    card.querySelector('.timer-container').classList.add('hidden');
+                    card.querySelector('.expired-msg').classList.remove('hidden');
+                    
+                    const btn = card.querySelector('.claim-btn');
+                    btn.disabled = true;
+                    // Styling tombol jika sudah kedaluwarsa disesuaikan dengan shape modern
+                    btn.className = "w-full py-3 px-6 bg-slate-200 text-slate-400 font-semibold rounded-full cursor-not-allowed";
+                    btn.innerText = "Berakhir";
+                });
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            promoCards.forEach(card => {
+                card.querySelector('.days').innerText = formatTime(days);
+                card.querySelector('.hours').innerText = formatTime(hours);
+                card.querySelector('.minutes').innerText = formatTime(minutes);
+                card.querySelector('.seconds').innerText = formatTime(seconds);
+            });
+
+        }, 1000);
+
+        function claimPromo(kodePromo, namaPromo) {
+            modalCodeDisplay.innerText = kodePromo;
+            modalDescDisplay.innerText = `Voucher "${namaPromo}" telah tersimpan di akun Anda.`;
+
+            modal.classList.remove("hidden");
+            setTimeout(() => {
+                modal.classList.remove("opacity-0");
+                modalContent.classList.remove("scale-95");
+                modalContent.classList.add("scale-100");
+            }, 10);
+        }
+
+        function closeModal() {
+            modal.classList.add("opacity-0");
+            modalContent.classList.remove("scale-100");
+            modalContent.classList.add("scale-95");
+            
+            setTimeout(() => {
+                modal.classList.add("hidden");
+            }, 300);
+        }
+    </script>
+</body>
+</html>

@@ -35,6 +35,20 @@
             visibility: visible;
             pointer-events: auto;
         }
+        
+        /* Background Header sama seperti Index */
+        .hero-gradient { 
+            background: linear-gradient(to bottom, rgba(22, 101, 52, 0.85), rgba(255, 255, 255, 0.85), rgba(74, 222, 128, 0.85)); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px); 
+        }
+        .hero-gradient::after { 
+            content: ''; 
+            position: absolute; 
+            bottom: 0; left: 0; right: 0; 
+            height: 200px; 
+            background: linear-gradient(to bottom, transparent, rgba(241, 245, 249, 0.3)); 
+        }
     </style>
 </head>
 <body class="bg-green-50 text-gray-800">
@@ -44,7 +58,7 @@
         <div class="max-w-7xl mx-auto px-6 lg:px-12 py-4 relative">
             <div class="glass border border-white/20 rounded-2xl px-6 py-3 flex justify-between items-center shadow-lg">
                 <div class="flex items-center gap-2">
-                    <img src="gambar/logo kost.png" alt="Logo" class="h-10 w-auto rounded-md object-contain mr-2">
+                    <img src="gambar/logo kost hijau.png" alt="Logo" class="h-10 w-auto rounded-md object-contain mr-2">
                     <span class="font-bold text-xl tracking-tight text-gray-900">Kost<span class="text-green-600">Acarya</span></span>
                 </div>
                 <div class="hidden min-[1136px]:flex space-x-10">
@@ -69,17 +83,19 @@
     </nav>
 
     <!-- Hero Section -->
-    <div class="relative bg-gray-900 h-96 flex items-center justify-center">
-        <img src="gambar/booking.png" alt="Hotel Luxury" class="absolute w-full h-full object-cover opacity-80">
-        <div class="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/50"></div>
-        <div class="relative z-10 text-center px-4">
-            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Reservasi Kamar Online</h1>
-            <p class="text-xl text-gray-200">Nikmati kenyamanan dan kemewahan penginapan terbaik.</p>
+    <div class="relative pt-44 pb-32 px-6 overflow-hidden min-h-[450px] flex items-center justify-center">
+        <div class="hero-gradient absolute inset-0 -z-10"></div>
+        <div class="relative z-10 text-center px-4 mt-8">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">Reservasi Kamar Online</h1>
+            <p class="text-xl text-slate-700 font-medium">Nikmati kenyamanan dan fasilitas eksklusif hunian kami.</p>
         </div>
+        <!-- Decorative blobs -->
+        <div class="absolute top-1/2 left-0 w-64 h-64 bg-green-400/20 blur-[100px] rounded-full pointer-events-none"></div>
+        <div class="absolute bottom-0 right-0 w-96 h-96 bg-green-500/20 blur-[120px] rounded-full pointer-events-none"></div>
     </div>
 
     <!-- Main Content Area -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 -mt-20 relative z-20" id="booking">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 -mt-20 relative z-20 scroll-mt-32" id="booking">
         <div class="grid grid-cols-1 min-[1025px]:grid-cols-3 gap-8">
             
             <!-- Info Card (Left Side) -->
@@ -93,7 +109,7 @@
                         </li>
                         <li class="flex items-center">
                             <i class="fa-solid fa-phone text-green-600 mr-3 w-5"></i>
-                            <span>+62 812 3456 7890</span>
+                            <span>+62 8124671508</span>
                         </li>
                         <li class="flex items-center">
                             <i class="fa-solid fa-envelope text-green-600 mr-3 w-5"></i>
@@ -181,10 +197,14 @@
                             <textarea id="message" name="pesan" rows="3" class="w-full border-gray-300 rounded-xl shadow-sm focus:ring-green-500 focus:border-green-500 border p-2.5 transition-colors" placeholder="Contoh: Saya ingin kamar di lantai atas, bebas asap rokok..."></textarea>
                         </div>
 
-                        <div class="pt-4">
-                            <button type="submit" id="submitBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition duration-300 transform hover:-translate-y-1 flex justify-center items-center">
-                                <span>Konfirmasi Pemesanan</span>
-                                <i class="fa-solid fa-paper-plane ml-2"></i>
+                        <div class="pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition duration-300 transform hover:-translate-y-1 flex justify-center items-center">
+                                <i class="fa-solid fa-envelope mr-2"></i>
+                                <span>Kirim via Email</span>
+                            </button>
+                            <button type="button" onclick="sendToWhatsApp()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition duration-300 transform hover:-translate-y-1 flex justify-center items-center">
+                                <i class="fa-brands fa-whatsapp text-xl mr-2"></i>
+                                <span>Kirim via WhatsApp</span>
                             </button>
                         </div>
                     </form>
@@ -233,6 +253,27 @@
         const submitBtn = document.getElementById('submitBtn');
         const modal = document.getElementById('successModal');
         const modalName = document.getElementById('modalName');
+
+        // Fungsi untuk mengirim data via WhatsApp
+        function sendToWhatsApp() {
+            // Validasi apakah form sudah diisi semua yang wajib
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            const name = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const room = document.getElementById('roomType').value;
+            const checkIn = document.getElementById('checkIn').value;
+            const message = document.getElementById('message').value;
+
+            const waText = `Halo Acarya Kost, saya ingin melakukan pemesanan kamar dengan detail berikut:\n\n*Nama:* ${name}\n*Email:* ${email}\n*No. HP/WA:* ${phone}\n*Tipe Kamar:* ${room}\n*Tanggal Check-in:* ${checkIn}\n*Permintaan Khusus:* ${message ? message : '-'}\n\nMohon konfirmasinya. Terima kasih!`;
+            
+            const encodedText = encodeURIComponent(waText);
+            window.open(`https://wa.me/628124671508?text=${encodedText}`, '_blank');
+        }
 
         form.addEventListener('submit', function(e) {
             e.preventDefault(); // Mencegah reload halaman
