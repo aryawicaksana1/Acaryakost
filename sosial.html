@@ -7,6 +7,28 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    <script>
+        // Init Theme
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+        
+        // Sinkronisasi tema antar tab
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'theme') {
+                if (e.newValue === 'dark') {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            }
+        });
+    </script>
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .glass-card {
@@ -17,14 +39,10 @@
         }
     </style>
 </head>
-<body class="min-h-screen bg-slate-900 flex items-center justify-center p-4 relative overflow-x-hidden">
-
-    <!-- Background Elements -->
-    <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-orange-600/30 rounded-full blur-3xl opacity-50 animate-pulse"></div>
-    <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-blue-600/30 rounded-full blur-3xl opacity-50 animate-pulse" style="animation-delay: 1s;"></div>
+<body class="min-h-screen bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 flex items-center justify-center p-4 relative overflow-x-hidden transition-colors duration-300">
 
     <!-- Main Card -->
-    <div class="glass-card w-full max-w-md rounded-3xl p-8 text-center relative z-10 shadow-2xl transform transition-all duration-1000 translate-y-0 opacity-100" id="mainCard">
+    <div class="glass-card bg-slate-900 w-full max-w-md rounded-3xl p-8 text-center relative z-10 shadow-2xl transform transition-all duration-1000 translate-y-0 opacity-100" id="mainCard">
         
         <!-- Share Button -->
         <button onclick="shareProfile()" class="absolute right-4 top-4 w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition group">

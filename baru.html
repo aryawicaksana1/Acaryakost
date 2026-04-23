@@ -16,7 +16,7 @@
         }
 
         body {
-            background-color: #dfdcd7; /* Warna latar belakang abu-abu kecoklatan pucat */
+        background-color: #ffffff;
             color: #222;
             padding: 60px 20px;
             display: flex;
@@ -105,12 +105,15 @@
             grid-column: span 1;
             background-color: #cfcac3;
             color: #1a1a1a;
+            background-color: #dcfce7;
+            color: #064e3b;
         }
 
         /* Card 3: Real-Time Scheduling (Kiri Bawah, Kecil) */
         .card-3 {
             grid-column: span 1;
             background-color: #b7a99b;
+            background-color: #22c55e;
             color: white;
         }
 
@@ -118,8 +121,10 @@
         .card-4 {
             grid-column: span 2;
             background-color: #5d6e5a;
+            background-color: #166534;
             /* Menggunakan gradient overlay agar teks terbaca, plus gambar orang di sebelah kanan */
             background-image: linear-gradient(to right, rgba(93,110,90,1) 30%, rgba(93,110,90,0) 80%),
+            background-image: linear-gradient(to right, rgba(22,101,52,1) 30%, rgba(22,101,52,0) 80%),
                               url('https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=600');
             background-size: cover; /* Background warna dasar */
             background-size: auto 100%; /* Mengatur tinggi gambar full, lebar menyesuaikan */
@@ -152,6 +157,7 @@
             
             .card-4 {
                 background-image: linear-gradient(to top, rgba(93,110,90,0.9) 30%, rgba(93,110,90,0.3) 100%),
+                background-image: linear-gradient(to top, rgba(22,101,52,0.9) 30%, rgba(22,101,52,0.3) 100%),
                                   url('https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=600');
             }
         }

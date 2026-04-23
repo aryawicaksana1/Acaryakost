@@ -7,11 +7,34 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    <script>
+        // Init Theme
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+        
+        // Sinkronisasi tema antar tab
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'theme') {
+                if (e.newValue === 'dark') {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            }
+        });
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
         
         body { font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
         .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .dark .glass { background: rgba(15, 23, 42, 0.7); border-color: rgba(255, 255, 255, 0.1); }
 
         /* Custom Scrollbar Hide */
         .no-scrollbar::-webkit-scrollbar {
@@ -97,7 +120,7 @@
 
         /* Background Pattern */
         .pattern-dots {
-            background-image: radial-gradient(#f97316 1.5px, transparent 1.5px);
+            background-image: radial-gradient(#16a34a 1.5px, transparent 1.5px);
             background-size: 24px 24px;
         }
 
@@ -115,9 +138,33 @@
         .animate-scroll:hover, .animate-scroll:active {
             animation-play-state: paused !important;
         }
+
+        /* Animasi Bintang Parallax saat Scroll */
+        .star-layer {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -30;
+            pointer-events: none;
+            background-repeat: repeat;
+            transition: opacity 0.5s ease;
+        }
+        .star-layer-1 {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Ctext x='40' y='40' font-size='14' fill='%23fbbf24' opacity='0.6'%3E%E2%98%85%3C/text%3E%3Ctext x='200' y='180' font-size='18' fill='%23fbbf24' opacity='0.5'%3E%E2%98%85%3C/text%3E%3Ctext x='320' y='80' font-size='12' fill='%23fbbf24' opacity='0.7'%3E%E2%98%85%3C/text%3E%3Ctext x='120' y='320' font-size='16' fill='%23fbbf24' opacity='0.4'%3E%E2%98%85%3C/text%3E%3Ctext x='280' y='280' font-size='14' fill='%23fbbf24' opacity='0.6'%3E%E2%98%85%3C/text%3E%3C/svg%3E");
+            opacity: 0.2;
+        }
+        .dark .star-layer-1 { opacity: 0.6; }
+        .star-layer-2 {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Ctext x='80' y='120' font-size='10' fill='%23fcd34d' opacity='0.5'%3E%E2%98%85%3C/text%3E%3Ctext x='220' y='50' font-size='8' fill='%23fcd34d' opacity='0.6'%3E%E2%98%85%3C/text%3E%3Ctext x='150' y='250' font-size='11' fill='%23fcd34d' opacity='0.4'%3E%E2%98%85%3C/text%3E%3Ctext x='50' y='220' font-size='9' fill='%23fcd34d' opacity='0.5'%3E%E2%98%85%3C/text%3E%3Ctext x='260' y='180' font-size='10' fill='%23fcd34d' opacity='0.7'%3E%E2%98%85%3C/text%3E%3C/svg%3E");
+            opacity: 0.15;
+        }
+        .dark .star-layer-2 { opacity: 0.4; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800">
+<body class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
+
+    <!-- Latar Belakang Animasi Bintang Parallax -->
+    <div id="star-layer-1" class="star-layer star-layer-1"></div>
+    <div id="star-layer-2" class="star-layer star-layer-2"></div>
 
     <!-- Navbar -->
     <nav class="fixed w-full z-50 top-0 transition-all duration-300">
@@ -125,32 +172,32 @@
             <div class="glass border border-white/20 rounded-2xl px-6 py-3 flex justify-between items-center shadow-lg relative">
                 <div class="flex items-center gap-2">
                     <img src="gambar/logo kost hijau.png" alt="Logo" class="h-10 w-auto object-contain">
-                    <span class="text-xl font-extrabold tracking-tight text-slate-800">Kost<span class="text-orange-600">Acarya</span></span>
+                    <span class="text-xl font-extrabold tracking-tight text-slate-800 dark:text-white">Kost<span class="text-green-600">Acarya</span></span>
                 </div>
                 <div class="hidden min-[824px]:flex space-x-10">
-                    <a href="index.html" class="text-sm font-semibold hover:text-orange-600 transition">Home</a>
-                    <a href="booking.html" class="text-sm font-semibold hover:text-orange-600 transition">Booking</a>
-                    <a href="#fasilitas" class="text-sm font-semibold hover:text-orange-600 transition">Fasilitas</a>
-                    <a href="#testimoni" class="text-sm font-semibold hover:text-orange-600 transition">Testimoni</a>
+                    <a href="index.html" class="text-sm font-semibold text-slate-900 dark:text-slate-100 hover:text-green-600 dark:hover:text-green-400 transition">Home</a>
+                    <a href="booking.html" class="text-sm font-semibold text-slate-900 dark:text-slate-100 hover:text-green-600 dark:hover:text-green-400 transition">Booking</a>
+                    <a href="#fasilitas" class="text-sm font-semibold text-slate-900 dark:text-slate-100 hover:text-green-600 dark:hover:text-green-400 transition">Fasilitas</a>
+                    <a href="#testimoni" class="text-sm font-semibold text-slate-900 dark:text-slate-100 hover:text-green-600 dark:hover:text-green-400 transition">Testimoni</a>
                 </div>
-                <a href="sosial.html" class="hidden min-[824px]:inline-block bg-slate-900 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-orange-700 transition-all shadow-md active:scale-95">Hubungi Kami</a>
+                <a href="sosial.html" class="hidden min-[824px]:inline-block bg-slate-900 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-green-700 transition-all shadow-md active:scale-95">Hubungi Kami</a>
 
                 <!-- Mobile Hamburger -->
                 <div class="min-[824px]:hidden flex items-center">
-                    <button id="mobileMenuButton" onclick="toggleMobileMenu()" class="text-slate-800 hover:text-orange-600 focus:outline-none p-2">
+                    <button id="mobileMenuButton" onclick="toggleMobileMenu()" class="text-slate-800 dark:text-slate-100 hover:text-green-600 focus:outline-none p-2">
                         <i id="menuOpen" class="fa-solid fa-bars text-xl"></i>
                         <i id="menuClose" class="fa-solid fa-xmark text-xl hidden"></i>
                     </button>
                 </div>
 
                 <!-- Mobile Menu Dropdown -->
-                <div id="mobileMenu" class="min-[824px]:hidden hidden absolute right-6 top-full mt-2 w-64 rounded-2xl bg-white/95 border border-slate-100 shadow-xl overflow-hidden z-50" style="backdrop-filter: blur(10px);">
+                <div id="mobileMenu" class="min-[824px]:hidden hidden absolute right-6 top-full mt-2 w-64 rounded-2xl bg-white/95 dark:bg-slate-900/95 border border-slate-100 dark:border-slate-800 shadow-xl overflow-hidden z-50" style="backdrop-filter: blur(10px);">
                     <div class="px-4 py-3 space-y-2">
-                        <a href="index.html" class="block text-slate-900 font-semibold py-2 px-3 rounded-lg hover:bg-slate-50 transition">Home</a>
-                        <a href="booking.html" class="block text-slate-900 font-semibold py-2 px-3 rounded-lg hover:bg-slate-50 transition">Booking</a>
-                        <a href="#fasilitas" class="block text-slate-900 font-semibold py-2 px-3 rounded-lg hover:bg-slate-50 transition">Fasilitas</a>
-                        <a href="#testimoni" class="block text-slate-900 font-semibold py-2 px-3 rounded-lg hover:bg-slate-50 transition">Testimoni</a>
-                        <a href="sosial.html" class="block text-white bg-orange-600 text-center rounded-lg py-3 font-bold mt-2 hover:bg-orange-700 transition">Hubungi Kami</a>
+                        <a href="index.html" class="block text-slate-900 dark:text-slate-100 font-semibold py-2 px-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition">Home</a>
+                        <a href="booking.html" class="block text-slate-900 dark:text-slate-100 font-semibold py-2 px-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition">Booking</a>
+                        <a href="#fasilitas" class="block text-slate-900 dark:text-slate-100 font-semibold py-2 px-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition">Fasilitas</a>
+                        <a href="#testimoni" class="block text-slate-900 dark:text-slate-100 font-semibold py-2 px-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition">Testimoni</a>
+                        <a href="sosial.html" class="block text-white bg-green-600 text-center rounded-lg py-3 font-bold mt-2 hover:bg-green-700 transition">Hubungi Kami</a>
                     </div>
                 </div>
             </div>
@@ -161,10 +208,8 @@
     <main class="pt-20">
         
         <!-- SECTION LOKASI 1 -->
-        <section id="lokasi1" class="relative py-24 bg-white reveal overflow-hidden">
+        <section id="lokasi1" class="relative py-24 bg-transparent reveal overflow-hidden">
             <!-- Decorative Backgrounds -->
-            <div class="absolute top-0 left-0 w-72 h-72 bg-orange-400/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
-            <div class="absolute bottom-0 right-0 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl translate-x-1/3 translate-y-1/3 pointer-events-none"></div>
             <div class="absolute inset-0 opacity-[0.03] pattern-dots pointer-events-none"></div>
             <div class="max-w-7xl mx-auto px-6 relative z-10">
                 <div class="flex flex-col md:flex-row gap-16 items-center mb-16">
@@ -182,20 +227,20 @@
                             </div>
                             
                             <!-- Floating Badge -->
-                            <div class="absolute bottom-5 left-5 bg-white/95 backdrop-blur-md px-3 py-2 rounded-xl shadow-lg flex items-center gap-3 border border-white/50">
+                            <div class="absolute bottom-5 left-5 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md px-3 py-2 rounded-xl shadow-lg flex items-center gap-3 border border-white/50 dark:border-slate-600">
                                 <div class="w-8 h-8 bg-green-50 rounded-full flex items-center justify-center text-green-600 shadow-inner">
                                     <i class="fas fa-gem text-sm"></i>
                                 </div>
                                 <div>
-                                    <p class="text-[8px] text-slate-500 font-bold uppercase tracking-widest mb-0.5">Tipe Hunian</p>
-                                    <p class="text-xs font-extrabold text-slate-800">Premium Center</p>
+                                    <p class="text-[8px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest mb-0.5">Tipe Hunian</p>
+                                    <p class="text-xs font-extrabold text-slate-800 dark:text-slate-100">Premium Center</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="md:w-1/2">
-                        <h2 class="text-orange-600 font-bold tracking-widest uppercase text-sm mb-2">Desa Padang keling</h2>
-                        <h3 class="text-4xl font-extrabold mb-2">ACARYA KOST 2 - <span class="text-orange-600">Premium Center</span></h3>
+                        <h2 class="text-green-600 font-bold tracking-widest uppercase text-sm mb-2">Desa Padang keling</h2>
+                        <h3 class="text-4xl font-extrabold mb-2 text-slate-900 dark:text-white">ACARYA KOST 2 - <span class="text-green-600">Premium Center</span></h3>
                         
                         <!-- Rating 4.5 Bintang -->
                         <div class="flex items-center gap-2 mb-6">
@@ -210,23 +255,21 @@
                             <span class="text-slate-400 text-xs font-medium ml-1">(120+ Ulasan Terverifikasi)</span>
                         </div>
 
-                        <p class="text-slate-600 mb-8 text-lg leading-relaxed text-justify">Terletak di area premium yang sangat dekat dengan Kampus Pusat Undiksha dan STAH Mpu Kuturan. Lokasi ini dikelilingi oleh berbagai pusat kuliner, cafe, dan tempat makan.</p>
+                        <p class="text-slate-600 dark:text-slate-300 mb-8 text-lg leading-relaxed text-justify">Terletak di area premium yang sangat dekat dengan Kampus Pusat Undiksha dan STAH Mpu Kuturan. Lokasi ini dikelilingi oleh berbagai pusat kuliner, cafe, dan tempat makan.</p>
                         <div class="grid grid-cols-2 gap-4 text-sm font-semibold">
-                            <div class="flex items-center gap-2"><i class="fas fa-university text-orange-500"></i> Dekat Undiksha & STAH</div>
-                            <div class="flex items-center gap-2"><i class="fas fa-utensils text-orange-500"></i> Area Pusat Kuliner</div>
-                            <div class="flex items-center gap-2"><i class="fas fa-leaf text-orange-500"></i> Area yang tenang</div>
-                            <div class="flex items-center gap-2"><i class="fas fa-video text-orange-500"></i> CCTV 24/7</div>
+                            <div class="flex items-center gap-2"><i class="fas fa-university text-green-500 w-5 text-center"></i> Dekat Undiksha & STAH</div>
+                            <div class="flex items-center gap-2"><i class="fas fa-utensils text-green-500 w-5 text-center"></i> Area Pusat Kuliner</div>
+                            <div class="flex items-center gap-2"><i class="fas fa-leaf text-green-500 w-5 text-center"></i> Area yang tenang</div>
+                            <div class="flex items-center gap-2"><i class="fas fa-video text-green-500 w-5 text-center"></i> CCTV 24/7</div>
+                            <div class="flex items-center gap-2"><i class="fas fa-wifi text-green-500 w-5 text-center"></i> Wifi Kencang</div>
+                            <div class="flex items-center gap-2"><i class="fas fa-parking text-green-500 w-5 text-center"></i> Area Parkir luas</div>
+                            <div class="flex items-center gap-2"><i class="fas fa-check-circle text-green-500 w-5 text-center"></i> Fasilitas lengkap</div>
+                            <div class="flex items-center gap-2"><i class="fas fa-couch text-green-500 w-5 text-center"></i> Tempat Bersantai</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Highlight Fitur Utama -->
-                <div class="flex flex-wrap justify-center gap-6 md:gap-10 mb-16 reveal text-slate-700 text-sm md:text-base font-semibold">
-                    <div class="flex items-center gap-2"><i class="fas fa-parking text-orange-500 text-lg"></i> Area Parkir Luas</div>
-                    <div class="flex items-center gap-2"><i class="fas fa-wifi text-orange-500 text-lg"></i> WiFi Kencang</div>
-                    <div class="flex items-center gap-2"><i class="fas fa-check-circle text-orange-500 text-lg"></i> Fasilitas Lengkap</div>
-                    <div class="flex items-center gap-2"><i class="fas fa-leaf text-orange-500 text-lg"></i> Area yang Tenang</div>
-                </div>
+                
 
                 <!-- Slide Galeri Fasilitas -->
                 <div id="fasilitas" class="mb-20 relative group reveal scroll-mt-28">
@@ -234,15 +277,15 @@
                         <div class="flex items-center justify-between mb-4">
                             <div class="flex flex-col">
                                 <h4 class="text-xl font-bold italic text-slate-400 uppercase tracking-widest">Fasilitas Detail</h4>
-                                <div class="h-1 w-20 bg-orange-600 mt-1 rounded-full"></div>
+                                <div class="h-1 w-20 bg-green-600 mt-1 rounded-full"></div>
                             </div>
                         </div>
                         <!-- Deskripsi Menarik -->
                         <div class="max-w-2xl">
                             <p class="text-slate-600 leading-relaxed text-justify">
-                                Kami memahami bahwa kenyamanan adalah kunci produktivitas Anda sebagai mahasiswa atau pekerja profesional. Nikmati fasilitas modern mulai dari <span class="text-orange-600 font-semibold">Smart Bedroom</span> yang estetik hingga <span class="text-orange-600 font-semibold">High-Speed Wi-Fi</span> yang stabil untuk menunjang segala aktivitas digital Anda.
+                            <span class="dark:text-slate-300">Kami memahami bahwa kenyamanan adalah kunci produktivitas Anda sebagai mahasiswa atau pekerja profesional. Nikmati fasilitas modern mulai dari</span> <span class="text-green-600 font-semibold">Smart Bedroom</span> yang estetik hingga <span class="text-green-600 font-semibold">High-Speed Wi-Fi</span> yang stabil untuk menunjang segala aktivitas digital Anda.
                             </p>
-                            <p class="text-xs text-orange-500 font-bold mt-2 animate-pulse uppercase tracking-tighter">
+                            <p class="text-xs text-green-500 font-bold mt-2 animate-pulse uppercase tracking-tighter">
                                 <i class="fas fa-info-circle mr-1"></i> Klik gambar di bawah untuk melihat detail interior
                             </p>
                         </div>
@@ -252,8 +295,8 @@
                     <div class="relative overflow-hidden p-4 group">
 
                         <!-- Gradient Fade Mask Kiri & Kanan -->
-                        <div class="hidden md:block absolute top-0 bottom-0 left-0 w-16 bg-gradient-to-r from-slate-50 to-transparent z-10 pointer-events-none"></div>
-                        <div class="hidden md:block absolute top-0 bottom-0 right-0 w-16 bg-gradient-to-l from-slate-50 to-transparent z-10 pointer-events-none"></div>
+                        <div class="hidden md:block absolute top-0 bottom-0 left-0 w-16 bg-gradient-to-r from-white dark:from-slate-900 to-transparent z-10 pointer-events-none"></div>
+                        <div class="hidden md:block absolute top-0 bottom-0 right-0 w-16 bg-gradient-to-l from-white dark:from-slate-900 to-transparent z-10 pointer-events-none"></div>
                         
                         <div id="facility-slider-container" class="overflow-hidden py-4 px-0 md:px-4">
                             <div id="facility-slider-track" class="flex animate-scroll group-hover:[animation-play-state:paused]">
@@ -266,7 +309,12 @@
                                             <i class="fas fa-bed text-lg"></i>
                                         </div>
                                         <div class="facility-info absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col justify-center items-center text-center p-6 text-white opacity-0 translate-y-8 transition-all duration-300">
-                                            <h3 class="text-2xl font-bold mb-2 text-orange-400">Kamar Tidur Lux</h3>
+                                            <div class="flex items-center gap-3 mb-2">
+                                            <div class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 flex-shrink-0 text-green-400">
+                                                    <i class="fas fa-bed text-lg"></i>
+                                                </div>
+                                            <h3 class="text-xl font-bold text-green-400 text-left">Kamar Tidur Lux</h3>
+                                            </div>
                                             <p class="text-sm leading-relaxed text-slate-200 mb-4">Nyaman & ber-AC</p>
                                             <span class="text-[10px] text-slate-300 border border-slate-500 px-3 py-1 rounded-full uppercase tracking-wider">Klik untuk tutup</span>
                                         </div>
@@ -281,7 +329,12 @@
                                             <i class="fas fa-shower text-lg"></i>
                                         </div>
                                         <div class="facility-info absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col justify-center items-center text-center p-6 text-white opacity-0 translate-y-8 transition-all duration-300">
-                                            <h3 class="text-2xl font-bold mb-2 text-teal-400">Kamar Mandi Dalam</h3>
+                                            <div class="flex items-center gap-3 mb-2">
+                                                <div class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 flex-shrink-0 text-teal-400">
+                                                    <i class="fas fa-shower text-lg"></i>
+                                                </div>
+                                                <h3 class="text-xl font-bold text-teal-400 text-left">Kamar Mandi Dalam</h3>
+                                            </div>
                                             <p class="text-sm leading-relaxed text-slate-200 mb-4">Bersih & higienis</p>
                                             <span class="text-[10px] text-slate-300 border border-slate-500 px-3 py-1 rounded-full uppercase tracking-wider">Klik untuk tutup</span>
                                         </div>
@@ -296,7 +349,12 @@
                                             <i class="fas fa-laptop text-lg"></i>
                                         </div>
                                         <div class="facility-info absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col justify-center items-center text-center p-6 text-white opacity-0 translate-y-8 transition-all duration-300">
-                                            <h3 class="text-2xl font-bold mb-2 text-cyan-400">Meja Belajar & Kerja</h3>
+                                            <div class="flex items-center gap-3 mb-2">
+                                                <div class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 flex-shrink-0 text-cyan-400">
+                                                    <i class="fas fa-laptop text-lg"></i>
+                                                </div>
+                                                <h3 class="text-xl font-bold text-cyan-400 text-left">Meja Belajar & Kerja</h3>
+                                            </div>
                                             <p class="text-sm leading-relaxed text-slate-200 mb-4">Fokus belajar maksimal</p>
                                             <span class="text-[10px] text-slate-300 border border-slate-500 px-3 py-1 rounded-full uppercase tracking-wider">Klik untuk tutup</span>
                                         </div>
@@ -307,11 +365,16 @@
                                 <div class="facility-card-wrapper flex-shrink-0 w-[280px] md:w-[320px] px-2 sm:px-3">
                                     <div class="facility-card relative w-full aspect-[4/5] rounded-[2rem] shadow-md overflow-hidden border border-slate-200 group cursor-pointer" onclick="toggleFacInfo(this)">
                                         <img src="gambar/interior acarya 2/edit/nongkrong.png" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="Area Santai">
-                                        <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm w-10 h-10 flex items-center justify-center rounded-full shadow-sm z-10 text-orange-500">
+                                        <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm w-10 h-10 flex items-center justify-center rounded-full shadow-sm z-10 text-green-500">
                                             <i class="fas fa-mug-hot text-lg"></i>
                                         </div>
                                         <div class="facility-info absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col justify-center items-center text-center p-6 text-white opacity-0 translate-y-8 transition-all duration-300">
-                                            <h3 class="text-2xl font-bold mb-2 text-orange-400">Tempat Nongkrong</h3>
+                                            <div class="flex items-center gap-3 mb-2">
+                                            <div class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 flex-shrink-0 text-green-400">
+                                                    <i class="fas fa-mug-hot text-lg"></i>
+                                                </div>
+                                            <h3 class="text-xl font-bold text-green-400 text-left">Tempat Nongkrong</h3>
+                                            </div>
                                             <p class="text-sm leading-relaxed text-slate-200 mb-4">Cocok untuk diskusi</p>
                                             <span class="text-[10px] text-slate-300 border border-slate-500 px-3 py-1 rounded-full uppercase tracking-wider">Klik untuk tutup</span>
                                         </div>
@@ -326,7 +389,12 @@
                                             <i class="fas fa-box text-lg"></i>
                                         </div>
                                         <div class="facility-info absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col justify-center items-center text-center p-6 text-white opacity-0 translate-y-8 transition-all duration-300">
-                                            <h3 class="text-2xl font-bold mb-2 text-purple-400">Lemari Pakaian</h3>
+                                            <div class="flex items-center gap-3 mb-2">
+                                                <div class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 flex-shrink-0 text-purple-400">
+                                                    <i class="fas fa-box text-lg"></i>
+                                                </div>
+                                                <h3 class="text-xl font-bold text-purple-400 text-left">Lemari Pakaian</h3>
+                                            </div>
                                             <p class="text-sm leading-relaxed text-slate-200 mb-4">Luas untuk sehari-hari</p>
                                             <span class="text-[10px] text-slate-300 border border-slate-500 px-3 py-1 rounded-full uppercase tracking-wider">Klik untuk tutup</span>
                                         </div>
@@ -341,7 +409,12 @@
                                             <i class="fas fa-utensils text-lg"></i>
                                         </div>
                                         <div class="facility-info absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col justify-center items-center text-center p-6 text-white opacity-0 translate-y-8 transition-all duration-300">
-                                            <h3 class="text-2xl font-bold mb-2 text-red-400">Dapur</h3>
+                                            <div class="flex items-center gap-3 mb-2">
+                                                <div class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 flex-shrink-0 text-red-400">
+                                                    <i class="fas fa-utensils text-lg"></i>
+                                                </div>
+                                                <h3 class="text-xl font-bold text-red-400 text-left">Dapur</h3>
+                                            </div>
                                             <p class="text-sm leading-relaxed text-slate-200 mb-4">Cukup untuk memasak</p>
                                             <span class="text-[10px] text-slate-300 border border-slate-500 px-3 py-1 rounded-full uppercase tracking-wider">Klik untuk tutup</span>
                                         </div>
@@ -358,23 +431,23 @@
                     <h4 class="text-2xl font-bold mb-4 text-center uppercase tracking-widest text-slate-400 italic">Pilihan Kamar</h4>
                     
                     <!-- Deskripsi Bawah Judul Pilihan Kamar -->
-                    <div class="max-w-4xl mx-auto bg-white p-8 rounded-[2rem] shadow-sm text-center mb-10">
+                    <div class="max-w-4xl mx-auto bg-white dark:bg-slate-800 p-8 rounded-[2rem] shadow-sm text-center mb-10">
                         <div class="flex flex-wrap justify-center gap-6 mb-4 text-xs font-bold text-slate-400 uppercase tracking-widest">
                             <span><i class="fas fa-shield-alt text-green-500 mr-1"></i> Transaksi Aman</span>
-                            <span><i class="fas fa-clock text-orange-500 mr-1"></i> Konfirmasi Cepat</span>
-                            <span><i class="fas fa-user-check text-orange-500 mr-1"></i> Admin Ramah</span>
+                            <span><i class="fas fa-clock text-green-500 mr-1"></i> Konfirmasi Cepat</span>
+                            <span><i class="fas fa-user-check text-green-500 mr-1"></i> Admin Ramah</span>
                         </div>
-                        <p class="text-slate-600 leading-relaxed text-sm md:text-base text-justify">
+                        <p class="text-slate-600 dark:text-slate-300 leading-relaxed text-sm md:text-base text-justify">
                             Jangan lewatkan kesempatan untuk tinggal di hunian impian dengan lokasi paling strategis di Singaraja. Kamar kami <span class="text-red-500 font-bold italic">cepat penuh</span> terutama saat memasuki semester baru. 
-                            <span class="block mt-2 font-semibold text-slate-800">Booking sekarang cukup dengan DP ringan dan amankan posisi Anda sebelum kehabisan!</span>
+                            <span class="block mt-2 font-semibold text-slate-800 dark:text-white">Booking sekarang cukup dengan DP ringan dan amankan posisi Anda sebelum kehabisan!</span>
                         </p>
                     </div>
                     
                     <div class="flex flex-wrap justify-center gap-6">
-                        <div class="price-card w-full md:max-w-sm bg-slate-50 p-6 rounded-3xl border border-slate-200 flex flex-col justify-between shadow-sm">
+                        <div class="price-card w-full md:max-w-sm bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 flex flex-col justify-between shadow-sm">
                             <div>
-                                <h4 class="text-lg font-bold mb-2">Tipe Gold</h4>
-                                <div class="text-2xl font-extrabold text-orange-600 mb-4">Rp 2.500.000 <span class="text-xs font-normal text-slate-400">/bln</span></div>
+                                <h4 class="text-lg font-bold mb-2">Sewa bulanan</h4>
+                                <div class="text-2xl font-extrabold text-green-600 mb-4">Rp 1.200.000 <span class="text-xs font-normal text-slate-400">/bulan</span></div>
                                 <ul class="space-y-3 text-slate-600 mb-6 text-sm text-left">
                                     <li class="flex items-center gap-3"><i class="fas fa-check-circle text-green-500 w-4"></i><span>Kamar Full Furnished</span></li>
                                     <li class="flex items-center gap-3"><i class="fas fa-check-circle text-green-500 w-4"></i><span>Air Conditioner (AC)</span></li>
@@ -382,21 +455,19 @@
                                     <li class="flex items-center gap-3"><i class="fas fa-check-circle text-green-500 w-4"></i><span>Kamar Mandi Dalam</span></li>
                                 </ul>
                             </div>
-                            <a href="https://wa.me/628124671508" class="block text-center bg-orange-600 text-white py-2 rounded-xl font-bold hover:bg-orange-700 transition">Pesan Sekarang</a>
+                            <a href="https://wa.me/628124671508" class="block text-center bg-green-600 text-white py-2 rounded-xl font-bold hover:bg-green-700 transition">Pesan Sekarang</a>
                         </div>
-                        <div class="price-card w-full md:max-w-sm bg-orange-50 p-6 rounded-3xl border-2 border-orange-500 flex flex-col justify-between relative overflow-hidden shadow-lg">
-                            <div class="absolute top-0 right-0 bg-orange-500 text-white text-[10px] px-3 py-1 font-bold rounded-bl-xl">BEST SELLER</div>
+                        <div class="price-card w-full md:max-w-sm bg-green-50 dark:bg-slate-800 p-6 rounded-3xl border-2 border-green-500 flex flex-col justify-between relative overflow-hidden shadow-lg">
+                            <div class="absolute top-0 right-0 bg-green-500 text-white text-[10px] px-3 py-1 font-bold rounded-bl-xl">BEST SELLER</div>
                             <div>
-                                <h4 class="text-lg font-bold mb-2">Tipe Executive</h4>
-                                <div class="text-2xl font-extrabold text-orange-700 mb-4">Rp 3.200.000 <span class="text-xs font-normal text-slate-400">/thun</span></div>
+                                <h4 class="text-lg font-bold mb-2">Sewa Tahunan</h4>
+                                <div class="text-2xl font-extrabold text-green-700 mb-4">Rp 13.000.000 <span class="text-xs font-normal text-slate-400">/tahun</span></div>
                                 <ul class="space-y-3 text-slate-600 mb-6 text-sm text-left">
-                                    <li class="flex items-center gap-3"><i class="fas fa-star text-yellow-500 w-4"></i><span class="font-bold">Semua fasilitas Tipe Gold</span></li>
-                                    <li class="flex items-center gap-3"><i class="fas fa-plus-circle text-orange-500 w-4"></i><span>Kulkas Mini Pribadi</span></li>
+                                    <li class="flex items-center gap-3"><i class="fas fa-star text-yellow-500 w-4"></i><span class="font-bold">diskon pembayaran 1 bulan</span></li>
                                     <li class="flex items-center gap-3"><i class="fas fa-plus-circle text-orange-500 w-4"></i><span>Smart TV 32 inch</span></li>
-                                    <li class="flex items-center gap-3"><i class="fas fa-tags text-orange-500 w-4"></i><span class="font-semibold">Diskon pembayaran 1 bulan</span></li>
                                 </ul>
                             </div>
-                            <a href="https://wa.me/6281234567890" class="block text-center bg-orange-600 text-white py-2 rounded-xl font-bold hover:bg-orange-700 transition">Pesan Sekarang</a>
+                            <a href="https://wa.me/6281234567890" class="block text-center bg-green-600 text-white py-2 rounded-xl font-bold hover:bg-green-700 transition">Pesan Sekarang</a>
                         </div>
                         
                     </div>
@@ -407,7 +478,7 @@
                     <div class="flex items-center justify-center mb-4">
                         <div class="flex flex-col items-center">
                             <h4 class="text-xl font-bold italic text-slate-400 uppercase tracking-widest">Detail lokasi</h4>
-                            <div class="h-1 w-20 bg-orange-600 mt-1 rounded-full"></div>
+                                <div class="h-1 w-20 bg-green-600 mt-1 rounded-full"></div>
                         </div>
                     </div>
                 </div>
@@ -415,30 +486,28 @@
                 <!-- Deskripsi Detail Lokasi -->
                 <div class="max-w-2xl mx-auto mb-4 reveal">
                     <p class="text-slate-600 leading-relaxed text-justify">
-                        Lokasi kami dirancang dengan cermat untuk memberikan <span class="text-orange-600 font-semibold">ketenangan maksimal</span> dan <span class="text-orange-600 font-semibold">lingkungan yang asri</span>. Terletak di area semi-pedesaan yang jauh dari kebisingan jalan raya, menjadikan tempat ini sangat ideal bagi Anda yang membutuhkan ruang fokus tinggi untuk belajar atau sekadar beristirahat dengan optimal.
+                        <span class="dark:text-slate-300">Lokasi kami dirancang dengan cermat untuk memberikan</span> <span class="text-orange-600 font-semibold">ketenangan maksimal</span> dan <span class="text-orange-600 font-semibold">lingkungan yang asri</span>. <span class="dark:text-slate-300">Terletak di area semi-pedesaan yang jauh dari kebisingan jalan raya, menjadikan tempat ini sangat ideal bagi Anda yang membutuhkan ruang fokus tinggi untuk belajar atau sekadar beristirahat dengan optimal.</span>
+                        <span class="dark:text-slate-300">Lokasi kami dirancang dengan cermat untuk memberikan</span> <span class="text-green-600 font-semibold">ketenangan maksimal</span> dan <span class="text-green-600 font-semibold">lingkungan yang asri</span>. <span class="dark:text-slate-300">Terletak di area semi-pedesaan yang jauh dari kebisingan jalan raya, menjadikan tempat ini sangat ideal bagi Anda yang membutuhkan ruang fokus tinggi untuk belajar atau sekadar beristirahat dengan optimal.</span>
                     </p>
-                    <p class="text-xs text-orange-500 font-bold mt-2 animate-pulse uppercase tracking-tighter text-center">
-                        <i class="fas fa-map-marker-alt mr-1"></i> Lihat peta interaktif di bawah untuk titik lokasi yang presisi
-                    </p>
+                    
                 </div>
 
                 <div class="max-w-6xl mx-auto px-6 py-12 mb-24 reveal">
                     <!-- Main Content Card -->
-                    <div class="glass-card rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col lg:flex-row border border-white/50 relative">
-                        <div class="absolute inset-0 bg-gradient-to-br from-orange-50 to-transparent pointer-events-none z-0"></div>
+                    <div class="glass-card rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col lg:flex-row border border-white/50 dark:border-slate-700 dark:bg-slate-800/95">
                         
                         <!-- Map Side -->
-                        <div class="w-full lg:w-3/5 map-container order-2 lg:order-1 flex flex-col z-10">
+                        <div class="w-full lg:w-3/5 map-container order-2 lg:order-1 flex flex-col">
                             <div id="map"></div>
                             <!-- Badge on Map -->
-                            <div class="absolute top-6 left-6 z-[400] bg-white/90 backdrop-blur px-4 py-2 rounded-xl shadow-lg border border-white flex items-center gap-2">
-                                <div class="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+                            <div class="absolute top-6 left-6 z-[1000] bg-white/90 dark:bg-slate-800/90 backdrop-blur px-4 py-2 rounded-xl shadow-lg border border-white dark:border-slate-600 flex items-center gap-2">
+                                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                                 <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Titik Presisi</span>
                             </div>
 
                             <!-- Mobile Buttons (Visible < 1024px) -->
-                            <div class="p-6 flex flex-col gap-4 lg:hidden bg-white border-t border-slate-100">
-                                <button onclick="openGoogleMaps()" class="custom-button w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-3">
+                            <div class="p-6 flex flex-col gap-4 lg:hidden bg-white dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700">
+                                <button onclick="openGoogleMaps()" class="custom-button w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-3">
                                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
                                     Petunjuk Arah
                                 </button>
@@ -450,39 +519,39 @@
                         </div>
 
                         <!-- Detail Side -->
-                        <div class="w-full lg:w-2/5 p-8 md:p-12 flex flex-col justify-between bg-white order-1 lg:order-2">
+                        <div class="w-full lg:w-2/5 p-8 md:p-12 flex flex-col justify-between bg-white dark:bg-slate-800 order-1 lg:order-2">
                             <div>
-                                <h2 id="place-name" class="text-3xl font-bold mb-6 text-slate-900 leading-tight">Nama Tempat</h2>
+                                <h2 id="place-name" class="text-3xl font-bold mb-6 text-slate-900 dark:text-white leading-tight">Nama Tempat</h2>
                                 
                                 <div class="space-y-6">
                                     <!-- Address Item -->
-                                    <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                                        <div class="bg-orange-600 p-2.5 rounded-xl text-white shadow-lg shadow-orange-200">
+                                    <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-700 border border-slate-100 dark:border-slate-600">
+                                        <div class="bg-green-600 p-2.5 rounded-xl text-white shadow-lg shadow-green-200">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                             </svg>
                                         </div>
                                         <div>
                                             <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Alamat</h3>
-                                            <p id="place-address" class="text-slate-600 font-medium leading-relaxed">Desa Padang Keling, Singaraja, Bali</p>
+                                            <p id="place-address" class="text-slate-600 dark:text-slate-300 font-medium leading-relaxed">Desa Padang Keling, Singaraja, Bali</p>
                                         </div>
                                     </div>
 
                                     <!-- Hours Item -->
-                                    <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                                        <div class="bg-orange-600 p-2.5 rounded-xl text-white shadow-lg shadow-orange-200">
+                                    <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-700 border border-slate-100 dark:border-slate-600">
+                                        <div class="bg-green-600 p-2.5 rounded-xl text-white shadow-lg shadow-green-200">
                                             <i class="fas fa-clock text-xl w-6 h-6 flex items-center justify-center"></i>
                                         </div>
                                         <div>
                                             <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Akses Kost</h3>
-                                            <p class="text-slate-600 font-medium">Akses 24 Jam (Bawa Kunci)</p>
+                                            <p class="text-slate-600 dark:text-slate-300 font-medium">Akses 24 Jam (Bawa Kunci)</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="mt-8">
-                                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Tentang Lokasi</h3>
-                                    <p class="text-slate-500 leading-relaxed italic text-justify">
+                                    <h3 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Tentang Lokasi</h3>
+                                    <p class="text-slate-500 dark:text-slate-400 leading-relaxed italic text-justify">
                                         "Ruang hening yang dirancang untuk memberikan privasi dan pengalaman istirahat terbaik. Jauh dari hiruk-pikuk kota, asri, dan sangat kondusif."
                                     </p>
                                 </div>
@@ -490,7 +559,7 @@
 
                             <!-- Action Buttons -->
                             <div class="mt-12 hidden lg:flex flex-col gap-4">
-                                <button onclick="openGoogleMaps()" class="custom-button w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-3">
+                                <button onclick="openGoogleMaps()" class="custom-button w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-3">
                                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
                                     Petunjuk Arah
                                 </button>
@@ -535,7 +604,7 @@
                             const marker = L.marker([locationData.lat, locationData.lng]).addTo(map);
                             marker.bindPopup(`
                                 <div class="p-2 text-center">
-                                    <strong class="text-orange-600 block mb-1">${locationData.name}</strong>
+                                    <strong class="text-green-600 block mb-1">${locationData.name}</strong>
                                     <span class="text-xs text-slate-500 italic">Kami di sini!</span>
                                 </div>
                             `).openPopup();
@@ -561,11 +630,11 @@
 
                                 const originalContent = btn.innerHTML;
                                 btn.innerHTML = `<span>Tersalin!</span>`;
-                                btn.classList.replace('bg-slate-900', 'bg-orange-600');
+                                btn.classList.replace('bg-slate-900', 'bg-green-600');
                                 
                                 setTimeout(() => {
                                     btn.innerHTML = originalContent;
-                                    btn.classList.replace('bg-orange-600', 'bg-slate-900');
+                                    btn.classList.replace('bg-green-600', 'bg-slate-900');
                                 }, 2000);
                             }
 
@@ -573,16 +642,16 @@
                         </script>
 
                 <!-- SECTION ULASAN PENGHUNI SLIDER -->
-                <div id="testimoni" class="bg-slate-50 rounded-[3rem] p-10 md:p-16 border border-slate-100 overflow-hidden relative reveal z-0 scroll-mt-28">
+                <div id="testimoni" class="bg-transparent rounded-[3rem] p-10 md:p-16 border border-slate-100 dark:border-slate-700 overflow-hidden relative reveal z-0 scroll-mt-28">
                     <div class="absolute inset-0 opacity-[0.05] pattern-dots pointer-events-none -z-10"></div>
                     <div class="text-center mb-12">
-                        <h4 class="text-orange-600 font-bold uppercase tracking-widest text-sm mb-2">Apa Kata Mereka?</h4>
-                        <h3 class="text-3xl font-extrabold">Ulasan Penghuni Kost</h3>
+                        <h4 class="text-green-600 font-bold uppercase tracking-widest text-sm mb-2">Apa Kata Mereka?</h4>
+                        <h3 class="text-3xl font-extrabold text-slate-900 dark:text-white">Ulasan Penghuni Kost</h3>
                         
                         <!-- Deskripsi Menarik Di Bawah Judul Ulasan -->
                         <div class="max-w-2xl mx-auto mt-4">
-                            <p class="text-slate-500 text-sm md:text-base leading-relaxed text-justify">
-                                Kepercayaan Anda adalah prioritas kami. Lebih dari <span class="text-orange-600 font-bold">500+ mahasiswa dan pekerja</span> telah merasakan kenyamanan tinggal di Kost Acarya. Bergabunglah dengan komunitas penghuni kami yang solid dan nikmati pengalaman kost yang sesungguhnya.
+                            <p class="text-slate-500 dark:text-slate-400 text-sm md:text-base leading-relaxed text-justify">
+                                Kepercayaan Anda adalah prioritas kami. Lebih dari <span class="text-green-600 font-bold">120+ mahasiswa dan pekerja</span> telah merasakan kenyamanan tinggal di Kost Acarya. Bergabunglah dengan komunitas penghuni kami yang solid dan nikmati pengalaman kost yang sesungguhnya.
                             </p>
                         </div>
                     </div>
@@ -591,8 +660,8 @@
                     <div class="relative overflow-hidden p-4 group">
                         
                         <!-- Gradient Fade Mask Kiri & Kanan -->
-                        <div class="hidden md:block absolute top-0 bottom-0 left-0 w-16 bg-gradient-to-r from-slate-50 to-transparent z-10 pointer-events-none"></div>
-                        <div class="hidden md:block absolute top-0 bottom-0 right-0 w-16 bg-gradient-to-l from-slate-50 to-transparent z-10 pointer-events-none"></div>
+                        <div class="hidden md:block absolute top-0 bottom-0 left-0 w-16 bg-gradient-to-r from-slate-50 dark:from-slate-800 to-transparent z-10 pointer-events-none"></div>
+                        <div class="hidden md:block absolute top-0 bottom-0 right-0 w-16 bg-gradient-to-l from-slate-50 dark:from-slate-800 to-transparent z-10 pointer-events-none"></div>
                         
                         <div id="testi-slider-container" class="overflow-hidden py-4 px-0 md:px-4">
                             <div id="testi-slider-track" class="flex animate-scroll group-hover:[animation-play-state:paused]">
@@ -616,15 +685,27 @@
     <script>
         // Simple navbar interaction on scroll
         window.onscroll = function() {
+            // Animasi Bintang Parallax
+            const scrolled = window.scrollY;
+            const star1 = document.getElementById('star-layer-1');
+            const star2 = document.getElementById('star-layer-2');
+            if (star1) star1.style.backgroundPositionY = -(scrolled * 0.4) + 'px';
+            if (star2) star2.style.backgroundPositionY = -(scrolled * 0.2) + 'px';
+
             const nav = document.querySelector('nav');
+            const glass = nav.querySelector('.glass');
             if (window.scrollY > 50) {
                 nav.classList.add('py-2');
-                nav.querySelector('.glass').classList.remove('bg-white/70');
-                nav.querySelector('.glass').classList.add('bg-white/95');
+                if (glass) {
+                    glass.classList.remove('bg-white/70', 'dark:bg-slate-900/70');
+                    glass.classList.add('bg-white/95', 'dark:bg-slate-900/95');
+                }
             } else {
                 nav.classList.remove('py-2');
-                nav.querySelector('.glass').classList.add('bg-white/70');
-                nav.querySelector('.glass').classList.remove('bg-white/95');
+                if (glass) {
+                    glass.classList.add('bg-white/70', 'dark:bg-slate-900/70');
+                    glass.classList.remove('bg-white/95', 'dark:bg-slate-900/95');
+                }
             }
         };
 
@@ -728,19 +809,19 @@
         const renderTestiCards = () => {
             testiTrack.innerHTML = testimonials.map((t) => `
                 <div class="testimonial-card-wrapper flex-shrink-0 w-[300px] md:w-[350px] p-3">
-                    <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-100 h-full flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <div class="bg-white dark:bg-slate-700 p-6 rounded-3xl shadow-md border border-slate-100 dark:border-slate-600 h-full flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                         <div>
                             <div class="flex items-center gap-4 mb-4">
-                                <img src="${t.image}" alt="${t.name}" class="w-14 h-14 rounded-full bg-orange-50 border-2 border-orange-100">
+                                <img src="${t.image}" alt="${t.name}" class="w-14 h-14 rounded-full bg-green-50 border-2 border-green-100">
                                 <div>
-                                    <h4 class="font-bold text-slate-900">${t.name}</h4>
-                                    <p class="text-xs text-orange-600 font-semibold">${t.role}</p>
+                                    <h4 class="font-bold text-slate-900 dark:text-white">${t.name}</h4>
+                                    <p class="text-xs text-green-600 font-semibold">${t.role}</p>
                                 </div>
                             </div>
                             <div class="mb-3">${getStars(t.rating)}</div>
-                            <p class="text-slate-600 text-sm leading-relaxed italic">"${t.text}"</p>
+                            <p class="text-slate-600 dark:text-slate-200 text-sm leading-relaxed italic">"${t.text}"</p>
                         </div>
-                        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+                        <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-600 flex items-center justify-between">
                             <span class="text-xs text-slate-400"><i class="fas fa-clock mr-1"></i> Penghuni ${t.stayDuration}</span>
                             <i class="fas fa-quote-right text-slate-200 text-2xl"></i>
                         </div>

@@ -7,6 +7,29 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    <script>
+        // Init Theme
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+
+        // Sinkronisasi tema jika diubah dari tab lain
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'theme') {
+                if (e.newValue === 'dark') {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+                if (typeof updateThemeIcon === 'function') updateThemeIcon();
+            }
+        });
+    </script>
     <style>
         /* Custom scrollbar hiding for cleaner look */
         .scrollbar-hide::-webkit-scrollbar {
@@ -18,14 +41,21 @@
         }
         
         body { font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
+        body { transition: background-color 0.3s, color 0.3s; }
         .hero-gradient { 
-            /* Gradien 3 Warna (Hijau Tua -> Putih -> Hijau Muda) transparan 85% */
-            background: linear-gradient(to bottom, rgba(22, 101, 52, 0.85), rgba(255, 255, 255, 0.85), rgba(74, 222, 128, 0.85)); 
-            backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px); 
+            background: rgba(255, 255, 255, 0.3); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px); 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
         }
-        .hero-gradient::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 200px; background: linear-gradient(to bottom, transparent, rgba(241, 245, 249, 0.3)); }
+        .dark .hero-gradient {
+            background: rgba(15, 23, 42, 0.5);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .hero-gradient::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 200px; background: linear-gradient(to bottom, transparent, rgba(248, 250, 252, 0.7)); }
+        .dark .hero-gradient::after { background: linear-gradient(to bottom, transparent, rgba(15, 23, 42, 0.8)); }
         .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .dark .glass { background: rgba(15, 23, 42, 0.7); border-color: rgba(255, 255, 255, 0.1); }
         .card-hover { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .card-hover:hover { transform: translateY(-10px); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); }
         .image-accent { position: relative; }
@@ -70,10 +100,48 @@
         .animate-scroll:hover, .animate-scroll:active {
             animation-play-state: paused !important;
         }
+
+        /* Animasi Bintang Parallax saat Scroll */
+        .star-layer {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -30; /* Posisi di paling belakang */
+            pointer-events: none;
+            background-repeat: repeat;
+            transition: opacity 0.5s ease;
+        }
+        .star-layer-1 {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Ctext x='40' y='40' font-size='14' fill='%23fbbf24' opacity='0.6'%3E%E2%98%85%3C/text%3E%3Ctext x='200' y='180' font-size='18' fill='%23fbbf24' opacity='0.5'%3E%E2%98%85%3C/text%3E%3Ctext x='320' y='80' font-size='12' fill='%23fbbf24' opacity='0.7'%3E%E2%98%85%3C/text%3E%3Ctext x='120' y='320' font-size='16' fill='%23fbbf24' opacity='0.4'%3E%E2%98%85%3C/text%3E%3Ctext x='280' y='280' font-size='14' fill='%23fbbf24' opacity='0.6'%3E%E2%98%85%3C/text%3E%3C/svg%3E");
+            opacity: 0.2; /* Halus di mode terang */
+        }
+        .dark .star-layer-1 { opacity: 0.6; } /* Lebih terang di mode gelap */
+        .star-layer-2 {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Ctext x='80' y='120' font-size='10' fill='%23fcd34d' opacity='0.5'%3E%E2%98%85%3C/text%3E%3Ctext x='220' y='50' font-size='8' fill='%23fcd34d' opacity='0.6'%3E%E2%98%85%3C/text%3E%3Ctext x='150' y='250' font-size='11' fill='%23fcd34d' opacity='0.4'%3E%E2%98%85%3C/text%3E%3Ctext x='50' y='220' font-size='9' fill='%23fcd34d' opacity='0.5'%3E%E2%98%85%3C/text%3E%3Ctext x='260' y='180' font-size='10' fill='%23fcd34d' opacity='0.7'%3E%E2%98%85%3C/text%3E%3C/svg%3E");
+            opacity: 0.15;
+        }
+        .dark .star-layer-2 { opacity: 0.4; }
+
+        /* Efek Cahaya (Glow) pada Teks */
+        .text-glow {
+            text-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        .dark .text-glow {
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+        }
+        .text-glow-green {
+            text-shadow: 0 0 15px rgba(22, 163, 74, 0.5);
+        }
+        .dark .text-glow-green {
+            text-shadow: 0 0 20px rgba(74, 222, 128, 0.6), 0 0 35px rgba(74, 222, 128, 0.3);
+        }
     </style>
    
 </head>
-<body class="bg-[#F8FAFC] text-slate-900 leading-relaxed">
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 leading-relaxed transition-colors duration-300">
+
+    <!-- Latar Belakang Animasi Bintang Parallax -->
+    <div id="star-layer-1" class="star-layer star-layer-1"></div>
+    <div id="star-layer-2" class="star-layer star-layer-2"></div>
 
     <!-- Navbar -->
     <nav class="fixed w-full z-50 top-0 transition-all duration-300">
@@ -81,36 +149,46 @@
             <div class="glass border border-white/20 rounded-2xl px-6 py-3 flex justify-between items-center shadow-lg relative z-20 transition-all duration-300">
                 <div class="flex items-center gap-2">
                     <img src="gambar/logo kost hijau.png" alt="KostKu logo" class="w-auto h-10 rounded-md object-contain">
-                    <span class="text-xl font-extrabold tracking-tight text-slate-800">Acarya<span class="text-green-600">kost</span></span>
+                <span class="text-xl font-extrabold tracking-tight text-slate-800 dark:text-white">Acarya<span class="text-green-600">kost</span></span>
                 </div>
-                <div class="hidden min-[1136px]:flex space-x-10">
-                    <a href="#" class="text-sm font-semibold text-slate-900 hover:text-green-600 transition">Home</a>
-                    <a href="booking.html" class="text-sm font-semibold text-slate-900 hover:text-green-600 transition">Booking</a>
-                    <a href="#section-promo" class="text-sm font-semibold text-slate-900 hover:text-green-600 transition">Promo</a>
-                    <a href="#pemilik-kost" class="text-sm font-semibold text-slate-900 hover:text-green-600 transition">Pemilik Kost</a>
-                    <a href="#visi-misi" class="text-sm font-semibold text-slate-900 hover:text-green-600 transition">Visi &amp; Misi</a>
-                    <a href="#section-aturan" class="text-sm font-semibold text-slate-900 hover:text-green-600 transition">Aturan &amp; Etika</a>
-                    <a href="#testimoni" class="text-sm font-semibold text-slate-900 hover:text-green-600 transition">Testimoni</a>
+            <div class="hidden min-[1136px]:flex items-center space-x-8">
+                <a href="#" class="text-sm font-semibold text-slate-900 dark:text-slate-100 hover:text-green-600 dark:hover:text-green-400 transition">Home</a>
+                <a href="booking.html" class="text-sm font-semibold text-slate-900 dark:text-slate-100 hover:text-green-600 dark:hover:text-green-400 transition">Booking</a>
+                <a href="#section-promo" class="text-sm font-semibold text-slate-900 dark:text-slate-100 hover:text-green-600 dark:hover:text-green-400 transition">Promo</a>
+                <a href="#pemilik-kost" class="text-sm font-semibold text-slate-900 dark:text-slate-100 hover:text-green-600 dark:hover:text-green-400 transition">Pemilik Kost</a>
+                <a href="#visi-misi" class="text-sm font-semibold text-slate-900 dark:text-slate-100 hover:text-green-600 dark:hover:text-green-400 transition">Visi &amp; Misi</a>
+                <a href="#section-aturan" class="text-sm font-semibold text-slate-900 dark:text-slate-100 hover:text-green-600 dark:hover:text-green-400 transition">Aturan &amp; Etika</a>
+                <a href="#testimoni" class="text-sm font-semibold text-slate-900 dark:text-slate-100 hover:text-green-600 dark:hover:text-green-400 transition">Testimoni</a>
+                
+                <!-- Theme Toggle Button -->
+                <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-700 dark:text-yellow-400" aria-label="Toggle Theme">
+                    <i class="theme-icon fas fa-moon"></i>
+                </button>
                 </div>
 
                 <!-- Mobile hamburger button -->
-                <button id="mobileMenuButton" onclick="toggleMobileMenu()" class="min-[1136px]:hidden p-2 rounded-lg text-slate-800 hover:bg-slate-100 transition mr-3" aria-label="Toggle menu">
+            <div class="min-[1136px]:hidden flex items-center gap-2 mr-3">
+                <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-700 dark:text-yellow-400" aria-label="Toggle Theme">
+                    <i class="theme-icon fas fa-moon"></i>
+                </button>
+                <button id="mobileMenuButton" onclick="toggleMobileMenu()" class="p-2 rounded-lg text-slate-800 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition" aria-label="Toggle menu">
                     <svg id="menuOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     <svg id="menuClose" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
+            </div>
 
-                <a href="sosial.html" class="hidden min-[1136px]:inline-block bg-slate-900 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-green-700 transition-all shadow-md active:scale-95">Hubungi Kami</a>
+                <a href="sosial.html" class="hidden min-[1136px]:inline-block bg-slate-900 dark:bg-green-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-green-700 dark:hover:bg-green-500 transition-all shadow-md active:scale-95">Hubungi Kami</a>
             </div>
             <!-- Mobile dropdown menu (rounded, translucent, blurred) -->
-                <div id="mobileMenu" class="min-[1136px]:hidden hidden absolute right-6 top-full mt-2 w-64 rounded-2xl bg-white/95 border border-slate-100 shadow-xl overflow-hidden z-50" style="backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
+        <div id="mobileMenu" class="min-[1136px]:hidden hidden absolute right-6 top-full mt-2 w-64 rounded-2xl bg-white/95 dark:bg-slate-900/95 border border-slate-100 dark:border-slate-800 shadow-xl overflow-hidden z-50" style="backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
                 <div class="px-4 py-3 space-y-2">
-                    <a href="#" class="block text-slate-900 font-semibold py-3 px-3 rounded-lg hover:bg-green-50 hover:text-green-700 transition">Home</a>
-                    <a href="booking.html" class="block text-slate-900 font-semibold py-3 px-3 rounded-lg hover:bg-green-50 hover:text-green-700 transition">Booking</a>
-                    <a href="#section-promo" class="block text-slate-900 font-semibold py-3 px-3 rounded-lg hover:bg-green-50 hover:text-green-700 transition">Promo</a>
-                    <a href="#pemilik-kost" class="block text-slate-900 font-semibold py-3 px-3 rounded-lg hover:bg-green-50 hover:text-green-700 transition">Pemilik Kost</a>
-                    <a href="#visi-misi" class="block text-slate-900 font-semibold py-3 px-3 rounded-lg hover:bg-green-50 hover:text-green-700 transition">Visi &amp; Misi</a>
-                    <a href="#section-aturan" class="block text-slate-900 font-semibold py-3 px-3 rounded-lg hover:bg-green-50 hover:text-green-700 transition">Aturan &amp; Etika</a>
-                    <a href="#testimoni" class="block text-slate-900 font-semibold py-3 px-3 rounded-lg hover:bg-green-50 hover:text-green-700 transition">Testimoni</a>
+                <a href="#" class="block text-slate-900 dark:text-slate-100 font-semibold py-3 px-3 rounded-lg hover:bg-green-50 dark:hover:bg-slate-800 hover:text-green-700 transition">Home</a>
+                <a href="booking.html" class="block text-slate-900 dark:text-slate-100 font-semibold py-3 px-3 rounded-lg hover:bg-green-50 dark:hover:bg-slate-800 hover:text-green-700 transition">Booking</a>
+                <a href="#section-promo" class="block text-slate-900 dark:text-slate-100 font-semibold py-3 px-3 rounded-lg hover:bg-green-50 dark:hover:bg-slate-800 hover:text-green-700 transition">Promo</a>
+                <a href="#pemilik-kost" class="block text-slate-900 dark:text-slate-100 font-semibold py-3 px-3 rounded-lg hover:bg-green-50 dark:hover:bg-slate-800 hover:text-green-700 transition">Pemilik Kost</a>
+                <a href="#visi-misi" class="block text-slate-900 dark:text-slate-100 font-semibold py-3 px-3 rounded-lg hover:bg-green-50 dark:hover:bg-slate-800 hover:text-green-700 transition">Visi &amp; Misi</a>
+                <a href="#section-aturan" class="block text-slate-900 dark:text-slate-100 font-semibold py-3 px-3 rounded-lg hover:bg-green-50 dark:hover:bg-slate-800 hover:text-green-700 transition">Aturan &amp; Etika</a>
+                <a href="#testimoni" class="block text-slate-900 dark:text-slate-100 font-semibold py-3 px-3 rounded-lg hover:bg-green-50 dark:hover:bg-slate-800 hover:text-green-700 transition">Testimoni</a>
                     <a href="sosial.html" class="block text-white bg-green-600 text-center rounded-lg py-3 font-bold mt-2 hover:bg-green-700 transition">Hubungi Kami</a>
                 </div>
             </div>
@@ -119,24 +197,27 @@
 
     <!-- Hero Section -->
     <header class="relative pt-44 pb-32 px-6 overflow-hidden reveal">
+        <!-- Decorative Blobs for Glassmorphism Effect -->
+        <div class="absolute inset-0 overflow-hidden -z-20">
+            <div class="absolute -top-20 -right-20 w-[32rem] h-[32rem] bg-green-400 rounded-full filter blur-[100px] opacity-80 dark:opacity-50 animate-pulse"></div>
+            <div class="absolute top-20 -left-20 w-[32rem] h-[32rem] bg-emerald-400 rounded-full filter blur-[100px] opacity-80 dark:opacity-50 animate-pulse"></div>
+        </div>
         <div class="hero-gradient absolute inset-0 -z-10"></div>
         <div class="max-w-6xl mx-auto text-center relative z-10">
             <div class="inline-block px-4 py-1.5 bg-white/10 backdrop-blur-md rounded-full text-white text-xs font-bold tracking-widest uppercase mb-8 border border-white/20">
                 Hunian Premium Tahun 2025/2026
             </div>
-            <h1 class="text-5xl md:text-7xl font-extrabold text-slate-900 mb-8 tracking-tight leading-[1.1]">
-                Temukan Kenyamanan <br> <span class="text-green-700">Rumah Kedua Anda</span>
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-8 tracking-tight leading-[1.1]">
+                <span class="text-slate-900 dark:text-white text-glow">Temukan Kenyamanan</span> <br> 
+                <span class="text-green-600 dark:text-green-400 text-glow-green">Rumah Kedua Anda</span>
             </h1>
             
         </div>
-        <!-- Decorative blobs -->
-        <div class="absolute top-1/2 left-0 w-64 h-64 bg-green-400/20 blur-[100px] rounded-full animate-float pointer-events-none"></div>
-        <div class="absolute bottom-0 right-0 w-96 h-96 bg-green-500/20 blur-[120px] rounded-full animate-float-delayed pointer-events-none"></div>
     </header>
 
     <!-- Floating Features Box (Tengah Header & Section Selanjutnya) -->
     <div class="relative z-20 -mt-20 max-w-5xl mx-auto px-4 md:px-6 reveal">
-        <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] shadow-xl p-4 md:p-8 lg:p-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6 border border-slate-100">
+        <div class="bg-white dark:bg-slate-800 rounded-[1.5rem] md:rounded-[2rem] shadow-xl p-4 md:p-8 lg:p-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6 border border-slate-100 dark:border-slate-700">
             
             <!-- Item 1 -->
             <div class="flex items-center gap-3 md:gap-5 w-full md:w-auto group cursor-default hover:-translate-y-1 transition-all duration-300">
@@ -144,8 +225,8 @@
                     <i class="fas fa-map-marker-alt text-base md:text-2xl group-hover:animate-bounce"></i>
                 </div>
                 <div>
-                    <h3 class="font-bold text-slate-900 text-sm md:text-lg leading-tight">Lokasi Strategis</h3>
-                    <p class="text-xs md:text-sm text-slate-500 mt-0.5">Akses mudah ke kampus & kota</p>
+                    <h3 class="font-bold text-slate-900 dark:text-white text-sm md:text-lg leading-tight">Lokasi Strategis</h3>
+                    <p class="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-0.5">Akses mudah ke kampus & kota</p>
                 </div>
             </div>
 
@@ -157,8 +238,8 @@
                     <i class="fas fa-star text-base md:text-2xl group-hover:rotate-180 transition-transform duration-500"></i>
                 </div>
                 <div>
-                    <h3 class="font-bold text-slate-900 text-sm md:text-lg leading-tight">Fasilitas Premium</h3>
-                    <p class="text-xs md:text-sm text-slate-500 mt-0.5">Kamar luas & full furnished</p>
+                    <h3 class="font-bold text-slate-900 dark:text-white text-sm md:text-lg leading-tight">Fasilitas Premium</h3>
+                    <p class="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-0.5">Kamar luas & full furnished</p>
                 </div>
             </div>
 
@@ -170,8 +251,8 @@
                     <i class="fas fa-shield-alt text-base md:text-2xl group-hover:-rotate-12 transition-transform duration-300"></i>
                 </div>
                 <div>
-                    <h3 class="font-bold text-slate-900 text-sm md:text-lg leading-tight">Keamanan 24/7</h3>
-                    <p class="text-xs md:text-sm text-slate-500 mt-0.5">CCTV & Akses terpantau</p>
+                    <h3 class="font-bold text-slate-900 dark:text-white text-sm md:text-lg leading-tight">Keamanan 24/7</h3>
+                    <p class="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-0.5">CCTV & Akses terpantau</p>
                 </div>
             </div>
 
@@ -179,7 +260,7 @@
     </div>
 
     <!-- Lokasi 1 -->
-    <section id="kost-lokasi-1" class="relative py-24 px-6 bg-gradient-to-b from-green-50/50 to-white overflow-hidden reveal">
+    <section id="kost-lokasi-1" class="relative py-24 px-6 bg-transparent overflow-hidden reveal transition-colors duration-300">
         <div class="absolute inset-0 opacity-[0.03] pattern-dots pointer-events-none"></div>
         <div class="max-w-7xl mx-auto">
             <div class="flex flex-col min-[1025px]:flex-row items-start min-[1025px]:items-center gap-0 min-[1025px]:gap-20">
@@ -210,58 +291,58 @@
                         <span class="w-2 h-2 bg-green-600 rounded-full animate-pulse"></span>
                         Lokasi 1: Kawasan Pemukiman Strategis
                     </div>
-                    <h2 class="order-1 min-[1025px]:order-none text-4xl font-extrabold text-slate-900 mb-6 leading-tight">ACARYA KOST 1 - BTN BANYUNING LESTARI</h2>
-                    <p class="order-3 min-[1025px]:order-none text-lg text-slate-600 mb-8 text-justify">Hunian yang ramai dengan fasilitas yang lengkap. Kami menghadirkan konsep hunian yang dinamis di mana privasi kamar Anda berpadu sempurna dengan ruang sosial yang hidup. Tata ruang kami memaksimalkan interaksi. Bagi Anda yang mencintai diskusi, haus akan wawasan baru, dan menikmati energi lingkungan yang ramai,  tepat untuk tumbuh dan memperluas jaringan.</p>
+                    <h2 class="order-1 min-[1025px]:order-none text-4xl font-extrabold text-slate-900 dark:text-white mb-6 leading-tight">ACARYA KOST 1 - BTN BANYUNING LESTARI</h2>
+                    <p class="order-3 min-[1025px]:order-none text-lg text-slate-600 dark:text-slate-300 mb-8 text-justify">Hunian yang ramai dengan fasilitas yang lengkap. Kami menghadirkan konsep hunian yang dinamis di mana privasi kamar Anda berpadu sempurna dengan ruang sosial yang hidup. Tata ruang kami memaksimalkan interaksi. Bagi Anda yang mencintai diskusi, haus akan wawasan baru, dan menikmati energi lingkungan yang ramai,  tepat untuk tumbuh dan memperluas jaringan.</p>
                     
                     
                     <div class="order-3 min-[1025px]:order-none grid grid-cols-2 gap-4 mb-10">
-                        <div class="flex items-center gap-3 text-slate-700">
-                            <div class="p-2 bg-slate-50 rounded-lg text-green-600">
+                        <div class="flex items-center gap-3 text-slate-700 dark:text-slate-200">
+                            <div class="p-2 bg-slate-50 dark:bg-slate-800 rounded-lg text-green-600">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                             </div>
                             <span class="font-medium">AC</span>
                         </div>
-                        <div class="flex items-center gap-3 text-slate-700">
-                            <div class="p-2 bg-slate-50 rounded-lg text-green-600">
+                    <div class="flex items-center gap-3 text-slate-700 dark:text-slate-200">
+                        <div class="p-2 bg-slate-50 dark:bg-slate-800 rounded-lg text-green-600">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                             </div>
-                            <span class="font-medium">KM Dalam lengkap</span>
+                            <span class="font-medium">KM DALAM LENGKAP</span>
                         </div>
-                        <div class="flex items-center gap-3 text-slate-700">
-                            <div class="p-2 bg-slate-50 rounded-lg text-green-600">
+                    <div class="flex items-center gap-3 text-slate-700 dark:text-slate-200">
+                        <div class="p-2 bg-slate-50 dark:bg-slate-800 rounded-lg text-green-600">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                             </div>
-                            <span class="font-medium">Free Wifi</span>
+                            <span class="font-medium">FREE WIFI</span>
                         </div>
-                        <div class="flex items-center gap-3 text-slate-700">
-                            <div class="p-2 bg-slate-50 rounded-lg text-green-600">
+                    <div class="flex items-center gap-3 text-slate-700 dark:text-slate-200">
+                        <div class="p-2 bg-slate-50 dark:bg-slate-800 rounded-lg text-green-600">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                             </div>
-                            <span class="font-medium">hangout place</span>
+                            <span class="font-medium">HANGOUT PLACE</span>
                         </div>
-                        <div class="flex items-center gap-3 text-slate-700">
-                            <div class="p-2 bg-slate-50 rounded-lg text-green-600">
+                    <div class="flex items-center gap-3 text-slate-700 dark:text-slate-200">
+                        <div class="p-2 bg-slate-50 dark:bg-slate-800 rounded-lg text-green-600">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                             </div>
-                            <span class="font-medium">Inside Kitchen</span>
+                            <span class="font-medium">INSIDE KITCHEN</span>
                         </div>
-                        <div class="flex items-center gap-3 text-slate-700">
-                            <div class="p-2 bg-slate-50 rounded-lg text-green-600">
+                    <div class="flex items-center gap-3 text-slate-700 dark:text-slate-200">
+                        <div class="p-2 bg-slate-50 dark:bg-slate-800 rounded-lg text-green-600">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                             </div>
-                            <span class="font-medium">singgle bed </span>
+                            <span class="font-medium">SINGGLE BED </span>
                         </div>
-                        <div class="flex items-center gap-3 text-slate-700">
-                            <div class="p-2 bg-slate-50 rounded-lg text-green-600">
+                    <div class="flex items-center gap-3 text-slate-700 dark:text-slate-200">
+                        <div class="p-2 bg-slate-50 dark:bg-slate-800 rounded-lg text-green-600">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                             </div>
-                            <span class="font-medium">Study desk </span>
+                            <span class="font-medium">STUDY DESK </span>
                         </div>
-                        <div class="flex items-center gap-3 text-slate-700">
-                            <div class="p-2 bg-slate-50 rounded-lg text-green-600">
+                    <div class="flex items-center gap-3 text-slate-700 dark:text-slate-200">
+                        <div class="p-2 bg-slate-50 dark:bg-slate-800 rounded-lg text-green-600">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                             </div>
-                            <span class="font-medium">Cupboard  </span>
+                            <span class="font-medium">CUPBOARD  </span>
                         </div>
                     </div>
                     
@@ -293,7 +374,7 @@
     </div>
 
     <!-- Lokasi 2 -->
-    <section id="kost-lokasi-2" class="relative py-24 px-6 bg-gradient-to-b from-green-50/50 to-white overflow-hidden reveal">
+    <section id="kost-lokasi-2" class="relative py-24 px-6 bg-transparent overflow-hidden reveal transition-colors duration-300">
         <div class="absolute inset-0 opacity-[0.03] pattern-dots pointer-events-none"></div>
         <div class="max-w-7xl mx-auto">
             <div class="flex flex-col min-[1025px]:flex-row-reverse items-start min-[1025px]:items-center gap-0 min-[1025px]:gap-20">
@@ -324,40 +405,71 @@
                         <span class="w-2 h-2 bg-green-600 rounded-full animate-pulse"></span>
                         Lokasi 2: kawasan semi pedesaan
                     </div>
-                    <h2 class="order-1 min-[1025px]:order-none text-4xl font-extrabold text-slate-900 mb-6 leading-tight">ACARYA KOST 2 - DESA PADANG KELING</h2>
-                    <p class="order-3 min-[1025px]:order-none text-lg text-slate-600 mb-8 text-justify">Kami menghadirkan konsep Compact Luxury Apartment yang revolusioner. Setiap unit didesain secara efisien dengan interior mewah, menciptakan ruang yang intim namun berkelas. Keunggulan utama kami terletak pada lokasinya: tersembunyi jauh dari hiruk-pikuk pemukiman padat. Di sini, Anda tidak akan mendengar kebisingan tetangga atau keramaian jalanan. Yang ada hanyalah suasana hening yang kondusif untuk memaksimalkan konsentrasi belajar Anda dan menjamin kualitas tidur yang sempurna.</p>
+                    <h2 class="order-1 min-[1025px]:order-none text-4xl font-extrabold text-slate-900 dark:text-white mb-6 leading-tight">ACARYA KOST 2 - DESA PADANG KELING</h2>
+                    <p class="order-3 min-[1025px]:order-none text-lg text-slate-600 dark:text-slate-300 mb-8 text-justify">Kami menghadirkan konsep Compact Luxury Apartment yang revolusioner. Setiap unit didesain secara efisien dengan interior mewah, menciptakan ruang yang intim namun berkelas. Keunggulan utama kami terletak pada lokasinya: tersembunyi jauh dari hiruk-pikuk pemukiman padat. Di sini, Anda tidak akan mendengar kebisingan tetangga atau keramaian jalanan. Yang ada hanyalah suasana hening yang kondusif untuk memaksimalkan konsentrasi belajar Anda dan menjamin kualitas tidur yang sempurna.</p>
                     
                     
                     <div class="order-3 min-[1025px]:order-none grid grid-cols-2 gap-4 mb-10">
-                        <div class="flex items-center gap-3 text-slate-700">
-                            <div class="p-2 bg-white rounded-lg text-green-600">
+                        <div class="flex items-center gap-3 text-slate-700 dark:text-slate-200">
+                            <div class="p-2 bg-white dark:bg-slate-800 rounded-lg text-green-600">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                             </div>
-                            <span class="font-medium">Parkir Luas & Aman</span>
+                            <span class="font-medium">SPACIOUS AND SAFE PARKING</span>
                         </div>
-                         <div class="flex items-center gap-3 text-slate-700">
-                            <div class="p-2 bg-slate-50 rounded-lg text-green-600">
+                    
+                     <div class="flex items-center gap-3 text-slate-700 dark:text-slate-200">
+                        <div class="p-2 bg-slate-50 dark:bg-slate-800 rounded-lg text-green-600">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                             </div>
-                            <span class="font-medium">Inside Kitchen</span>
+                            <span class="font-medium">INSIDE KITCHEN</span>
                         </div>
-                        <div class="flex items-center gap-3 text-slate-700">
-                            <div class="p-2 bg-slate-50 rounded-lg text-green-600">
+                    <div class="flex items-center gap-3 text-slate-700 dark:text-slate-200">
+                        <div class="p-2 bg-slate-50 dark:bg-slate-800 rounded-lg text-green-600">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                             </div>
-                            <span class="font-medium">Study desk </span>
+                            <span class="font-medium">STUDY DESK  </span>
                         </div>
-                        <div class="flex items-center gap-3 text-slate-700">
-                            <div class="p-2 bg-white rounded-lg text-green-600">
+                    <div class="flex items-center gap-3 text-slate-700 dark:text-slate-200">
+                        <div class="p-2 bg-white dark:bg-slate-800 rounded-lg text-green-600">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                             </div>
-                            <span class="font-medium">Free Wifi</span>
+                            <span class="font-medium">FREE WIFI</span>
                         </div>
-                        <div class="flex items-center gap-3 text-slate-700">
-                            <div class="p-2 bg-white rounded-lg text-green-600">
+                    <div class="flex items-center gap-3 text-slate-700 dark:text-slate-200">
+                        <div class="p-2 bg-white dark:bg-slate-800 rounded-lg text-green-600">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                             </div>
-                            <span class="font-medium">singgle bed </span>
+                            <span class="font-medium">SINGGLE BED </span>
+                        </div>
+                    <div class="flex items-center gap-3 text-slate-700 dark:text-slate-200">
+                        <div class="p-2 bg-white dark:bg-slate-800 rounded-lg text-green-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <span class="font-medium">AC </span>
+                        </div>
+                    <div class="flex items-center gap-3 text-slate-700 dark:text-slate-200">
+                        <div class="p-2 bg-white dark:bg-slate-800 rounded-lg text-green-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <span class="font-medium">HANGOUT PLACE</span>
+                        </div>
+                    <div class="flex items-center gap-3 text-slate-700 dark:text-slate-200">
+                        <div class="p-2 bg-white dark:bg-slate-800 rounded-lg text-green-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <span class="font-medium">TV</span>
+                        </div>
+                    <div class="flex items-center gap-3 text-slate-700 dark:text-slate-200">
+                        <div class="p-2 bg-white dark:bg-slate-800 rounded-lg text-green-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <span class="font-medium">CUPBOARD</span>
+                        </div>
+                    <div class="flex items-center gap-3 text-slate-700 dark:text-slate-200">
+                        <div class="p-2 bg-white dark:bg-slate-800 rounded-lg text-green-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <span class="font-medium">SHOE CABINET</span>
                         </div>
 
                     </div>
@@ -373,14 +485,14 @@
 
     <!-- Separator: Event & Kegiatan Warga -->
     <div class="relative z-20 -mt-12 max-w-4xl mx-auto px-4 md:px-6 reveal">
-        <div class="bg-white rounded-2xl md:rounded-[2rem] shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-4 md:p-8 flex items-center justify-between gap-3 md:gap-6 border border-slate-100 group">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl md:rounded-[2rem] shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-4 md:p-8 flex items-center justify-between gap-3 md:gap-6 border border-slate-100 dark:border-slate-700 group">
             <div class="flex items-center gap-3 md:gap-5">
                 <div class="w-10 h-10 md:w-16 md:h-16 bg-teal-50 rounded-full flex items-center justify-center text-teal-600 flex-shrink-0">
                     <i class="fas fa-calendar-check text-base md:text-3xl group-hover:scale-110 group-hover:rotate-12 transition-transform"></i>
                 </div>
                 <div>
-                    <h3 class="font-bold text-slate-900 text-sm md:text-xl leading-tight">Kegiatan Kekeluargaan</h3>
-                    <p class="text-slate-500 mt-0.5 text-[10px] md:text-base leading-tight line-clamp-2 md:line-clamp-none">Nonton bareng & acara bakar-bakar rutin warga kost setiap bulan.</p>
+                    <h3 class="font-bold text-slate-900 dark:text-white text-sm md:text-xl leading-tight">Kegiatan Kekeluargaan</h3>
+                    <p class="text-slate-500 dark:text-slate-400 mt-0.5 text-[10px] md:text-base leading-tight line-clamp-2 md:line-clamp-none">Nonton bareng & acara bakar-bakar rutin warga kost setiap bulan.</p>
                 </div>
             </div>
             <a href="aturan&etika.html" class="flex-shrink-0 px-3 py-2 md:px-6 md:py-3 bg-slate-900 text-white font-bold text-xs md:text-base rounded-lg md:rounded-xl hover:bg-slate-800 transition shadow-lg whitespace-nowrap text-center">
@@ -394,7 +506,6 @@
         
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f8fafc;
         }
 
         .section-title {
@@ -453,9 +564,9 @@
                     <div class="order-1 min-[1025px]:order-none w-full px-4 sm:px-0">
                         
                         <span class="text-green-600 font-bold tracking-widest uppercase text-xs">Pesan dari Pemilik</span>
-                        <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900 mt-2">MENGENAL BAPAK ANOM DAN BU SRI.</h2>
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white mt-2">MENGENAL BAPAK ANOM DAN BU SRI.</h2>
                     </div>
-                    <p class="order-3 min-[1025px]:order-none text-base sm:text-lg md:text-xl text-slate-600 leading-relaxed font-light px-4 sm:px-0 text-justify">
+                <p class="order-3 min-[1025px]:order-none text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-300 leading-relaxed font-light px-4 sm:px-0 text-justify">
                         "Rumah bukan hanya tentang seberapa kokoh bangunan berdiri, tapi tentang kehangatan jiwa-jiwa yang ada di dalamnya. Di sini, kami berkomitmen menciptakan lebih dari sekadar tempat berteduh. Kami membangun sebuah sanctuary (tempat perlindungan) di mana setiap penghuni tidak hanya sekadar tinggal, tetapi benar-benar merasa pulang. 
                     </p>
                     
@@ -467,31 +578,35 @@
     <section id="visi-misi" class="relative reveal scroll-mt-32">
             <div class="absolute -inset-10 opacity-[0.05] pattern-dots pointer-events-none -z-10"></div>
             <div class="text-center max-w-2xl mx-auto mb-16">
-                <h2 class="text-3xl font-extrabold text-slate-900 section-title mb-6">Visi & Misi</h2>
-                    <p class="text-slate-500">Landasan kami dalam memberikan pelayanan terbaik bagi setiap penghuni Kost Nyaman.</p>
+                <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white section-title mb-6">Visi & Misi</h2>
+                    <p class="text-slate-500 dark:text-slate-400">Landasan kami dalam memberikan pelayanan terbaik bagi setiap penghuni Kost Nyaman.</p>
                     
             </div>
             <div class="grid md:grid-cols-2 gap-8">
-                <div class="group bg-white p-10 rounded-[2.5rem] shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-slate-100 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                <div class="group bg-white dark:bg-slate-800 p-10 rounded-[2.5rem] shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-slate-100 dark:border-slate-700 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-8 opacity-5 dark:opacity-10 group-hover:opacity-10 dark:group-hover:opacity-20 transition-opacity">
                         <i class="fas fa-eye text-9xl"></i>
                     </div>
-                    <div class="w-14 h-14 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center mb-6">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-14 h-14 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center flex-shrink-0">
                         <i class="fas fa-eye text-2xl"></i>
                     </div>
-                    <h3 class="text-2xl font-bold mb-4 text-slate-900">Visi Utama</h3>
-                    <p class="text-slate-600 leading-relaxed text-lg text-justify">Menciptakan standar baru hunian kost yang modern, bersih, dan inklusif, di mana setiap individu dapat bertumbuh dengan tenang.</p>
-                    <p class="text-slate-500 mt-4 text-justify">Visi kami adalah menjadi pilihan utama bagi pencari hunian dengan menghadirkan lingkungan yang aman, nyaman, dan mendukung perkembangan pribadi melalui fasilitas berkualitas, layanan profesional, dan komunitas yang ramah.</p>
+                    <h3 class="text-2xl font-bold text-slate-900 dark:text-white">Visi Utama</h3>
+                    </div>
+                    <p class="text-slate-600 dark:text-slate-300 leading-relaxed text-lg text-justify">Menciptakan standar baru hunian kost yang modern, bersih, dan inklusif, di mana setiap individu dapat bertumbuh dengan tenang.</p>
+                    <p class="text-slate-500 dark:text-slate-400 mt-4 text-justify">Visi kami adalah menjadi pilihan utama bagi pencari hunian dengan menghadirkan lingkungan yang aman, nyaman, dan mendukung perkembangan pribadi melalui fasilitas berkualitas, layanan profesional, dan komunitas yang ramah.</p>
                 </div>
 
                 <div class="group bg-slate-900 p-10 rounded-[2.5rem] shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 text-white relative overflow-hidden">
                     <div class="absolute top-0 right-0 p-8 opacity-10">
                         <i class="fas fa-rocket text-8xl text-green-500"></i>
                     </div>
-                    <div class="w-14 h-14 bg-green-500/20 text-green-400 rounded-2xl flex items-center justify-center mb-6">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-14 h-14 bg-green-500/20 text-green-400 rounded-2xl flex items-center justify-center flex-shrink-0">
                         <i class="fas fa-rocket text-2xl"></i>
                     </div>
-                    <h3 class="text-2xl font-bold mb-4">Misi Layanan</h3>
+                    <h3 class="text-2xl font-bold text-white">Misi Layanan</h3>
+                    </div>
                     <p class="text-green-200 mb-4 text-justify">Misi kami fokus pada pelayanan yang responsif dan konsisten: menjaga kebersihan dan keamanan, menyediakan fasilitas yang mendukung produktivitas, serta membangun komunikasi yang transparan dengan penghuni.</p>
                     <ul class="space-y-4 opacity-90">
                         <li class="flex items-center space-x-3">
@@ -501,7 +616,7 @@
                         <li class="flex items-center space-x-3">
                             <i class="fas fa-check text-green-400"></i>
                             <span>Sistem keamanan digital dan terpantau.</span>
-                        </li>
+                        </li>nah itu 
                         <li class="flex items-center space-x-3">
                             <i class="fas fa-check text-green-400"></i>
                             <span>Kebersihan area publik setiap hari.</span>
@@ -539,8 +654,8 @@
         
         <!-- Header Section -->
         <div class="text-center mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-green-900 mb-4">Kata Mereka Tentang Kost Kami</h2>
-            <p class="text-slate-600 max-w-2xl mx-auto">
+        <h2 class="text-3xl md:text-4xl font-bold text-green-900 dark:text-green-500 mb-4">Kata Mereka Tentang Kost Kami</h2>
+        <p class="text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
                 Dengar langsung pengalaman nyaman dari para penghuni yang sudah tinggal bersama kami.
             </p>
         </div>
@@ -549,8 +664,8 @@
         <div class="relative overflow-hidden p-4">
             
             <!-- Gradient Fade Mask Kiri & Kanan -->
-            <div class="hidden md:block absolute top-0 bottom-0 left-0 w-16 bg-gradient-to-r from-[#f8fafc] to-transparent z-10 pointer-events-none"></div>
-            <div class="hidden md:block absolute top-0 bottom-0 right-0 w-16 bg-gradient-to-l from-[#f8fafc] to-transparent z-10 pointer-events-none"></div>
+            <div class="hidden md:block absolute top-0 bottom-0 left-0 w-16 bg-gradient-to-r from-slate-50 dark:from-slate-900 to-transparent z-10 pointer-events-none transition-colors duration-300"></div>
+            <div class="hidden md:block absolute top-0 bottom-0 right-0 w-16 bg-gradient-to-l from-slate-50 dark:from-slate-900 to-transparent z-10 pointer-events-none transition-colors duration-300"></div>
             
             <div id="slider-container" class="overflow-hidden py-4 px-0 md:px-4">
                 <div id="slider-track" class="flex animate-scroll group-hover:[animation-play-state:paused]">
@@ -641,19 +756,19 @@
         const renderCards = () => {
             track.innerHTML = testimonials.map((t) => `
                 <div class="testimonial-card-wrapper flex-shrink-0 w-[300px] md:w-[350px] p-3">
-                    <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-100 h-full flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-md border border-slate-100 dark:border-slate-700 h-full flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                         <div>
                             <div class="flex items-center gap-4 mb-4">
                                 <img src="${t.image}" alt="${t.name}" class="w-14 h-14 rounded-full bg-green-50 border-2 border-green-100">
                                 <div>
-                                    <h4 class="font-bold text-slate-900">${t.name}</h4>
+                                <h4 class="font-bold text-slate-900 dark:text-white">${t.name}</h4>
                                     <p class="text-xs text-green-600 font-semibold">${t.role}</p>
                                 </div>
                             </div>
                             <div class="mb-3">${getStars(t.rating)}</div>
-                            <p class="text-slate-600 text-sm leading-relaxed italic">"${t.text}"</p>
+                        <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed italic">"${t.text}"</p>
                         </div>
-                        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+                    <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
                             <span class="text-xs text-slate-400"><i class="fas fa-clock mr-1"></i> Penghuni ${t.stayDuration}</span>
                             <i class="fas fa-quote-right text-slate-200 text-2xl"></i>
                         </div>
@@ -705,15 +820,27 @@
     <script>
         // Simple navbar interaction on scroll
         window.onscroll = function() {
+            // Animasi Bintang Parallax
+            const scrolled = window.scrollY;
+            const star1 = document.getElementById('star-layer-1');
+            const star2 = document.getElementById('star-layer-2');
+            if (star1) star1.style.backgroundPositionY = -(scrolled * 0.4) + 'px';
+            if (star2) star2.style.backgroundPositionY = -(scrolled * 0.2) + 'px';
+
             const nav = document.querySelector('nav');
+            const glass = nav.querySelector('.glass');
             if (window.scrollY > 50) {
                 nav.classList.add('py-2');
-                nav.querySelector('.glass').classList.remove('bg-white/70');
-                nav.querySelector('.glass').classList.add('bg-white/95');
+                if (glass) {
+                    glass.classList.remove('bg-white/70', 'dark:bg-slate-900/70');
+                    glass.classList.add('bg-white/95', 'dark:bg-slate-900/95');
+                }
             } else {
                 nav.classList.remove('py-2');
-                nav.querySelector('.glass').classList.add('bg-white/70');
-                nav.querySelector('.glass').classList.remove('bg-white/95');
+                if (glass) {
+                    glass.classList.add('bg-white/70', 'dark:bg-slate-900/70');
+                    glass.classList.remove('bg-white/95', 'dark:bg-slate-900/95');
+                }
             }
         };
 
@@ -752,27 +879,43 @@
                 if (close) close.classList.add('hidden');
             });
         });
+
+        // Theme Toggle Logic
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateThemeIcon();
+        }
+        function updateThemeIcon() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const icons = document.querySelectorAll('.theme-icon');
+            icons.forEach(icon => {
+                icon.className = isDark ? 'theme-icon fas fa-sun text-yellow-400' : 'theme-icon fas fa-moon text-slate-700';
+            });
+        }
+        document.addEventListener('DOMContentLoaded', updateThemeIcon);
     </script>
 
     <!-- Floating Quick Action (Speed Dial) -->
     <div class="fixed bottom-6 right-6 z-[100] flex flex-col items-end gap-3 group p-2 rounded-3xl transition-all duration-300">
         <!-- Secondary Buttons (Hidden by default, show on hover) -->
         <div class="flex flex-col gap-3 items-end origin-bottom scale-0 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-300 pointer-events-none group-hover:pointer-events-auto">
-            <a href="https://wa.me/628124671508" target="_blank" class="flex items-center gap-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg hover:shadow-xl hover:bg-white border border-slate-100 transition-all transform hover:-translate-x-1">
-                <span class="text-sm font-bold text-slate-700">Chat Admin</span>
+            <a href="https://wa.me/628124671508" target="_blank" class="flex items-center gap-3 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg hover:shadow-xl hover:bg-white dark:hover:bg-slate-700 border border-slate-100 dark:border-slate-600 transition-all transform hover:-translate-x-1">
+                <span class="text-sm font-bold text-slate-700 dark:text-slate-200">Chat Admin</span>
                 <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white"><i class="fab fa-whatsapp"></i></div>
             </a>
-            <a href="booking.html" class="flex items-center gap-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg hover:shadow-xl hover:bg-white border border-slate-100 transition-all transform hover:-translate-x-1">
-                <span class="text-sm font-bold text-slate-700">Pesan Kamar</span>
+            <a href="booking.html" class="flex items-center gap-3 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg hover:shadow-xl hover:bg-white dark:hover:bg-slate-700 border border-slate-100 dark:border-slate-600 transition-all transform hover:-translate-x-1">
+                <span class="text-sm font-bold text-slate-700 dark:text-slate-200">Pesan Kamar</span>
                 <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white"><i class="fas fa-bed"></i></div>
             </a>
-            <a href="aturan&etika.html" class="flex items-center gap-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg hover:shadow-xl hover:bg-white border border-slate-100 transition-all transform hover:-translate-x-1">
-                <span class="text-sm font-bold text-slate-700">Pusat Info</span>
+            <a href="aturan&etika.html" class="flex items-center gap-3 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg hover:shadow-xl hover:bg-white dark:hover:bg-slate-700 border border-slate-100 dark:border-slate-600 transition-all transform hover:-translate-x-1">
+                <span class="text-sm font-bold text-slate-700 dark:text-slate-200">Pusat Info</span>
                 <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white"><i class="fas fa-info"></i></div>
             </a>
         </div>
         <!-- Main Button -->
-        <button class="w-14 h-14 bg-slate-900 text-white rounded-full shadow-2xl flex items-center justify-center text-2xl hover:bg-slate-800 hover:scale-110 transition-all focus:outline-none border-2 border-white/20">
+        <button class="w-14 h-14 bg-slate-900 dark:bg-slate-700 text-white rounded-full shadow-2xl flex items-center justify-center text-2xl hover:bg-slate-800 dark:hover:bg-slate-600 hover:scale-110 transition-all focus:outline-none border-2 border-white/20">
             <i class="fas fa-bolt group-hover:hidden"></i>
             <i class="fas fa-times hidden group-hover:block transition-transform duration-300 rotate-90 group-hover:rotate-0"></i>
         </button>

@@ -7,18 +7,40 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    <script>
+        // Init Theme
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+        
+        // Sinkronisasi tema antar tab
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'theme') {
+                if (e.newValue === 'dark') {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            }
+        });
+    </script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f3e8ff; /* Light Purple Bg */ }
+        body { font-family: 'Inter', sans-serif; background-color: #ffffff; }
         .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .card-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(107, 33, 168, 0.1), 0 4px 6px -2px rgba(107, 33, 168, 0.05); }
         .search-focus:focus-within { ring: 2px solid #9333ea; border-color: #9333ea; box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.1); }
         .form-gradient { background: linear-gradient(135deg, #7e22ce, #a855f7); }
     </style>
 </head>
-<body class="min-h-screen flex flex-col text-slate-800">
+<body class="bg-white dark:bg-slate-900 min-h-screen flex flex-col text-slate-800 dark:text-slate-100 transition-colors duration-300">
 
     <!-- Hero Section / Header -->
-    <header class="bg-white border-b border-purple-100 sticky top-0 z-30 shadow-sm">
+    <header class="bg-white dark:bg-slate-900 border-b border-purple-100 dark:border-slate-800 sticky top-0 z-30 shadow-sm transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex flex-col md:flex-row items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
@@ -26,7 +48,7 @@
                         <i class="fas fa-file-signature text-xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-xl font-bold text-slate-800">Portal Formulir</h1>
+                        <h1 class="text-xl font-bold text-slate-800 dark:text-white">Portal Formulir</h1>
                         <p class="text-xs text-purple-600 font-medium">Pusat Akses Google Forms</p>
                     </div>
                 </div>
@@ -37,7 +59,7 @@
                         <i class="fas fa-search text-slate-400 group-focus-within:text-purple-500"></i>
                     </div>
                     <input type="text" id="search-input" onkeyup="filterResources()" 
-                        class="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg leading-5 bg-slate-50 placeholder-slate-400 focus:outline-none focus:bg-white transition duration-150 ease-in-out sm:text-sm"
+                        class="block w-full pl-10 pr-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg leading-5 bg-slate-50 dark:bg-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:bg-white dark:focus:bg-slate-700 transition duration-150 ease-in-out sm:text-sm"
                         placeholder="Cari form pendaftaran, pembayaran...">
                 </div>
             </div>
@@ -49,10 +71,10 @@
         
         <!-- Filter Categories -->
         <div class="flex flex-wrap gap-2 mb-8 justify-center md:justify-start">
-            <button onclick="filterType('all')" class="filter-btn active px-4 py-1.5 rounded-full text-sm font-medium bg-purple-600 text-white shadow-sm hover:bg-purple-700 transition">Semua</button>
-            <button onclick="filterType('pendaftaran')" class="filter-btn px-4 py-1.5 rounded-full text-sm font-medium bg-white text-slate-600 border border-slate-200 hover:bg-purple-50 hover:text-purple-600 transition">Pendaftaran</button>
-            <button onclick="filterType('survei')" class="filter-btn px-4 py-1.5 rounded-full text-sm font-medium bg-white text-slate-600 border border-slate-200 hover:bg-purple-50 hover:text-purple-600 transition">Survei</button>
-            <button onclick="filterType('pembayaran')" class="filter-btn px-4 py-1.5 rounded-full text-sm font-medium bg-white text-slate-600 border border-slate-200 hover:bg-purple-50 hover:text-purple-600 transition">Pembayaran</button>
+            <button onclick="filterType('all')" class="filter-btn active px-4 py-1.5 rounded-full text-sm font-medium bg-purple-600 text-white shadow-sm hover:bg-purple-700 transition dark:border-transparent">Semua</button>
+            <button onclick="filterType('pendaftaran')" class="filter-btn px-4 py-1.5 rounded-full text-sm font-medium bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-purple-50 dark:hover:bg-slate-700 hover:text-purple-600 dark:hover:text-purple-400 transition">Pendaftaran</button>
+            <button onclick="filterType('survei')" class="filter-btn px-4 py-1.5 rounded-full text-sm font-medium bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-purple-50 dark:hover:bg-slate-700 hover:text-purple-600 dark:hover:text-purple-400 transition">Survei</button>
+            <button onclick="filterType('pembayaran')" class="filter-btn px-4 py-1.5 rounded-full text-sm font-medium bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-purple-50 dark:hover:bg-slate-700 hover:text-purple-600 dark:hover:text-purple-400 transition">Pembayaran</button>
         </div>
 
         <!-- Grid Container -->
@@ -65,14 +87,14 @@
             <div class="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mb-4">
                 <i class="fas fa-clipboard-question text-purple-300 text-2xl"></i>
             </div>
-            <h3 class="text-lg font-medium text-slate-900">Form tidak ditemukan</h3>
+        <h3 class="text-lg font-medium text-slate-900 dark:text-white">Form tidak ditemukan</h3>
             <p class="text-slate-500">Coba kata kunci pencarian lain.</p>
         </div>
 
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-purple-100 mt-auto">
+    <footer class="bg-white dark:bg-slate-900 border-t border-purple-100 dark:border-slate-800 mt-auto transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 py-6 text-center text-sm text-slate-500">
             &copy; 2024 Portal Formulir Digital.
         </div>
@@ -114,14 +136,6 @@
                 type: "pembayaran",
                 status: "open",
                 deadline: "10 Feb 2024"
-            },
-            {
-                title: "RSVP Gathering Kantor",
-                description: "Konfirmasi kehadiran untuk acara makan malam tahunan.",
-                url: "https://docs.google.com/forms/d/e/example4/viewform",
-                type: "pendaftaran",
-                status: "open",
-                deadline: "20 Des 2024"
             },
             {
                 title: "Survei Kepuasan kost acarya 1",
@@ -175,7 +189,7 @@
             items.forEach(item => {
                 const isClosed = item.status === 'closed';
                 const card = document.createElement('div');
-                card.className = `bg-white rounded-xl shadow-sm border p-5 flex flex-col h-full relative overflow-hidden group ${isClosed ? 'border-gray-100 opacity-70 grayscale-[0.5]' : 'border-purple-100 card-hover'}`;
+            card.className = `bg-white dark:bg-slate-800 rounded-xl shadow-sm border p-5 flex flex-col h-full relative overflow-hidden group ${isClosed ? 'border-gray-100 dark:border-slate-700 opacity-70 grayscale-[0.5]' : 'border-purple-100 dark:border-slate-700 card-hover'}`;
                 
                 card.innerHTML = `
                     <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
@@ -183,7 +197,7 @@
                     </div>
                     
                     <div class="flex items-start justify-between mb-4 z-10">
-                        <div class="bg-purple-50 p-3 rounded-lg shadow-sm">
+                    <div class="bg-purple-50 dark:bg-slate-700 p-3 rounded-lg shadow-sm">
                             ${getIcon(item.type)}
                         </div>
                         <span class="text-[10px] font-bold ${isClosed ? 'text-red-500 bg-red-50' : 'text-green-600 bg-green-50'} px-2 py-1 rounded-full uppercase tracking-wide border ${isClosed ? 'border-red-100' : 'border-green-100'}">
@@ -236,12 +250,12 @@
             buttons.forEach(btn => {
                 if(btn.innerText.toLowerCase().includes(type === 'all' ? 'semua' : type)) {
                     // Active state
-                    btn.classList.remove('bg-white', 'text-slate-600', 'border-slate-200');
-                    btn.classList.add('bg-purple-600', 'text-white', 'border-transparent');
+                btn.classList.remove('bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300', 'border-slate-200', 'dark:border-slate-700');
+                btn.classList.add('bg-purple-600', 'text-white', 'border-transparent', 'dark:border-transparent');
                 } else {
                     // Inactive state
-                    btn.classList.add('bg-white', 'text-slate-600', 'border-slate-200');
-                    btn.classList.remove('bg-purple-600', 'text-white', 'border-transparent');
+                btn.classList.add('bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300', 'border-slate-200', 'dark:border-slate-700');
+                btn.classList.remove('bg-purple-600', 'text-white', 'border-transparent', 'dark:border-transparent');
                 }
             });
 
