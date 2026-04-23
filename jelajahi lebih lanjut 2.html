@@ -75,6 +75,29 @@
         .facility-card.active img {
             transform: scale(1.1);
         }
+        
+        /* Pindahkan efek cahaya ke wrapper agar tidak terpotong oleh overflow-hidden */
+        .facility-card-wrapper {
+            position: relative;
+            z-index: 1;
+        }
+        .facility-card-wrapper::before {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            top: 0; bottom: 0;
+            left: 0.5rem; right: 0.5rem; /* Menyesuaikan px-2 */
+            background: linear-gradient(45deg, #4ade80, #16a34a);
+            filter: blur(20px);
+            opacity: 0;
+            transition: opacity 0.5s;
+            border-radius: 2rem;
+        }
+        @media (min-width: 640px) {
+            .facility-card-wrapper::before { left: 0.75rem; right: 0.75rem; /* Menyesuaikan sm:px-3 */ }
+        }
+        .facility-card-wrapper:hover::before { opacity: 0.6; }
+        .dark .facility-card-wrapper:hover::before { opacity: 0.8; }
 
         #facilitySlider {
             scroll-behavior: smooth;
@@ -303,7 +326,7 @@
                                 
                                 <!-- Card 1: Kamar Tidur Lux -->
                                 <div class="facility-card-wrapper flex-shrink-0 w-[280px] md:w-[320px] px-2 sm:px-3">
-                                    <div class="facility-card relative w-full aspect-[4/5] rounded-[2rem] shadow-md overflow-hidden border border-slate-200 group cursor-pointer" onclick="toggleFacInfo(this)">
+                                    <div class="facility-card relative w-full aspect-[4/5] rounded-[2rem] shadow-md overflow-hidden group cursor-pointer" onclick="toggleFacInfo(this)">
                                         <img src="gambar/interior acarya 2/edit/kasur.png" class="absolute inset-0 w-full h-full object-cover object-[50%_75%] transition-transform duration-500 group-hover:scale-105" alt="Kamar Tidur">
                                         <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm w-10 h-10 flex items-center justify-center rounded-full shadow-sm z-10 text-blue-500">
                                             <i class="fas fa-bed text-lg"></i>
@@ -323,7 +346,7 @@
 
                                 <!-- Card 2: Kamar Mandi -->
                                 <div class="facility-card-wrapper flex-shrink-0 w-[280px] md:w-[320px] px-2 sm:px-3">
-                                    <div class="facility-card relative w-full aspect-[4/5] rounded-[2rem] shadow-md overflow-hidden border border-slate-200 group cursor-pointer" onclick="toggleFacInfo(this)">
+                                    <div class="facility-card relative w-full aspect-[4/5] rounded-[2rem] shadow-md overflow-hidden group cursor-pointer" onclick="toggleFacInfo(this)">
                                         <img src="gambar/interior acarya 2/edit/kamar mandi 3.png" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="Kamar Mandi">
                                         <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm w-10 h-10 flex items-center justify-center rounded-full shadow-sm z-10 text-teal-500">
                                             <i class="fas fa-shower text-lg"></i>
@@ -343,7 +366,7 @@
 
                                 <!-- Card 3: Meja Belajar -->
                                 <div class="facility-card-wrapper flex-shrink-0 w-[280px] md:w-[320px] px-2 sm:px-3">
-                                    <div class="facility-card relative w-full aspect-[4/5] rounded-[2rem] shadow-md overflow-hidden border border-slate-200 group cursor-pointer" onclick="toggleFacInfo(this)">
+                                    <div class="facility-card relative w-full aspect-[4/5] rounded-[2rem] shadow-md overflow-hidden group cursor-pointer" onclick="toggleFacInfo(this)">
                                         <img src="gambar/interior acarya 2/edit/meja belajar.png" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="Ruang Kerja">
                                         <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm w-10 h-10 flex items-center justify-center rounded-full shadow-sm z-10 text-cyan-500">
                                             <i class="fas fa-laptop text-lg"></i>
@@ -363,7 +386,7 @@
 
                                 <!-- Card 4: Tempat Nongkrong -->
                                 <div class="facility-card-wrapper flex-shrink-0 w-[280px] md:w-[320px] px-2 sm:px-3">
-                                    <div class="facility-card relative w-full aspect-[4/5] rounded-[2rem] shadow-md overflow-hidden border border-slate-200 group cursor-pointer" onclick="toggleFacInfo(this)">
+                                    <div class="facility-card relative w-full aspect-[4/5] rounded-[2rem] shadow-md overflow-hidden group cursor-pointer" onclick="toggleFacInfo(this)">
                                         <img src="gambar/interior acarya 2/edit/nongkrong.png" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="Area Santai">
                                         <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm w-10 h-10 flex items-center justify-center rounded-full shadow-sm z-10 text-green-500">
                                             <i class="fas fa-mug-hot text-lg"></i>
@@ -383,7 +406,7 @@
 
                                 <!-- Card 5: Lemari -->
                                 <div class="facility-card-wrapper flex-shrink-0 w-[280px] md:w-[320px] px-2 sm:px-3">
-                                    <div class="facility-card relative w-full aspect-[4/5] rounded-[2rem] shadow-md overflow-hidden border border-slate-200 group cursor-pointer" onclick="toggleFacInfo(this)">
+                                    <div class="facility-card relative w-full aspect-[4/5] rounded-[2rem] shadow-md overflow-hidden group cursor-pointer" onclick="toggleFacInfo(this)">
                                         <img src="gambar/interior acarya 2/edit/lemari tangga.png" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="Lemari">
                                         <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm w-10 h-10 flex items-center justify-center rounded-full shadow-sm z-10 text-purple-500">
                                             <i class="fas fa-box text-lg"></i>
@@ -403,7 +426,7 @@
 
                                 <!-- Card 6: Dapur -->
                                 <div class="facility-card-wrapper flex-shrink-0 w-[280px] md:w-[320px] px-2 sm:px-3">
-                                    <div class="facility-card relative w-full aspect-[4/5] rounded-[2rem] shadow-md overflow-hidden border border-slate-200 group cursor-pointer" onclick="toggleFacInfo(this)">
+                                    <div class="facility-card relative w-full aspect-[4/5] rounded-[2rem] shadow-md overflow-hidden group cursor-pointer" onclick="toggleFacInfo(this)">
                                         <img src="gambar/interior acarya 2/edit/dapur edit.png" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="Dapur">
                                         <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm w-10 h-10 flex items-center justify-center rounded-full shadow-sm z-10 text-red-500">
                                             <i class="fas fa-utensils text-lg"></i>
@@ -464,7 +487,7 @@
                                 <div class="text-2xl font-extrabold text-green-700 mb-4">Rp 13.000.000 <span class="text-xs font-normal text-slate-400">/tahun</span></div>
                                 <ul class="space-y-3 text-slate-600 mb-6 text-sm text-left">
                                     <li class="flex items-center gap-3"><i class="fas fa-star text-yellow-500 w-4"></i><span class="font-bold">diskon pembayaran 1 bulan</span></li>
-                                    <li class="flex items-center gap-3"><i class="fas fa-plus-circle text-orange-500 w-4"></i><span>Smart TV 32 inch</span></li>
+                                    <li class="flex items-center gap-3"><i class="fas fa-plus-circle text-green-500 w-4"></i><span>Smart TV 32 inch</span></li>
                                 </ul>
                             </div>
                             <a href="https://wa.me/6281234567890" class="block text-center bg-green-600 text-white py-2 rounded-xl font-bold hover:bg-green-700 transition">Pesan Sekarang</a>
@@ -486,7 +509,7 @@
                 <!-- Deskripsi Detail Lokasi -->
                 <div class="max-w-2xl mx-auto mb-4 reveal">
                     <p class="text-slate-600 leading-relaxed text-justify">
-                        <span class="dark:text-slate-300">Lokasi kami dirancang dengan cermat untuk memberikan</span> <span class="text-orange-600 font-semibold">ketenangan maksimal</span> dan <span class="text-orange-600 font-semibold">lingkungan yang asri</span>. <span class="dark:text-slate-300">Terletak di area semi-pedesaan yang jauh dari kebisingan jalan raya, menjadikan tempat ini sangat ideal bagi Anda yang membutuhkan ruang fokus tinggi untuk belajar atau sekadar beristirahat dengan optimal.</span>
+                        <span class="dark:text-slate-300">Lokasi kami dirancang dengan cermat untuk memberikan</span> <span class="text-green-600 font-semibold">ketenangan maksimal</span> dan <span class="text-green-600 font-semibold">lingkungan yang asri</span>. <span class="dark:text-slate-300">Terletak di area semi-pedesaan yang jauh dari kebisingan jalan raya, menjadikan tempat ini sangat ideal bagi Anda yang membutuhkan ruang fokus tinggi untuk belajar atau sekadar beristirahat dengan optimal.</span>
                         <span class="dark:text-slate-300">Lokasi kami dirancang dengan cermat untuk memberikan</span> <span class="text-green-600 font-semibold">ketenangan maksimal</span> dan <span class="text-green-600 font-semibold">lingkungan yang asri</span>. <span class="dark:text-slate-300">Terletak di area semi-pedesaan yang jauh dari kebisingan jalan raya, menjadikan tempat ini sangat ideal bagi Anda yang membutuhkan ruang fokus tinggi untuk belajar atau sekadar beristirahat dengan optimal.</span>
                     </p>
                     

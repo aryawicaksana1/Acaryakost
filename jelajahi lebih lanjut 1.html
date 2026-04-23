@@ -53,6 +53,29 @@
         .facility-card.active img {
             transform: scale(1.1);
         }
+        
+        /* Pindahkan efek cahaya ke wrapper agar tidak terpotong oleh overflow-hidden */
+        .facility-card-wrapper {
+            position: relative;
+            z-index: 1;
+        }
+        .facility-card-wrapper::before {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            top: 0; bottom: 0;
+            left: 0.5rem; right: 0.5rem; /* Menyesuaikan px-2 */
+            background: linear-gradient(45deg, #4ade80, #16a34a);
+            filter: blur(20px);
+            opacity: 0;
+            transition: opacity 0.5s;
+            border-radius: 2rem;
+        }
+        @media (min-width: 640px) {
+            .facility-card-wrapper::before { left: 0.75rem; right: 0.75rem; /* Menyesuaikan sm:px-3 */ }
+        }
+        .facility-card-wrapper:hover::before { opacity: 0.6; }
+        .dark .facility-card-wrapper:hover::before { opacity: 0.8; }
 
         .price-card {
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -278,7 +301,7 @@
                                 
                                 <!-- Card 1: WiFi -->
                                 <div class="facility-card-wrapper flex-shrink-0 w-[280px] md:w-[320px] px-2 sm:px-3">
-                                    <div class="facility-card relative w-full aspect-[4/5] rounded-[2rem] shadow-md overflow-hidden border border-slate-200 group cursor-pointer" onclick="toggleFacInfo(this)">
+                                    <div class="facility-card relative w-full aspect-[4/5] rounded-[2rem] shadow-md overflow-hidden group cursor-pointer" onclick="toggleFacInfo(this)">
                                         <div class="absolute inset-0 w-full h-full bg-slate-200 flex items-center justify-center gap-3 text-slate-400 transition-transform duration-500 group-hover:scale-105 px-4">
                                             <div class="w-10 h-10 bg-white/60 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
                                                 <i class="fas fa-image text-lg"></i>
@@ -303,7 +326,7 @@
 
                                 <!-- Card 2: AC -->
                                 <div class="facility-card-wrapper flex-shrink-0 w-[280px] md:w-[320px] px-2 sm:px-3">
-                                    <div class="facility-card relative w-full aspect-[4/5] rounded-[2rem] shadow-md overflow-hidden border border-slate-200 group cursor-pointer" onclick="toggleFacInfo(this)">
+                                    <div class="facility-card relative w-full aspect-[4/5] rounded-[2rem] shadow-md overflow-hidden group cursor-pointer" onclick="toggleFacInfo(this)">
                                         <div class="absolute inset-0 w-full h-full bg-slate-200 flex items-center justify-center gap-3 text-slate-400 transition-transform duration-500 group-hover:scale-105 px-4">
                                             <div class="w-10 h-10 bg-white/60 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
                                                 <i class="fas fa-image text-lg"></i>
@@ -328,7 +351,7 @@
 
                                 <!-- Card 3: Kamar Mandi -->
                                 <div class="facility-card-wrapper flex-shrink-0 w-[280px] md:w-[320px] px-2 sm:px-3">
-                                    <div class="facility-card relative w-full aspect-[4/5] rounded-[2rem] shadow-md overflow-hidden border border-slate-200 group cursor-pointer" onclick="toggleFacInfo(this)">
+                                    <div class="facility-card relative w-full aspect-[4/5] rounded-[2rem] shadow-md overflow-hidden group cursor-pointer" onclick="toggleFacInfo(this)">
                                         <div class="absolute inset-0 w-full h-full bg-slate-200 flex items-center justify-center gap-3 text-slate-400 transition-transform duration-500 group-hover:scale-105 px-4">
                                             <div class="w-10 h-10 bg-white/60 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
                                                 <i class="fas fa-image text-lg"></i>
@@ -353,7 +376,7 @@
 
                                 <!-- Card 4: Dapur -->
                                 <div class="facility-card-wrapper flex-shrink-0 w-[280px] md:w-[320px] px-2 sm:px-3">
-                                    <div class="facility-card relative w-full aspect-[4/5] rounded-[2rem] shadow-md overflow-hidden border border-slate-200 group cursor-pointer" onclick="toggleFacInfo(this)">
+                                    <div class="facility-card relative w-full aspect-[4/5] rounded-[2rem] shadow-md overflow-hidden group cursor-pointer" onclick="toggleFacInfo(this)">
                                         <div class="absolute inset-0 w-full h-full bg-slate-200 flex items-center justify-center gap-3 text-slate-400 transition-transform duration-500 group-hover:scale-105 px-4">
                                             <div class="w-10 h-10 bg-white/60 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
                                                 <i class="fas fa-image text-lg"></i>
@@ -378,7 +401,7 @@
 
                                 <!-- Card 5: Keamanan -->
                                 <div class="facility-card-wrapper flex-shrink-0 w-[280px] md:w-[320px] px-2 sm:px-3">
-                                    <div class="facility-card relative w-full aspect-[4/5] rounded-[2rem] shadow-md overflow-hidden border border-slate-200 group cursor-pointer" onclick="toggleFacInfo(this)">
+                                    <div class="facility-card relative w-full aspect-[4/5] rounded-[2rem] shadow-md overflow-hidden group cursor-pointer" onclick="toggleFacInfo(this)">
                                         <div class="absolute inset-0 w-full h-full bg-slate-200 flex items-center justify-center gap-3 text-slate-400 transition-transform duration-500 group-hover:scale-105 px-4">
                                             <div class="w-10 h-10 bg-white/60 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
                                                 <i class="fas fa-image text-lg"></i>
@@ -403,7 +426,7 @@
 
                                 <!-- Card 6: Parkir -->
                                 <div class="facility-card-wrapper flex-shrink-0 w-[280px] md:w-[320px] px-2 sm:px-3">
-                                    <div class="facility-card relative w-full aspect-[4/5] rounded-[2rem] shadow-md overflow-hidden border border-slate-200 group cursor-pointer" onclick="toggleFacInfo(this)">
+                                    <div class="facility-card relative w-full aspect-[4/5] rounded-[2rem] shadow-md overflow-hidden group cursor-pointer" onclick="toggleFacInfo(this)">
                                         <div class="absolute inset-0 w-full h-full bg-slate-200 flex items-center justify-center gap-3 text-slate-400 transition-transform duration-500 group-hover:scale-105 px-4">
                                             <div class="w-10 h-10 bg-white/60 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
                                                 <i class="fas fa-image text-lg"></i>
