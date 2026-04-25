@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<html lang="id">
 <html lang="id" class="dark">
 <head>
     <meta charset="UTF-8">
@@ -619,7 +618,7 @@
                         <li class="flex items-center space-x-3">
                             <i class="fas fa-check text-green-400"></i>
                             <span>Sistem keamanan digital dan terpantau.</span>
-                        </li>nah itu 
+                        </li>
                         <li class="flex items-center space-x-3">
                             <i class="fas fa-check text-green-400"></i>
                             <span>Kebersihan area publik setiap hari.</span>
@@ -810,8 +809,6 @@
         });
 
     </script>
-</body>
-
 
     <!-- Footer -->
     <footer class=" text-white pt-24 pb-12 px-6">
@@ -827,9 +824,13 @@
                 <i class="fas fa-desktop text-3xl text-blue-500"></i>
             </div>
             <h3 class="text-2xl font-bold text-slate-800 dark:text-white mb-3">Saran Tampilan</h3>
-            <p class="text-slate-600 dark:text-slate-300 mb-8 text-sm leading-relaxed">
+            <p class="text-slate-600 dark:text-slate-300 mb-6 text-sm leading-relaxed">
                 Untuk pengalaman visual dan eksplorasi yang maksimal, kami menyarankan Anda membuka website ini menggunakan <strong>Desktop atau Laptop</strong>.
             </p>
+            <div class="flex items-center justify-center gap-2 mb-6 text-sm text-slate-500 dark:text-slate-400">
+                <input type="checkbox" id="dontShowAgain" class="w-4 h-4 text-green-600 rounded border-slate-300 focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-slate-800 focus:ring-2 dark:bg-slate-700 dark:border-slate-600 cursor-pointer">
+                <label for="dontShowAgain" class="cursor-pointer">Jangan tampilkan pesan ini lagi</label>
+            </div>
             <button onclick="closeDesktopSuggestion()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg hover:shadow-blue-500/30 transform hover:-translate-y-1">
                 Mengerti, Lanjutkan
             </button>
@@ -837,28 +838,35 @@
     </div>
 
     <script>
-        // Logika Notifikasi Saran Desktop (Muncul di Mobile saja)
-        document.addEventListener('DOMContentLoaded', () => {
-            // Cek jika ukuran layar kecil (< 768px) dan belum pernah di-close di sesi ini
-            if (window.innerWidth < 768 && !sessionStorage.getItem('desktopSuggestionClosed')) {
+        // Logika Notifikasi Saran Desktop
+        function checkDesktopSuggestion() {
+            // Cek jika ukuran layar kecil (< 768px) dan belum di-set 'jangan tampilkan lagi'
+            if (window.innerWidth < 768 && !localStorage.getItem('desktopSuggestionClosedForever') && !sessionStorage.getItem('desktopSuggestionClosed')) {
                 const modal = document.getElementById('desktopSuggestion');
                 const content = document.getElementById('desktopSuggestionContent');
                 
-                if (modal) {
+                if (modal && modal.classList.contains('hidden')) {
                     modal.classList.remove('hidden');
                     // Timeout sedikit agar transisi opacity & transform berjalan mulus
                     setTimeout(() => {
                         modal.classList.remove('opacity-0');
-                        content.classList.remove('scale-95');
-                        content.classList.add('scale-100');
+                        if (content) {
+                            content.classList.remove('scale-95');
+                            content.classList.add('scale-100');
+                        }
                     }, 50);
                 }
             }
-        });
+        }
+
+        // Jalankan saat pertama load dan setiap kali ukuran layar ditarik/dikecilkan
+        checkDesktopSuggestion();
+        window.addEventListener('resize', checkDesktopSuggestion);
 
         function closeDesktopSuggestion() {
             const modal = document.getElementById('desktopSuggestion');
             const content = document.getElementById('desktopSuggestionContent');
+            const dontShowAgain = document.getElementById('dontShowAgain');
             
             if (modal) {
                 modal.classList.add('opacity-0');
@@ -869,8 +877,13 @@
                     modal.classList.add('hidden');
                 }, 300); // Sesuai durasi transisi Tailwind (duration-300)
                 
-                // Simpan data di session storage agar tidak muncul lagi saat di-refresh
+                // Simpan di session storage agar tidak muncul lagi saat refresh
                 sessionStorage.setItem('desktopSuggestionClosed', 'true');
+
+                // Jika checkbox dicentang, simpan di localStorage secara permanen
+                if (dontShowAgain && dontShowAgain.checked) {
+                    localStorage.setItem('desktopSuggestionClosedForever', 'true');
+                }
             }
         }
 

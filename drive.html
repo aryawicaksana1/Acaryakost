@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,23 +11,6 @@
         tailwind.config = {
             darkMode: 'class'
         }
-    </script>
-    <script>
-        // Init Theme
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        }
-        
-        // Sinkronisasi tema antar tab
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'theme') {
-                if (e.newValue === 'dark') {
-                    document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                }
-            }
-        });
     </script>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #ffffff; }
@@ -104,9 +87,13 @@
                 <i class="fas fa-desktop text-3xl text-blue-500"></i>
             </div>
             <h3 class="text-2xl font-bold text-slate-800 dark:text-white mb-3">Saran Tampilan</h3>
-            <p class="text-slate-600 dark:text-slate-300 mb-8 text-sm leading-relaxed">
+            <p class="text-slate-600 dark:text-slate-300 mb-6 text-sm leading-relaxed">
                 Untuk pengalaman visual dan eksplorasi yang maksimal, kami menyarankan Anda membuka website ini menggunakan <strong>Desktop atau Laptop</strong>.
             </p>
+            <div class="flex items-center justify-center gap-2 mb-6 text-sm text-slate-500 dark:text-slate-400">
+                <input type="checkbox" id="dontShowAgain" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-slate-800 focus:ring-2 dark:bg-slate-700 dark:border-slate-600 cursor-pointer">
+                <label for="dontShowAgain" class="cursor-pointer">Jangan tampilkan pesan ini lagi</label>
+            </div>
             <button onclick="closeDesktopSuggestion()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg hover:shadow-blue-500/30 transform hover:-translate-y-1">
                 Mengerti, Lanjutkan
             </button>
@@ -115,45 +102,54 @@
 
     <script>
         // Logika Notifikasi Saran Desktop
-        document.addEventListener('DOMContentLoaded', () => {
-            if (window.innerWidth < 768 && !sessionStorage.getItem('desktopSuggestionClosed')) {
+        function checkDesktopSuggestion() {
+            if (window.innerWidth < 768 && !localStorage.getItem('desktopSuggestionClosedForever') && !sessionStorage.getItem('desktopSuggestionClosed')) {
                 const modal = document.getElementById('desktopSuggestion');
                 const content = document.getElementById('desktopSuggestionContent');
-                if (modal) {
+                if (modal && modal.classList.contains('hidden')) {
                     modal.classList.remove('hidden');
                     setTimeout(() => {
                         modal.classList.remove('opacity-0');
-                        content.classList.remove('scale-95');
-                        content.classList.add('scale-100');
+                        if (content) {
+                            content.classList.remove('scale-95');
+                            content.classList.add('scale-100');
+                        }
                     }, 50);
                 }
             }
-        });
+        }
+
+        checkDesktopSuggestion();
+        window.addEventListener('resize', checkDesktopSuggestion);
 
         function closeDesktopSuggestion() {
             const modal = document.getElementById('desktopSuggestion');
             const content = document.getElementById('desktopSuggestionContent');
+            const dontShowAgain = document.getElementById('dontShowAgain');
             if (modal) {
                 modal.classList.add('opacity-0');
                 content.classList.remove('scale-100');
                 content.classList.add('scale-95');
                 setTimeout(() => { modal.classList.add('hidden'); }, 300);
+                
                 sessionStorage.setItem('desktopSuggestionClosed', 'true');
+
+                if (dontShowAgain && dontShowAgain.checked) {
+                    localStorage.setItem('desktopSuggestionClosedForever', 'true');
+                }
             }
         }
 
-        // ==========================================
         // DATA LINK (SILAKAN EDIT DI SINI)
         // ==========================================
         const resources = [
             {
-                title: "peraturan kost Acarya 2",
-                description: "PDF peraturan Kost Acarya 2 .",
-                url: "https://drive.google.com/file/d/1IlZtR3dRsN2vFP8ScfA5pOr-69qjMlu_/view?usp=sharing",
+                title: "Peraturan Kost Acarya 2",
+                description: "PDF peraturan Kost Acarya 2.",
+                url: "https://drive.google.com/file/d/1IlZtR3dRsN2vFP8Sc",
                 type: "document",
                 date: "Mar 2026"
             },
-
             {
                 title: "Peraturan Kost Acarya 1",
                 description: "PDF peraturan Kost Acarya 1.",
