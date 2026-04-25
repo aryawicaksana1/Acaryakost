@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" class="dark">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,6 +29,22 @@
                 if (typeof updateThemeIcon === 'function') updateThemeIcon();
             }
         });
+
+        // Theme Toggle Logic
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateThemeIcon();
+        }
+        function updateThemeIcon() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const icons = document.querySelectorAll('.theme-icon');
+            icons.forEach(icon => {
+                icon.className = isDark ? 'theme-icon fas fa-sun text-yellow-400' : 'theme-icon fas fa-moon text-slate-700';
+            });
+        }
+        document.addEventListener('DOMContentLoaded', updateThemeIcon);
     </script>
     <style>
         /* Custom scrollbar hiding for cleaner look */
@@ -945,22 +961,6 @@
                 if (close) close.classList.add('hidden');
             });
         });
-
-        // Theme Toggle Logic
-        function toggleTheme() {
-            document.documentElement.classList.toggle('dark');
-            const isDark = document.documentElement.classList.contains('dark');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            updateThemeIcon();
-        }
-        function updateThemeIcon() {
-            const isDark = document.documentElement.classList.contains('dark');
-            const icons = document.querySelectorAll('.theme-icon');
-            icons.forEach(icon => {
-                icon.className = isDark ? 'theme-icon fas fa-sun text-yellow-400' : 'theme-icon fas fa-moon text-slate-700';
-            });
-        }
-        document.addEventListener('DOMContentLoaded', updateThemeIcon);
     </script>
 
     <!-- Floating Quick Action (Speed Dial) -->
