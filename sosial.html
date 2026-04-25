@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,23 +11,6 @@
         tailwind.config = {
             darkMode: 'class'
         }
-    </script>
-    <script>
-        // Init Theme
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        }
-        
-        // Sinkronisasi tema antar tab
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'theme') {
-                if (e.newValue === 'dark') {
-                    document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                }
-            }
-        });
     </script>
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -90,6 +73,18 @@
                 <div class="ml-4 flex-grow">
                     <h3 class="font-bold text-white">Instagram</h3>
                     <p class="text-xs text-slate-400 group-hover:text-white/90">@acaryasingaraja</p>
+                </div>
+                <i class="fas fa-chevron-right text-white/50 group-hover:text-white"></i>
+            </a>
+
+            <!-- TikTok -->
+            <a href="https://www.tiktok.com/@acarya.kost.singa" target="_blank" class="group flex items-center p-3 rounded-xl bg-white/5 hover:bg-slate-800 border border-white/10 hover:border-slate-700 transition-all duration-300 hover:-translate-y-1">
+                <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white group-hover:bg-white/20">
+                    <i class="fab fa-tiktok text-xl"></i>
+                </div>
+                <div class="ml-4 flex-grow">
+                    <h3 class="font-bold text-white">TikTok</h3>
+                    <p class="text-xs text-slate-400 group-hover:text-white/90">@acarya.kost.singa</p>
                 </div>
                 <i class="fas fa-chevron-right text-white/50 group-hover:text-white"></i>
             </a>

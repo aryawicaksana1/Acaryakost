@@ -332,8 +332,52 @@
         </div>
     </div>
 
+    <!-- Notifikasi Saran Desktop -->
+    <div id="desktopSuggestion" class="fixed inset-0 z-[120] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 px-4">
+        <div id="desktopSuggestionContent" class="bg-white dark:bg-slate-800 rounded-[2rem] p-8 max-w-sm w-full shadow-2xl transform scale-95 transition-transform duration-300 border border-slate-100 dark:border-slate-700 text-center">
+            <div class="w-20 h-20 bg-indigo-50 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+                <i class="fas fa-desktop text-3xl text-indigo-500"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-800 dark:text-white mb-3">Saran Tampilan</h3>
+            <p class="text-slate-600 dark:text-slate-300 mb-8 text-sm leading-relaxed">
+                Untuk pengalaman visual dan eksplorasi yang maksimal, kami menyarankan Anda membuka website ini menggunakan <strong>Desktop atau Laptop</strong>.
+            </p>
+            <button onclick="closeDesktopSuggestion()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg hover:shadow-indigo-500/30 transform hover:-translate-y-1">
+                Mengerti, Lanjutkan
+            </button>
+        </div>
+    </div>
+
     <!-- Script Logika Timer dan Modal -->
     <script>
+        // Logika Notifikasi Saran Desktop
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.innerWidth < 768 && !sessionStorage.getItem('desktopSuggestionClosed')) {
+                const modal = document.getElementById('desktopSuggestion');
+                const content = document.getElementById('desktopSuggestionContent');
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    setTimeout(() => {
+                        modal.classList.remove('opacity-0');
+                        content.classList.remove('scale-95');
+                        content.classList.add('scale-100');
+                    }, 50);
+                }
+            }
+        });
+
+        function closeDesktopSuggestion() {
+            const modal = document.getElementById('desktopSuggestion');
+            const content = document.getElementById('desktopSuggestionContent');
+            if (modal) {
+                modal.classList.add('opacity-0');
+                content.classList.remove('scale-100');
+                content.classList.add('scale-95');
+                setTimeout(() => { modal.classList.add('hidden'); }, 300);
+                sessionStorage.setItem('desktopSuggestionClosed', 'true');
+            }
+        }
+
         // Tanggal target promo berakhir: 30 April 2026, 23:59:59
         const targetDate = new Date("April 30, 2026 23:59:59").getTime();
 

@@ -478,7 +478,7 @@
                                     <li class="flex items-center gap-3"><i class="fas fa-check-circle text-green-500 w-4"></i><span>Kamar Mandi Dalam</span></li>
                                 </ul>
                             </div>
-                            <a href="https://wa.me/628124671508" class="block text-center bg-green-600 text-white py-2 rounded-xl font-bold hover:bg-green-700 transition">Pesan Sekarang</a>
+                            <a href="booking.html" class="block text-center bg-green-600 text-white py-2 rounded-xl font-bold hover:bg-green-700 transition">Pesan Sekarang</a>
                         </div>
                         <div class="price-card w-full md:max-w-sm bg-green-50 dark:bg-slate-800 p-6 rounded-3xl border-2 border-green-500 flex flex-col justify-between relative overflow-hidden shadow-lg">
                             <div class="absolute top-0 right-0 bg-green-500 text-white text-[10px] px-3 py-1 font-bold rounded-bl-xl">BEST SELLER</div>
@@ -490,7 +490,7 @@
                                     <li class="flex items-center gap-3"><i class="fas fa-plus-circle text-green-500 w-4"></i><span>Smart TV 32 inch</span></li>
                                 </ul>
                             </div>
-                            <a href="https://wa.me/6281234567890" class="block text-center bg-green-600 text-white py-2 rounded-xl font-bold hover:bg-green-700 transition">Pesan Sekarang</a>
+                            <a href="booking.html" class="block text-center bg-green-600 text-white py-2 rounded-xl font-bold hover:bg-green-700 transition">Pesan Sekarang</a>
                         </div>
                         
                     </div>
@@ -698,14 +698,59 @@
 
     </main>
 
+
     <!-- Footer -->
     <footer class="text-white pt-24 pb-12 px-6">
-            <div class="pt-8 border-t border-white/10 text-center text-slate-500 text-sm">
-                &copy; 2026 Acarya Kost Management. Crafted for your comfort.
-            </div>
+        <div class="pt-8 border-t border-white/10 text-center text-slate-500 text-sm">
+            &copy; 2026 Acarya Kost Management. Crafted for your comfort.
+        </div>
     </footer>
 
+    <!-- Notifikasi Saran Desktop -->
+    <div id="desktopSuggestion" class="fixed inset-0 z-[120] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 px-4">
+        <div id="desktopSuggestionContent" class="bg-white dark:bg-slate-800 rounded-[2rem] p-8 max-w-sm w-full shadow-2xl transform scale-95 transition-transform duration-300 border border-slate-100 dark:border-slate-700 text-center">
+            <div class="w-20 h-20 bg-green-50 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+                <i class="fas fa-desktop text-3xl text-green-500"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-800 dark:text-white mb-3">Saran Tampilan</h3>
+            <p class="text-slate-600 dark:text-slate-300 mb-8 text-sm leading-relaxed">
+                Untuk pengalaman visual dan eksplorasi yang maksimal, kami menyarankan Anda membuka website ini menggunakan <strong>Desktop atau Laptop</strong>.
+            </p>
+            <button onclick="closeDesktopSuggestion()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg hover:shadow-green-500/30 transform hover:-translate-y-1">
+                Mengerti, Lanjutkan
+            </button>
+        </div>
+    </div>
+
     <script>
+        // Logika Notifikasi Saran Desktop
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.innerWidth < 768 && !sessionStorage.getItem('desktopSuggestionClosed')) {
+                const modal = document.getElementById('desktopSuggestion');
+                const content = document.getElementById('desktopSuggestionContent');
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    setTimeout(() => {
+                        modal.classList.remove('opacity-0');
+                        content.classList.remove('scale-95');
+                        content.classList.add('scale-100');
+                    }, 50);
+                }
+            }
+        });
+
+        function closeDesktopSuggestion() {
+            const modal = document.getElementById('desktopSuggestion');
+            const content = document.getElementById('desktopSuggestionContent');
+            if (modal) {
+                modal.classList.add('opacity-0');
+                content.classList.remove('scale-100');
+                content.classList.add('scale-95');
+                setTimeout(() => { modal.classList.add('hidden'); }, 300);
+                sessionStorage.setItem('desktopSuggestionClosed', 'true');
+            }
+        }
+
         // Simple navbar interaction on scroll
         window.onscroll = function() {
             // Animasi Bintang Parallax
