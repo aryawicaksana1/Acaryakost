@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promo Sewa - Kost Acarya</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .grayscale-card {
+            filter: grayscale(100%);
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+        .grayscale-card:hover {
+            opacity: 0.95;
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-800 flex flex-col min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-green-600 text-white shadow-md">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <img src="gambar/logo kost hijau.png" alt="Logo Acarya Kost" class="h-10 w-auto rounded-md object-contain">
+                <h1 class="text-2xl font-bold tracking-tight">Kost Acarya</h1>
+            </div>
+            <nav>
+                <a href="index.html" class="hover:text-green-200 transition">Beranda</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-6 py-12 flex flex-col items-center">
+        
+        <!-- Hero Section -->
+        <div class="text-center mb-16 max-w-2xl">
+            <h2 class="text-4xl font-extrabold text-gray-900 mb-4">Promo Spesial Sewa Kost</h2>
+            <p class="text-lg text-gray-600 mb-6">Dapatkan harga terbaik untuk kenyamanan tinggal Anda di Kost Acarya. Temukan pilihan sewa bulanan dan tahunan yang sesuai dengan kebutuhan Anda.</p>
+            
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative" role="alert">
+                <strong class="font-bold">Mohon Maaf!</strong>
+                <span class="block sm:inline"> Saat ini semua periode promo telah berakhir. Nantikan penawaran menarik kami selanjutnya.</span>
+            </div>
+        </div>
+
+        <!-- Promo Cards Section -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-7xl">
+            
+            <!-- 1. Bulanan Card (Expired) -->
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden grayscale-card relative">
+                <div class="absolute top-4 right-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide z-10 shadow">
+                    Berakhir
+                </div>
+                <div class="bg-green-50 p-8 text-center border-b border-green-100 relative">
+                     <!-- Strikethrough overlay for emphasis -->
+                    <div class="absolute inset-0 flex items-center justify-center opacity-20 pointer-events-none">
+                        <div class="w-full h-1 bg-red-500 transform -rotate-12"></div>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-green-900 mb-2">Paket Bulanan</h3>
+                    <div class="flex justify-center items-baseline mb-4">
+                        <span class="text-gray-500 line-through mr-2">Rp 1.500.000</span>
+                        <span class="text-4xl font-extrabold text-gray-900">Rp 1.200.000</span>
+                        <span class="text-gray-500 ml-1">/bln</span>
+                    </div>
+                    <p class="text-sm text-green-600 font-medium">Diskon 20% untuk 3 bulan pertama</p>
+                </div>
+                <div class="p-8 flex flex-col h-full">
+                    <ul class="space-y-4 text-gray-600 mb-8 flex-grow">
+                        <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Kamar AC & Full Furnished</li>
+                        <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Free WiFi Kecepatan Tinggi</li>
+                        <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Termasuk Listrik & Air</li>
+                    </ul>
+                    <button disabled class="w-full mt-auto bg-gray-400 text-white font-semibold py-3 rounded-xl cursor-not-allowed transition-colors">
+                        Promo Tidak Tersedia
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2. Paket 3 Bulan Card (Expired) -->
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden grayscale-card relative">
+                <div class="absolute top-4 right-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide z-10 shadow">
+                    Berakhir
+                </div>
+                <div class="bg-green-50 p-8 text-center border-b border-green-100 relative">
+                    <div class="absolute inset-0 flex items-center justify-center opacity-20 pointer-events-none">
+                        <div class="w-full h-1 bg-red-500 transform -rotate-12"></div>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-green-900 mb-2">Paket 3 Bulan</h3>
+                    <div class="flex justify-center items-baseline mb-4">
+                        <span class="text-gray-500 line-through mr-2">Rp 4.500.000</span>
+                        <span class="text-4xl font-extrabold text-gray-900">Rp 3.500.000</span>
+                        <span class="text-gray-500 ml-1">/3 bln</span>
+                    </div>
+                    <p class="text-sm text-green-600 font-medium">Bayar di muka lebih hemat!</p>
+                </div>
+                <div class="p-8 flex flex-col h-full">
+                    <ul class="space-y-4 text-gray-600 mb-8 flex-grow">
+                        <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Semua Fasilitas Bulanan</li>
+                        <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Gratis Pembersihan Kamar 2x</li>
+                        <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Bebas Biaya Parkir Motor</li>
+                    </ul>
+                    <button disabled class="w-full mt-auto bg-gray-400 text-white font-semibold py-3 rounded-xl cursor-not-allowed transition-colors">
+                        Promo Tidak Tersedia
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3. Paket Semesteran Card (Expired) -->
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden grayscale-card relative">
+                <div class="absolute top-4 right-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide z-10 shadow">
+                    Berakhir
+                </div>
+                <div class="bg-green-50 p-8 text-center border-b border-green-100 relative">
+                    <div class="absolute inset-0 flex items-center justify-center opacity-20 pointer-events-none">
+                        <div class="w-full h-1 bg-red-500 transform -rotate-12"></div>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-green-900 mb-2">Paket Semesteran</h3>
+                    <div class="flex justify-center items-baseline mb-4">
+                        <span class="text-gray-500 line-through mr-2">Rp 9.000.000</span>
+                        <span class="text-4xl font-extrabold text-gray-900">Rp 6.500.000</span>
+                        <span class="text-gray-500 ml-1">/6 bln</span>
+                    </div>
+                    <p class="text-sm text-green-600 font-medium">Diskon 25% + Bonus Menarik</p>
+                </div>
+                <div class="p-8 flex flex-col h-full">
+                    <ul class="space-y-4 text-gray-600 mb-8 flex-grow">
+                        <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Semua Fasilitas Bulanan</li>
+                        <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Gratis Laundry 5kg/Bulan</li>
+                        <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Gratis Sprei Cadangan</li>
+                    </ul>
+                    <button disabled class="w-full mt-auto bg-gray-400 text-white font-semibold py-3 rounded-xl cursor-not-allowed transition-colors">
+                        Promo Tidak Tersedia
+                    </button>
+                </div>
+            </div>
+
+            <!-- 4. Tahunan Card (Expired) -->
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden grayscale-card relative border-2 border-green-200">
+                <div class="absolute top-4 left-4 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide z-10 shadow">
+                    Best Value
+                </div>
+                <div class="absolute top-4 right-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide z-10 shadow">
+                    Berakhir
+                </div>
+                <div class="bg-green-600 p-8 text-center text-white relative">
+                    <div class="absolute inset-0 flex items-center justify-center opacity-20 pointer-events-none">
+                        <div class="w-full h-1 bg-red-500 transform -rotate-12"></div>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-2">Paket Tahunan</h3>
+                    <div class="flex justify-center items-baseline mb-4">
+                        <span class="text-green-300 line-through mr-2">Rp 18.000.000</span>
+                        <span class="text-4xl font-extrabold">Rp 12.000.000</span>
+                        <span class="text-green-200 ml-1">/thn</span>
+                    </div>
+                    <p class="text-sm font-medium text-green-200">Hemat Rp 6 Juta! (Setara Rp 1 Juta/bln)</p>
+                </div>
+                <div class="p-8 flex flex-col h-full">
+                    <ul class="space-y-4 text-gray-600 mb-8 flex-grow">
+                        <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Semua Fasilitas Lengkap</li>
+                        <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Prioritas Parkir Mobil/Motor</li>
+                        <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Gratis Laundry 10kg/Bulan</li>
+                    </ul>
+                    <button disabled class="w-full mt-auto bg-gray-400 text-white font-semibold py-3 rounded-xl cursor-not-allowed transition-colors">
+                        Promo Tidak Tersedia
+                    </button>
+                </div>
+            </div>
+
+            <!-- 5. Paket Sharing Berdua (Expired) -->
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden grayscale-card relative">
+                <div class="absolute top-4 right-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide z-10 shadow">
+                    Berakhir
+                </div>
+                <div class="bg-green-50 p-8 text-center border-b border-green-100 relative">
+                    <div class="absolute inset-0 flex items-center justify-center opacity-20 pointer-events-none">
+                        <div class="w-full h-1 bg-red-500 transform -rotate-12"></div>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-green-900 mb-2">Paket Sharing (2 Orang)</h3>
+                    <div class="flex justify-center items-baseline mb-4">
+                        <span class="text-gray-500 line-through mr-2">Rp 2.500.000</span>
+                        <span class="text-4xl font-extrabold text-gray-900">Rp 1.800.000</span>
+                        <span class="text-gray-500 ml-1">/bln</span>
+                    </div>
+                    <p class="text-sm text-green-600 font-medium">Bawa teman, biaya makin ringan!</p>
+                </div>
+                <div class="p-8 flex flex-col h-full">
+                    <ul class="space-y-4 text-gray-600 mb-8 flex-grow">
+                        <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Kamar Luas + Kasur Queen Size</li>
+                        <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Ekstra Lemari & Meja Belajar</li>
+                        <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Akses Kunci Masing-masing</li>
+                    </ul>
+                    <button disabled class="w-full mt-auto bg-gray-400 text-white font-semibold py-3 rounded-xl cursor-not-allowed transition-colors">
+                        Promo Tidak Tersedia
+                    </button>
+                </div>
+            </div>
+
+            <!-- 6. Paket Khusus Mahasiswa (Expired) -->
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden grayscale-card relative">
+                <div class="absolute top-4 right-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide z-10 shadow">
+                    Berakhir
+                </div>
+                <div class="bg-green-50 p-8 text-center border-b border-green-100 relative">
+                    <div class="absolute inset-0 flex items-center justify-center opacity-20 pointer-events-none">
+                        <div class="w-full h-1 bg-red-500 transform -rotate-12"></div>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-green-900 mb-2">Paket Mahasiswa Baru</h3>
+                    <div class="flex justify-center items-baseline mb-4">
+                        <span class="text-gray-500 line-through mr-2">Rp 1.500.000</span>
+                        <span class="text-4xl font-extrabold text-gray-900">Rp 1.000.000</span>
+                        <span class="text-gray-500 ml-1">/bln</span>
+                    </div>
+                    <p class="text-sm text-green-600 font-medium">Harga spesial dengan syarat KTM</p>
+                </div>
+                <div class="p-8 flex flex-col h-full">
+                    <ul class="space-y-4 text-gray-600 mb-8 flex-grow">
+                        <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Fasilitas Setara Kamar Standar</li>
+                        <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Akses Ruang Belajar Bersama</li>
+                        <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Diskon Print & Fotokopi 10%</li>
+                    </ul>
+                    <button disabled class="w-full mt-auto bg-gray-400 text-white font-semibold py-3 rounded-xl cursor-not-allowed transition-colors">
+                        Promo Tidak Tersedia
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="shared-footer"></div>
+
+    <script src="footer-inject.js"></script>
+</body>
+</html>

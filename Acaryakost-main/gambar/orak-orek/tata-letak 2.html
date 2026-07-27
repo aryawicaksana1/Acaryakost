@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Santai oleh The Korowai Uluwatu - Pemesanan Villa</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#4b7c52', /* Green color for buttons */
+                        secondary: '#f3f4f6', /* Light gray background */
+                        textMain: '#1f2937', /* Dark gray text */
+                        textLight: '#6b7280', /* Lighter gray text */
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom styles to ensure grid behaves exactly like the image */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 12px;
+            height: 100%;
+        }
+        
+        .main-photo {
+            grid-column: span 1;
+            grid-row: span 2;
+        }
+
+        /* Styling for range inputs/calendars is complex in raw HTML, using basic styling for the demo */
+        .date-picker-input::-webkit-calendar-picker-indicator {
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-white text-textMain font-sans antialiased pb-20">
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Photo Gallery Section -->
+        <div class="relative w-full h-[400px] md:h-[500px] lg:h-[600px] rounded-2xl overflow-hidden mb-8 grid grid-cols-1 md:grid-cols-2 gap-3">
+            
+            <!-- Main Large Photo (Left) -->
+            <div class="relative h-full w-full col-span-1">
+                <img src="https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1400&q=80" alt="Villa Living Room with Sea View" class="object-cover w-full h-full rounded-l-2xl md:rounded-r-none rounded-2xl hover:opacity-90 transition-opacity cursor-pointer">
+                
+                <!-- Floating Buttons over main image -->
+                <div class="absolute bottom-4 left-4 flex gap-3">
+                    <button class="bg-white/90 hover:bg-white text-gray-800 px-4 py-2 rounded-lg text-sm font-medium flex items-center shadow-sm backdrop-blur-sm transition-colors border border-gray-200">
+                        <i class="fa-solid fa-border-all mr-2"></i> Tampilkan foto
+                    </button>
+                    <button class="bg-white/90 hover:bg-white text-gray-800 px-4 py-2 rounded-lg text-sm font-medium flex items-center shadow-sm backdrop-blur-sm transition-colors border border-gray-200">
+                        <i class="fa-solid fa-circle-play text-red-500 mr-2"></i> Tur Virtual
+                    </button>
+                </div>
+            </div>
+
+            <!-- Smaller Photos Grid (Right) - Hidden on small mobile, shown on md and up -->
+            <div class="hidden md:grid grid-cols-2 grid-rows-2 gap-3 h-full col-span-1">
+                <div class="h-full w-full">
+                    <img src="https://images.unsplash.com/photo-1510798831971-661eb04b3739?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Villa Exterior on Cliff" class="object-cover w-full h-full hover:opacity-90 transition-opacity cursor-pointer">
+                </div>
+                <div class="h-full w-full">
+                    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Balcony View" class="object-cover w-full h-full rounded-tr-2xl hover:opacity-90 transition-opacity cursor-pointer">
+                </div>
+                <div class="h-full w-full">
+                    <img src="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Bedroom" class="object-cover w-full h-full hover:opacity-90 transition-opacity cursor-pointer">
+                </div>
+                <div class="h-full w-full">
+                    <img src="https://images.unsplash.com/photo-1600607688969-a5bfcd646154?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Kitchen and Living Area" class="object-cover w-full h-full rounded-br-2xl hover:opacity-90 transition-opacity cursor-pointer">
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="flex flex-col lg:flex-row gap-10 relative">
+            
+            <!-- Left Column: Details -->
+            <div class="w-full lg:w-[65%] flex flex-col gap-8">
+                
+                <!-- Title & Basic Info Section -->
+                <div class="border border-gray-200 rounded-2xl p-6 sm:p-8">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <span class="inline-block bg-blue-100 text-blue-700 text-xs font-semibold px-2 py-1 rounded mb-3">Seluruh vila</span>
+                            <h1 class="text-3xl sm:text-4xl font-bold leading-tight text-gray-900 mb-4">Santai oleh The Korowai Uluwatu - 1 Kamar Tidur</h1>
+                            
+                            <div class="flex items-center text-sm text-gray-600 mb-6">
+                                <span class="flex items-center font-semibold text-gray-900 mr-2">
+                                    <i class="fa-solid fa-star text-yellow-400 mr-1 text-xs"></i> 4,94
+                                </span>
+                                <span class="underline mr-4">(32)</span>
+                                <span><i class="fa-solid fa-location-dot mr-1 text-gray-400"></i> Bingin, Bali</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons (Save/Share) -->
+                        <div class="flex gap-2 shrink-0">
+                            <button class="p-2 rounded-full border border-gray-200 hover:bg-gray-50 transition-colors w-10 h-10 flex items-center justify-center text-gray-600">
+                                <i class="fa-regular fa-heart"></i>
+                            </button>
+                            <button class="p-2 rounded-full border border-gray-200 hover:bg-gray-50 transition-colors w-10 h-10 flex items-center justify-center text-gray-600">
+                                <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <hr class="border-gray-200 my-6">
+
+                    <!-- Capacity details -->
+                    <div class="flex flex-wrap gap-y-3 gap-x-6 text-sm text-gray-600">
+                        <span class="flex items-center"><i class="fa-regular fa-user mr-2 text-gray-400"></i> 2 tamu</span>
+                        <span class="flex items-center"><i class="fa-solid fa-bed mr-2 text-gray-400"></i> 1 tempat tidur</span>
+                        <span class="flex items-center"><i class="fa-solid fa-door-open mr-2 text-gray-400"></i> 1 kamar tidur</span>
+                        <span class="flex items-center"><i class="fa-solid fa-bath mr-2 text-gray-400"></i> 1 kamar mandi</span>
+                    </div>
+                </div>
+
+                <!-- About this place -->
+                <div class="border border-gray-200 rounded-2xl p-6 sm:p-8">
+                    <h2 class="text-xl font-bold mb-4 text-gray-900">Tentang Tempat Ini</h2>
+                    <p class="text-gray-600 leading-relaxed">
+                        Rasakan makna kemewahan sejati di Villa Santai, permata modern yang bertengger di tebing Pantai Bingin. Menawarkan akses langsung ke pantai dan pemandangan laut yang menakjubkan, vila ini menjanjikan pengalaman menginap di mana cakrawala bukan hanya pemandangan, tetapi sebuah pengalaman.
+                    </p>
+                </div>
+
+                <!-- Amenities -->
+                <div class="border border-gray-200 rounded-2xl p-6 sm:p-8">
+                    <h2 class="text-xl font-bold mb-2 text-gray-900">Apa yang ditawarkan tempat ini</h2>
+                    <p class="text-gray-500 text-sm mb-6">Semua yang Anda butuhkan untuk menginap mewah.</p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-4 mb-6">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-kitchen-set text-gray-600 w-5 text-center"></i>
+                            <span class="text-gray-700">Dapur</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-snowflake text-gray-600 w-5 text-center"></i>
+                            <span class="text-gray-700">AC</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-wifi text-gray-600 w-5 text-center"></i>
+                            <span class="text-gray-700">Wi-Fi Cepat</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-umbrella-beach text-gray-600 w-5 text-center"></i>
+                            <span class="text-gray-700 text-sm leading-tight">Akses langsung ke pantai</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-mountain-sun text-gray-600 w-5 text-center"></i>
+                            <span class="text-gray-700 text-sm leading-tight">Pemandangan indah</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-shower text-gray-600 w-5 text-center"></i>
+                            <span class="text-gray-700 text-sm leading-tight">Pancuran luar ruangan</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-broom text-gray-600 w-5 text-center"></i>
+                            <span class="text-gray-700 text-sm leading-tight">Pembersihan harian</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-hot-tub-person text-gray-600 w-5 text-center"></i>
+                            <span class="text-gray-700 text-sm leading-tight">Berendam di bak air panas</span>
+                        </div>
+                    </div>
+                    
+                    <button class="border border-gray-300 rounded-lg px-6 py-2.5 font-medium hover:bg-gray-50 transition-colors text-sm text-gray-800">
+                        Tampilkan semua 54 fasilitas
+                    </button>
+                </div>
+                
+                <!-- Additional placeholder for scrolling context -->
+                <div class="h-20 w-full border border-gray-200 rounded-2xl rounded-b-none border-b-0 hidden md:block mt-4 opacity-50"></div>
+
+            </div>
+
+            <!-- Right Column: Booking Widget -->
+            <div class="w-full lg:w-[35%]">
+                <div class="sticky top-8 bg-white border border-gray-200 rounded-2xl p-6 shadow-sm shadow-gray-100">
+                    
+                    <!-- Price Header -->
+                    <div class="mb-4">
+                        <span class="text-xs text-gray-500 uppercase tracking-wider font-semibold block mb-1">Perjalanan Anda</span>
+                        <div class="flex items-end flex-wrap gap-2">
+                            <span class="text-gray-400 line-through text-lg">Rp 3.710.000</span>
+                            <span class="text-2xl font-bold text-gray-900">Rp 3.487.400</span>
+                            <span class="text-gray-500 text-sm pb-1">/ malam</span>
+                        </div>
+                    </div>
+
+                    <!-- Date & Guest Inputs -->
+                    <div class="border border-gray-300 rounded-xl mb-6 overflow-hidden">
+                        
+                        <!-- Date Picker -->
+                        <div class="flex border-b border-gray-300 relative group cursor-pointer hover:bg-gray-50">
+                            <div class="p-3 pl-4 flex items-center justify-center text-gray-400 w-12 border-r border-gray-300">
+                                <i class="fa-regular fa-calendar"></i>
+                            </div>
+                            <div class="flex-1 p-3 relative">
+                                <div class="text-sm font-semibold text-gray-900">3 Juli - 5 Juli</div>
+                                <div class="text-xs text-gray-500">Check-In - Check-out</div>
+                                <!-- Invisible actual date input for functionality if needed, visually hidden -->
+                                <input type="text" class="date-picker-input bg-transparent absolute inset-0 text-transparent" aria-label="Select dates" style="color: transparent;">
+                            </div>
+                        </div>
+
+                        <!-- Guest Selector -->
+                        <div class="flex relative group cursor-pointer hover:bg-gray-50">
+                            <div class="p-3 pl-4 flex items-center justify-center text-gray-400 w-12 border-r border-gray-300">
+                                <i class="fa-solid fa-user-group text-sm"></i>
+                            </div>
+                            <div class="flex-1 p-3">
+                                <div class="text-sm font-semibold text-gray-900">2 Tamu</div>
+                                <div class="text-xs text-gray-500">Tamu</div>
+                            </div>
+                            <div class="p-3 flex items-center justify-center text-gray-400">
+                                <i class="fa-solid fa-chevron-down text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Price Breakdown -->
+                    <div class="space-y-3 mb-6 border-b border-gray-200 pb-6">
+                        
+                        <div class="flex justify-between text-gray-600 text-sm">
+                            <span class="underline decoration-dotted cursor-help">Rp 3.710.000 x 1 malam</span>
+                            <span>Rp 3.710.000</span>
+                        </div>
+                        
+                        <div class="flex justify-between text-sm items-center">
+                            <span class="text-green-600 font-medium">Pemesanan Langsung</span>
+                            <div class="text-right flex items-center text-green-600">
+                                <span class="bg-green-100 text-green-700 text-[10px] px-2 py-0.5 rounded-full mr-2">diterapkan <i class="fa-solid fa-circle-check ml-1"></i></span>
+                                <span>- Rp 222.600</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between text-gray-600 text-sm">
+                            <span class="underline decoration-dotted cursor-help">Biaya layanan (5,8%) <i class="fa-regular fa-circle-question text-xs ml-1 text-gray-400"></i></span>
+                            <span>Rp 202.269</span>
+                        </div>
+                    </div>
+
+                    <!-- Total -->
+                    <div class="flex justify-between font-bold text-gray-900 mb-6 text-lg">
+                        <span>Total</span>
+                        <span>Rp 3.689.669</span>
+                    </div>
+
+                    <!-- CTA Button -->
+                    <button class="w-full bg-primary hover:bg-[#3d6543] text-white font-semibold py-3.5 px-4 rounded-xl transition-colors mb-4 shadow-sm">
+                        Pesan sekarang
+                    </button>
+
+                    <div class="text-center">
+                        <span class="text-xs text-gray-500 flex items-center justify-center gap-1">
+                            <i class="fa-regular fa-circle-check text-green-500"></i> Jaminan Harga Terbaik
+                        </span>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+</body>
+</html>

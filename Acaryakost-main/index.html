@@ -1,0 +1,1818 @@
+<!DOCTYPE html>
+<html lang="id" class="overflow-x-hidden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACARYA KOST</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = { 
+            darkMode: 'class'
+        }
+    </script>
+    <style>
+        /* Custom scrollbar hiding for cleaner look */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        body { font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; transition: background-color 0.3s, color 0.3s; } 
+        .hero-gradient {
+            background: rgba(15, 23, 42, 0.5);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .hero-gradient::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 200px; background: linear-gradient(to bottom, transparent, #f9fafb); }
+        .glass { background: rgba(255, 255, 255, 0.7); border-color: rgba(0, 0, 0, 0.05); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .card-hover { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover { transform: translateY(-10px); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); }
+        .image-accent { position: relative; }
+        .image-accent::before { content: ''; position: absolute; top: -15px; left: -15px; right: 15px; bottom: 15px; border: 2px solid #16a34a; border-radius: 1.5rem; z-index: -1; }
+        
+        /* Animation Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Animasi Melayang untuk Ornamen */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-float-delayed { animation: float 6s ease-in-out 3s infinite; }
+
+        /* Background Pattern */
+        .pattern-dots {
+            background-image: radial-gradient(#16a34a 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+        }
+
+        /* Animasi Marquee (Terus Bergulir) */
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-50%)); }
+        }
+        .animate-scroll {
+            animation: scroll 30s linear infinite;
+            width: max-content;
+        }
+
+        /* Efek Cahaya (Glow) pada Teks */
+        /* .text-glow {
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+        }
+        .text-glow-green {
+            text-shadow: 0 0 20px rgba(74, 222, 128, 0.6), 0 0 35px rgba(74, 222, 128, 0.3);
+        } */
+
+        /* MacOS Window Dots */
+        .mac-dot { 
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* Gaya dari baru.html untuk kartu kode */
+        .sh-keyword { color: #F472B6; } /* Pink */ 
+        .sh-string { color: #A78BFA; }  /* Purple/Blue */ 
+        .sh-function { color: #60A5FA; } /* Light Blue */ 
+        .sh-variable { color: #1F2937; } /* Dark Gray for light theme */
+        .sh-punctuation { color: #6B7280; } /* Gray */ 
+        .sh-property { color: #34D399; } /* Green */ 
+        .sh-comment { color: #71717A; font-style: italic; } 
+        .code-window-shadow {
+            box-shadow: 0 0 0 1px rgba(0,0,0,0.05), 0 20px 40px -10px rgba(0,0,0,0.2);
+        }
+
+        /* Monospace font for code */
+        .font-mono { font-family: 'JetBrains Mono', monospace; } 
+
+        /* Gaya dari baru.html */
+        .top-glow {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%); 
+            width: 100vw;
+            height: 600px;
+            background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(22, 163, 74, 0.2), transparent);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .bg-grid {
+            position: absolute; 
+            inset: 0; 
+             background-image: linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+        }
+
+        /* Transisi halus untuk perubahan konten FAQ */
+        #content-answer {
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        /* Animasi untuk Modal */
+        .modal {
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .modal.visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        /* Animation for floating card from hero section */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+            animation-delay: 0.5s; /* Delay agar muncul setelah konten utama */
+            opacity: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-slate-900 leading-relaxed transition-colors duration-300">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 top-0 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 py-4 relative">
+            <div class="glass border border-gray-200/50 rounded-2xl px-6 py-3 flex justify-between items-center shadow-lg relative z-20 transition-all duration-300">
+                <div class="flex items-center gap-2">
+                    <img src="gambar/logo kost hijau.png" alt="KostKu logo" class="w-auto h-10 rounded-md object-contain">
+                <span class="text-xl font-extrabold tracking-tight text-gray-900">Acarya<span class="text-green-600">kost</span></span>
+                </div>
+            <!-- Desktop Menu & Buttons -->
+            <div class="hidden 2xl:flex items-center space-x-4">
+                <div class="flex items-center space-x-8">
+                    <a href="#" class="text-sm font-semibold text-gray-700 hover:text-green-600 transition">Home</a>
+                    <a href="#booking" class="text-sm font-semibold text-gray-700 hover:text-green-600 transition">Booking</a>
+                    <a href="#pemilik-kost" class="text-sm font-semibold text-gray-700 hover:text-green-600 transition">Pemilik Kost</a>
+                    <a href="#visi-misi" class="text-sm font-semibold text-gray-700 hover:text-green-600 transition">Visi &amp; Misi</a>
+                    <a href="#section-aturan" class="text-sm font-semibold text-gray-700 hover:text-green-600 transition">Aturan &amp; Etika</a>
+                    <a href="#faq" class="text-sm font-semibold text-gray-700 hover:text-green-600 transition">Pertanyaan</a>
+                </div>
+                <a href="sosial.html" class="bg-green-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-green-500 transition-all shadow-md active:scale-95">Hubungi Kami</a>
+                <a href="buat login yang perfect/login.html" class="bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-700 transition-all shadow-md active:scale-95">Login Admin</a>
+            </div>
+            <!-- Mobile hamburger button -->
+            <div class="2xl:hidden flex items-center">
+                <button id="mobileMenuButton" onclick="toggleMobileMenu()" class="p-2 rounded-lg text-gray-800 hover:bg-gray-100 transition" aria-label="Toggle menu">
+                    <svg id="menuOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    <svg id="menuClose" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <!-- Mobile dropdown menu (rounded, translucent, blurred) -->
+        <div id="mobileMenu" class="2xl:hidden hidden absolute right-6 top-full mt-2 w-64 rounded-2xl bg-white/95 border border-gray-200 shadow-xl overflow-hidden z-50" style="backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
+                <div class="px-4 py-3 space-y-2">
+                <a href="#" class="block text-gray-800 font-semibold py-3 px-3 rounded-lg hover:bg-gray-100 hover:text-green-700 transition">Home</a>
+                <a href="#booking" class="block text-gray-800 font-semibold py-3 px-3 rounded-lg hover:bg-gray-100 hover:text-green-700 transition">Booking</a>
+                <a href="#section-promo" class="block text-gray-800 font-semibold py-3 px-3 rounded-lg hover:bg-gray-100 hover:text-green-700 transition">Promo</a>
+                <a href="#pemilik-kost" class="block text-gray-800 font-semibold py-3 px-3 rounded-lg hover:bg-gray-100 hover:text-green-700 transition">Pemilik Kost</a>
+                <a href="#visi-misi" class="block text-gray-800 font-semibold py-3 px-3 rounded-lg hover:bg-gray-100 hover:text-green-700 transition">Visi &amp; Misi</a>
+                <a href="#section-aturan" class="block text-gray-800 font-semibold py-3 px-3 rounded-lg hover:bg-gray-100 hover:text-green-700 transition">Aturan &amp; Etika</a>
+                <a href="#testimoni" class="block text-gray-800 font-semibold py-3 px-3 rounded-lg hover:bg-gray-100 hover:text-green-700 transition">Testimoni</a>
+                <a href="#faq" class="block text-gray-800 font-semibold py-3 px-3 rounded-lg hover:bg-gray-100 hover:text-green-700 transition">pertanyaan</a>
+                <a href="sosial.html" class="block text-white bg-green-600 text-center rounded-lg py-3 font-bold mt-2 hover:bg-green-700 transition">Hubungi Kami</a>
+                <a href="login.html" class="block text-white bg-gray-800 text-center rounded-lg py-3 font-bold mt-2 hover:bg-gray-700 transition">Login Admin</a>
+                </div>
+            </div>
+            </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative w-full min-h-screen flex items-center bg-cover bg-center bg-no-repeat reveal" style="background-image: url('gambar/hero.jpg');">
+        
+        <!-- Overlay Gradasi Gelap (kiri) ke Transparan (kanan) -->
+        <div class="absolute inset-0 bg-black/30 bg-gradient-to-r from-black/70 via-black/40 to-transparent"></div>
+
+
+        <!-- Content Container -->
+        <div class="max-w-7xl mx-auto px-6 relative z-10 w-full">
+            <div class="max-w-3xl text-center md:text-left">
+                <div class="inline-block px-4 py-1.5 rounded-full bg-green-600/90 backdrop-blur-sm border border-green-500/50 text-white text-xs font-semibold mb-6 shadow-lg">
+                    Hunian Premium Tahun 2025/2026
+                </div>
+                <h1 class="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight leading-[1.1] text-white text-shadow-md">
+                    Temukan Kenyamanan <br> 
+                    <span class="text-green-400">Rumah Kedua Anda</span>
+                </h1>
+                <p class="text-lg md:text-xl text-gray-100 mb-10 max-w-lg leading-relaxed text-shadow-sm font-medium mx-auto md:mx-0">
+                    Solusi hunian modern yang dikelilingi oleh kenyamanan dan akses strategis. Langkah pertama menuju gaya hidup berkualitas dimulai dari sini.
+                </p>
+
+                <!-- Trusted By Section -->
+                <div class="flex items-center gap-4">
+                    <div class="flex -space-x-3">
+                        <img class="w-10 h-10 rounded-full border-2 border-white/50 object-cover shadow-sm" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Andi" alt="Penghuni 1">
+                        <img class="w-10 h-10 rounded-full border-2 border-white/50 object-cover shadow-sm" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Siti&gender=female" alt="Penghuni 2">
+                        <img class="w-10 h-10 rounded-full border-2 border-white/50 object-cover shadow-sm" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Budi" alt="Penghuni 3">
+                        <div class="w-10 h-10 rounded-full border-2 border-white/50 bg-green-600 text-white flex items-center justify-center text-sm font-bold shadow-sm z-10">+</div>
+                    </div>
+                    <p class="text-sm font-medium text-gray-200 text-shadow-sm">Dipercaya oleh <span class="font-bold text-white">ratusan</span> penghuni</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wavy Bottom Shape -->
+        <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-[0px] z-10">
+            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="block w-full h-24">
+                <path d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z" class="fill-gray-50"></path>
+            </svg>
+        </div>
+
+    </header>
+
+    <!-- Lokasi 1 -->
+    <section id="kost-lokasi-1" class="relative py-24 px-6 bg-transparent reveal scroll-mt-32 transition-colors duration-300">
+        <div class="absolute inset-0 opacity-[0.03] pattern-dots pointer-events-none"></div>
+        
+        
+
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col lg:flex-row items-start lg:items-center gap-0 lg:gap-20">
+                
+                <!-- Tampilan Gambar Elegan Lokasi 1 -->
+                <div class="w-full lg:w-1/2 relative group order-2 lg:order-none my-12 lg:my-0 animate-float">
+                    <div class="relative">
+                        <!-- Glowing Background Shadow -->
+                        <div class="absolute -inset-4 bg-gradient-to-r from-balck-400 to-emerald-500 rounded-[2.5rem] blur-2xl opacity-40 transition duration-500"></div>
+                        <!-- Image Card with macOS theme -->
+                                <div class="bg-white rounded-[1.5rem] shadow-2xl overflow-hidden z-10 transition-all duration-500 group-hover:-translate-y-2 group-active:scale-95 border border-gray-200">
+                                    <div class="px-4 h-10 flex items-center gap-2 bg-gray-100/50 border-b border-gray-200">
+                                        <span class="mac-dot bg-[#FF5F56]"></span>
+                                        <span class="mac-dot bg-[#FFBD2E]"></span>
+                                        <span class="mac-dot bg-[#27C93F]"></span>
+                                    </div>
+                                    <div class="p-4">
+                                        <div class="relative rounded-xl overflow-hidden">
+                                            <img src="gambar/kumpulan webp/keseluruhan kost 2-converted-from-png.webp" alt="Acarya Kost 1" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 aspect-[4/3]">
+                                            <div class="absolute inset-0 bg-gradient-to-t from-gray-900/50 via-transparent to-transparent opacity-70"></div>
+                                            <div class="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg animate-pulse border border-red-400 z-10">
+                                                <i class="fas fa-fire mr-1"></i>
+                                                full
+                                            </div>
+                                            <div class="absolute bottom-5 left-5 bg-slate-800/80 backdrop-blur-sm px-3 py-2 rounded-xl shadow-lg flex items-center gap-3 border border-slate-600">
+                                                <div class="w-8 h-8 bg-green-50 rounded-full flex items-center justify-center text-green-600 shadow-inner">
+                                                    <i class="fas fa-home text-sm"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="text-[8px] text-slate-400 font-bold uppercase tracking-widest mb-0.5">Tipe Hunian</p>
+                                                    <p class="text-xs font-extrabold text-slate-100">Medium Center</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                    </div>
+
+                    <!-- Code Snippet Card -->
+                    <div class="hidden lg:block mt-8 bg-white rounded-[1.5rem] code-window-shadow border border-gray-200/80 overflow-hidden ">
+                        <!-- Window Header -->
+                        <div class="flex items-center justify-between px-4 h-10 bg-gray-100/50 border-b border-gray-200">
+                            <div class="flex items-center gap-2">
+                                <span class="mac-dot bg-[#FF5F56]"></span>
+                                <span class="mac-dot bg-[#FFBD2E]"></span>
+                                <span class="mac-dot bg-[#27C93F]"></span>
+                            </div>
+                            <div class="text-xs text-slate-500 font-mono">kost-1-config.js</div>
+                            <div class="w-12"></div>
+                        </div>
+                        <!-- Code Area -->
+                        <div class="p-4 sm:p-6 text-xs sm:text-sm font-mono leading-relaxed">
+                                <pre><code><span class="sh-keyword">const</span> <span class="sh-variable">acaryaSatu</span> <span class="sh-punctuation">=</span> <span class="sh-punctuation">{</span>
+                                <span class="sh-property">nama</span><span class="sh-punctuation">:</span> <span class="sh-string">'Acarya Kost 1'</span><span class="sh-punctuation">,</span>
+                                <span class="sh-property">lokasi</span><span class="sh-punctuation">:</span> <span class="sh-string">'BTN Banyuning Lestari'</span><span class="sh-punctuation">,</span>
+                                <span class="sh-property">keunggulan</span><span class="sh-punctuation">: [</span>
+                                    <span class="sh-string">'Hunian Ramai & Dinamis'</span><span class="sh-punctuation">,</span>
+                                    <span class="sh-string">'Fasilitas Lengkap'</span><span class="sh-punctuation">,</span>
+                                    <span class="sh-string">'Ruang Sosial Hidup'</span>
+                                <span class="sh-punctuation">]</span>
+                                <span class="sh-punctuation">};</span></code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contents lg:block w-full lg:w-1/2">
+                    <div class="order-1 lg:order-none inline-flex items-center gap-2 px-3 py-1 bg-green-50 text-green-700 rounded-full text-xs font-bold uppercase tracking-wider mb-6">
+                        <span class="w-2 h-2 bg-green-600 rounded-full animate-pulse"></span>
+                        Lokasi 1: Kawasan Pemukiman Strategis
+                    </div>
+                    <h2 class="order-1 lg:order-none text-4xl font-extrabold text-gray-900 mb-6 leading-tight">ACARYA KOST 1 - BTN BANYUNING LESTARI</h2>
+                    <p id="desc-1" class="order-3 lg:order-none text-lg text-gray-700 mb-8 text-justify">Hunian yang ramai dengan fasilitas yang lengkap. Kami menghadirkan konsep hunian yang dinamis di mana privasi kamar Anda berpadu sempurna dengan ruang sosial yang hidup. Tata ruang kami memaksimalkan interaksi. Bagi Anda yang mencintai diskusi, haus akan wawasan baru, dan menikmati energi lingkungan yang ramai,  tepat untuk tumbuh dan memperluas jaringan.</p>
+                    
+                    
+                    <div class="order-3 lg:order-none grid grid-cols-2 gap-x-4 gap-y-5 mb-10">
+                        <div class="flex items-center gap-4 text-gray-800">
+                            <div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg text-green-600">
+                                <i class="fas fa-snowflake"></i>
+                            </div>
+                            <span class="font-medium">AC</span>
+                        </div>
+                        <div class="flex items-center gap-4 text-gray-800">
+                            <div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg text-green-600">
+                                <i class="fas fa-shower"></i>
+                            </div>
+                            <span class="font-medium">KM DALAM LENGKAP</span>
+                        </div>
+                        <div class="flex items-center gap-4 text-gray-800">
+                            <div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg text-green-600">
+                                <i class="fas fa-wifi"></i>
+                            </div>
+                            <span class="font-medium">FREE WIFI</span>
+                        </div>
+                        <div class="flex items-center gap-4 text-gray-800">
+                            <div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg text-green-600">
+                                <i class="fas fa-couch"></i>
+                            </div>
+                            <span class="font-medium">HANGOUT PLACE</span>
+                        </div>
+                        <div class="flex items-center gap-4 text-gray-800">
+                            <div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg text-green-600">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <span class="font-medium">INSIDE KITCHEN</span>
+                        </div>
+                        <div class="flex items-center gap-4 text-gray-800">
+                            <div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg text-green-600">
+                                <i class="fas fa-bed"></i>
+                            </div>
+                            <span class="font-medium">SINGGLE BED </span>
+                        </div>
+                        <div class="flex items-center gap-4 text-gray-800">
+                            <div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg text-green-600">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <span class="font-medium">STUDY DESK </span>
+                        </div>
+                        <div class="flex items-center gap-4 text-gray-800">
+                            <div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg text-green-600">
+                                <i class="fas fa-box-open"></i>
+                            </div>
+                            <span class="font-medium">CUPBOARD  </span>
+                        </div>
+                    </div>
+                    
+                    <button onclick="window.location.href='jelajahi lebih lanjut 1.html'" class="order-3 lg:order-none group bg-green-600 text-white px-10 py-4 rounded-2xl font-bold hover:bg-green-700 transition-all shadow-lg hover:shadow-green-200/50 flex items-center justify-center gap-3 w-full sm:w-auto">
+                        Jelajahi kost 1 lebih lanjut
+                        <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Separator: Promo Menarik -->
+    <div id="section-promo" class="relative z-20 -mt-12 mb-12 max-w-4xl mx-auto px-4 md:px-6 reveal scroll-mt-32">
+        <div class="bg-white/80 backdrop-blur-lg rounded-2xl md:rounded-[2rem] shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 text-gray-900 border border-gray-200 group overflow-hidden">
+            <div class="px-4 h-10 flex items-center gap-2 bg-gray-100/10 border-b border-gray-200/10">
+                <span class="mac-dot bg-[#FF5F56]"></span>
+                <span class="mac-dot bg-[#FFBD2E]"></span>
+                <span class="mac-dot bg-[#27C93F]"></span>
+            </div>
+            <div class="p-4 md:p-8 flex items-center justify-between gap-3 md:gap-6">
+                <div class="flex items-center gap-3 md:gap-5">
+                    <div class="w-10 h-10 md:w-16 md:h-16 bg-green-100 rounded-full flex items-center justify-center text-green-600 flex-shrink-0">
+                        <i class="fas fa-bullhorn text-base md:text-3xl animate-bounce group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-sm md:text-xl leading-tight">Promo Harga Spesial!</h3>
+                        <p class="text-gray-600 mt-0.5 text-[10px] md:text-base leading-tight line-clamp-2 md:line-clamp-none">Dapatkan potongan eksklusif pembayaran 1 Tahun.</p>
+                    </div>
+                </div>
+                <a href="promoweb.html" class="flex-shrink-0 px-3 py-2 md:px-6 md:py-3 bg-white text-green-600 font-bold text-xs md:text-base rounded-lg md:rounded-xl hover:bg-green-50 transition shadow-lg whitespace-nowrap text-center">
+                    Klaim Promo
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lokasi 3 -->
+    <section id="kost-lokasi-2" class="relative py-24 px-6 bg-transparent reveal scroll-mt-32 transition-colors duration-300">
+        <div class="absolute inset-0 opacity-[0.03] pattern-dots pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col lg:flex-row-reverse items-start lg:items-center gap-0 lg:gap-20">
+                
+                <!-- Tampilan Gambar Elegan Lokasi 2 -->
+                <div class="w-full lg:w-1/2 relative group order-2 lg:order-none my-12 lg:my-0 animate-float-delayed">
+                    <div class="relative">
+                        <!-- Glowing Background Shadow -->
+                        <div class="absolute -inset-4 bg-gradient-to-r from-black-400 to-emerald-500 rounded-[2.5rem] blur-2xl opacity-40 transition duration-500"></div>
+                        <!-- Image Card with macOS theme -->
+                        <div class="bg-white rounded-[1.5rem] shadow-2xl overflow-hidden z-10 transition-all duration-500 group-hover:-translate-y-2 group-active:scale-95 border border-gray-200">
+                            <div class="px-4 h-10 flex items-center gap-2 bg-gray-100/50 border-b border-gray-200">
+                                <span class="mac-dot bg-[#FF5F56]"></span>
+                                <span class="mac-dot bg-[#FFBD2E]"></span>
+                                <span class="mac-dot bg-[#27C93F]"></span>
+                            </div>
+                            <div class="p-4">
+                                <div class="relative rounded-xl overflow-hidden">
+                                    <img src="gambar/kumpulan webp/acarya 2 sore-converted-from-png.webp" alt="Acarya Kost 2" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 aspect-[4/3]">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900/50 via-transparent to-transparent opacity-70"></div>
+                                    <div class="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg animate-pulse border border-red-400 z-10">
+                                        <i class="fas fa-fire mr-1"></i>
+                                        full
+                                    </div>
+                                    <div class="absolute bottom-5 left-5 bg-slate-800/80 backdrop-blur-sm px-3 py-2 rounded-xl shadow-lg flex items-center gap-3 border border-slate-600">
+                                        <div class="w-8 h-8 bg-green-50 rounded-full flex items-center justify-center text-green-600 shadow-inner">
+                                            <i class="fas fa-gem text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-[8px] text-slate-400 font-bold uppercase tracking-widest mb-0.5">Tipe Hunian</p>
+                                            <p class="text-xs font-extrabold text-slate-100">Premium Center</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Code Snippet Card -->
+                    <div class="hidden lg:block mt-8 bg-white rounded-[1.5rem] code-window-shadow border border-gray-200/80 overflow-hidden">
+                        <!-- Window Header -->
+                        <div class="flex items-center justify-between px-4 h-10 bg-gray-100/50 border-b border-gray-200">
+                            <div class="flex items-center gap-2">
+                                <span class="mac-dot bg-[#FF5F56]"></span>
+                                <span class="mac-dot bg-[#FFBD2E]"></span>
+                                <span class="mac-dot bg-[#27C93F]"></span>
+                            </div>
+                            <div class="text-xs text-slate-500 font-mono">kost-2-config.js</div>
+                            <div class="w-12"></div>
+                        </div>
+                        <!-- Code Area -->
+                        <div class="p-4 sm:p-6 text-xs sm:text-sm font-mono leading-relaxed">
+                            <pre><code><span class="sh-keyword">const</span> <span class="sh-variable">acaryaDua</span> <span class="sh-punctuation">=</span> <span class="sh-punctuation">{</span>
+                            <span class="sh-property">nama</span><span class="sh-punctuation">:</span> <span class="sh-string">'Acarya Kost 2'</span><span class="sh-punctuation">,</span>
+                            <span class="sh-property">lokasi</span><span class="sh-punctuation">:</span> <span class="sh-string">'Desa Padang Keling'</span><span class="sh-punctuation">,</span>
+                            <span class="sh-property">keunggulan</span><span class="sh-punctuation">: [</span>
+                                <span class="sh-string">'Compact Luxury Apartment'</span><span class="sh-punctuation">,</span>
+                                <span class="sh-string">'Suasana Hening & Kondusif'</span><span class="sh-punctuation">,</span>
+                                <span class="sh-string">'Kualitas Istirahat Maksimal'</span>
+                            <span class="sh-punctuation">]</span>
+                            <span class="sh-punctuation">};</span></code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contents lg:block w-full lg:w-1/2">
+                    <div class="order-1 lg:order-none inline-flex items-center gap-2 px-3 py-1 bg-green-50 text-green-700 rounded-full text-xs font-bold uppercase tracking-wider mb-6">
+                        <span class="w-2 h-2 bg-green-600 rounded-full animate-pulse"></span>
+                        Lokasi 2: kawasan semi pedesaan
+                    </div>
+                    <h2 class="order-1 lg:order-none text-4xl font-extrabold text-gray-900 mb-6 leading-tight">ACARYA KOST 2 - DESA PADANG KELING</h2>
+                    <p id="desc-2" class="order-3 lg:order-none text-lg text-gray-700 mb-8 text-justify">Kami menghadirkan konsep Compact Luxury Apartment yang revolusioner. Setiap unit didesain secara efisien dengan interior mewah, menciptakan ruang yang intim namun berkelas. Keunggulan utama kami terletak pada lokasinya: tersembunyi jauh dari hiruk-pikuk pemukiman padat. Di sini, Anda tidak akan mendengar kebisingan tetangga atau keramaian jalanan. Yang ada hanyalah suasana hening yang kondusif untuk memaksimalkan konsentrasi belajar Anda dan menjamin kualitas tidur yang sempurna.</p>
+                    
+                    
+                    <div class="order-3 lg:order-none grid grid-cols-2 gap-x-4 gap-y-5 mb-10">
+                        <div class="flex items-center gap-4 text-gray-800">
+                            <div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg text-green-600">
+                                <i class="fas fa-parking"></i>
+                            </div>
+                            <span class="font-medium">SPACIOUS AND SAFE PARKING</span>
+                        </div>
+                        <div class="flex items-center gap-4 text-gray-800">
+                            <div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg text-green-600">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <span class="font-medium">INSIDE KITCHEN</span>
+                        </div>
+                        <div class="flex items-center gap-4 text-gray-800">
+                            <div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg text-green-600">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <span class="font-medium">STUDY DESK  </span>
+                        </div>
+                        <div class="flex items-center gap-4 text-gray-800">
+                            <div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg text-green-600">
+                                <i class="fas fa-wifi"></i>
+                            </div>
+                            <span class="font-medium">FREE WIFI</span>
+                        </div>
+                        <div class="flex items-center gap-4 text-gray-800">
+                            <div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg text-green-600">
+                                <i class="fas fa-bed"></i>
+                            </div>
+                            <span class="font-medium">SINGGLE BED </span>
+                        </div>
+                        <div class="flex items-center gap-4 text-gray-800">
+                            <div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg text-green-600">
+                                <i class="fas fa-snowflake"></i>
+                            </div>
+                            <span class="font-medium">AC </span>
+                        </div>
+                        <div class="flex items-center gap-4 text-gray-800">
+                            <div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg text-green-600">
+                                <i class="fas fa-couch"></i>
+                            </div>
+                            <span class="font-medium">HANGOUT PLACE</span>
+                        </div>
+                        <div class="flex items-center gap-4 text-gray-800">
+                            <div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg text-green-600">
+                                <i class="fas fa-tv"></i>
+                            </div>
+                            <span class="font-medium">TV</span>
+                        </div>
+                        <div class="flex items-center gap-4 text-gray-800">
+                            <div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg text-green-600">
+                                <i class="fas fa-box-open"></i>
+                            </div>
+                            <span class="font-medium">CUPBOARD</span>
+                        </div>
+                        <div class="flex items-center gap-4 text-gray-800">
+                            <div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg text-green-600">
+                                <i class="fas fa-shoe-prints"></i>
+                            </div>
+                            <span class="font-medium">SHOE CABINET</span>
+                        </div>
+
+                    </div>
+                    
+                    <button onclick="window.location.href='jelajahi lebih lanjut 2.html'" class="order-3 lg:order-none group bg-green-600 text-white px-10 py-4 rounded-2xl font-bold hover:bg-green-700 transition-all shadow-lg hover:shadow-green-200/50 flex items-center justify-center gap-3 w-full sm:w-auto">
+                        Jelajahi kost 2 lebih lanjut
+                        <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    
+
+    <!-- Separator: Event & Kegiatan Warga -->
+    <div class="relative z-20 -mt-12 max-w-4xl mx-auto px-4 md:px-6 reveal">
+        <div class="bg-gray-100/70 backdrop-blur-lg rounded-2xl md:rounded-[2rem] shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-gray-200 group overflow-hidden">
+            <div class="px-4 h-10 flex items-center gap-2 bg-gray-100/50 border-b border-gray-200">
+                <span class="mac-dot bg-[#FF5F56]"></span>
+                <span class="mac-dot bg-[#FFBD2E]"></span>
+                <span class="mac-dot bg-[#27C93F]"></span>
+            </div>
+            <div class="p-4 md:p-8 flex items-center justify-between gap-3 md:gap-6">
+                <div class="flex items-center gap-3 md:gap-5">
+                    <div class="w-10 h-10 md:w-16 md:h-16 bg-teal-100 rounded-full flex items-center justify-center text-teal-600 flex-shrink-0">
+                        <i class="fas fa-calendar-check text-base md:text-3xl group-hover:scale-110 group-hover:rotate-12 transition-transform"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-sm md:text-xl leading-tight">Kegiatan Kekeluargaan</h3>
+                        <p class="text-gray-600 mt-0.5 text-[10px] md:text-base leading-tight line-clamp-2 md:line-clamp-none">Nonton bareng & acara bakar-bakar rutin warga kost setiap bulan.</p>
+                    </div>
+                </div>
+                <a href="aturan&etika.html" class="flex-shrink-0 px-3 py-2 md:px-6 md:py-3 bg-gray-800 text-white font-bold text-xs md:text-base rounded-lg md:rounded-xl hover:bg-gray-700 transition shadow-lg whitespace-nowrap text-center">
+                    Lihat Jadwal
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .section-title {
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 4px;
+            background-color: #16a34a;
+            border-radius: 2px;
+        }
+
+        .peraturan-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .peraturan-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+    </style>
+
+        <main class=" mx-w-auto mx-auto px-6 py-20 space-y-32">
+        
+            <!-- Pemilik Kost Ayah-->
+        <section id="pemilik-kost" class="relative reveal bg-gray-200 -mx-6 px-6 py-20 overflow-hidden">
+                <!-- Top Wavy Shape -->
+                <div class="absolute top-0 left-0 w-full overflow-hidden leading-[0px]">
+                    <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="relative block w-[calc(100%+1.3px)] h-[100px] fill-gray-50">
+                        <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.3-35.83,69.26-2.49,135.94,12.34,204.94,35.83,68.31,23.2,125.33,35.37,186.39,32.83,61.92-2.52,126.87-16.38,184.41-35.83,52.45-17.83,103.61-34.45,158.35-39.84,53.23-5.37,102.22,1.31,155.42,20.18V0Z" opacity=".25"></path>
+                        <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5"></path>
+                        <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,122.49,0,184.86,20.58,61.42,20.23,121.67,56.86,184.87,93.41C1089.64,139.12,1166.7,131,1200,116.26V0Z"></path>
+                    </svg>
+                </div>
+
+                <div class="relative z-10 flex flex-col lg:flex-row gap-8 lg:gap-16 items-center justify-between max-w-6xl mx-auto">
+                    <div class="absolute -inset-10 opacity-[0.03] pattern-dots pointer-events-none -z-10"></div>
+                    <!-- Minimalist Profile Card -->
+                    <div class="w-full lg:w-auto flex justify-center px-4 sm:px-0 order-2 lg:order-none">
+                        <div class="group relative w-full h-96 sm:h-[28rem] md:h-[32rem] lg:w-[40rem] lg:h-[30rem] perspective-1000 cursor-pointer animate-float">
+                            <!-- KARTU FOTO UTAMA dengan gaya macOS gelap -->
+                            <div class="relative w-full h-full bg-white rounded-[1.5rem] sm:rounded-[2rem] md:rounded-[2.5rem] shadow-2xl overflow-hidden z-30 transition-all duration-500 group-hover:-translate-y-2 group-active:scale-95 border border-gray-200">
+                                <div class="px-4 h-10 flex items-center gap-2 bg-gray-100/50 border-b border-gray-200">
+                                    <div class="flex items-center gap-2">
+                                    <span class="mac-dot bg-[#FF5F56]"></span>
+                                    <span class="mac-dot bg-[#FFBD2E]"></span>
+                                    <span class="mac-dot bg-[#27C93F]"></span>
+                                    </div>
+                                </div>
+                                <div class="w-full h-[calc(100%-2.5rem)] relative p-4">
+                                    <div class="relative w-full h-full rounded-xl overflow-hidden">
+                                        <img src="gambar/kumpulan webp/ajik ibu-converted-from-png.webp"
+                                            alt="Ajik Ibu"
+                                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                                            style="object-position:50% 18%;">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-70"></div>
+                                        <div class="absolute bottom-0 left-0 right-0 p-4 sm:p-5 md:p-6 text-white">
+                                            <h3 class="text-xl sm:text-2xl md:text-3xl font-bold ">Bapak Anom dan Ibu Sri</h3>
+                                            <p class="text-xs sm:text-sm md:text-base text-green-400 font-semibold">Pemilik Acarya Kost</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="contents lg:block w-full lg:w-auto space-y-0 lg:space-y-8">
+                        <div class="order-1 lg:order-none w-full px-4 sm:px-0">
+                            
+                            <span class="text-green-600 font-bold tracking-widest uppercase text-xs">Pesan dari Pemilik</span>
+                        <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mt-2">MENGENAL BAPAK ANOM DAN IBU SRI.</h2>
+                        </div>
+                    <p class="order-3 lg:order-none text-base sm:text-lg md:text-xl text-gray-700 leading-relaxed font-light px-4 sm:px-0 text-justify">
+                            "Rumah bukan hanya tentang seberapa kokoh bangunan berdiri, tapi tentang kehangatan jiwa-jiwa yang ada di dalamnya. Di sini, kami berkomitmen menciptakan lebih dari sekadar tempat berteduh. Kami membangun sebuah sanctuary (tempat perlindungan) di mana setiap penghuni tidak only sekadar tinggal, tetapi benar-benar merasa pulang. 
+                        </p>
+                        
+                    </div>
+                </div>
+
+                <!-- Bottom Wavy Shape -->
+                <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-[0px] transform rotate-180">
+                    <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="relative block w-[calc(100%+1.3px)] h-[100px] fill-gray-50">
+                        <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.3-35.83,69.26-2.49,135.94,12.34,204.94,35.83,68.31,23.2,125.33,35.37,186.39,32.83,61.92-2.52,126.87-16.38,184.41-35.83,52.45-17.83,103.61-34.45,158.35-39.84,53.23-5.37,102.22,1.31,155.42,20.18V0Z" opacity=".25"></path>
+                        <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5"></path>
+                        <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,122.49,0,184.86,20.58,61.42,20.23,121.67,56.86,184.87,93.41C1089.64,139.12,1166.7,131,1200,116.26V0Z"></path>
+                    </svg>
+                </div>
+            </section>
+        </main>
+
+        <main class="max-w-6xl mx-auto px-6 py-20 space-y-32 ">
+                <!-- Visi & Misi -->
+                    <section id="visi-misi" class="relative reveal scroll-mt-32 ">
+                            <div class="absolute -inset-10 opacity-[0.05] pattern-dots pointer-events-none -z-10"></div>
+                                <div class="text-center max-w-2xl mx-auto mb-16">
+                                    <h2 class="text-3xl font-extrabold text-gray-900 section-title mb-6">Visi & Misi</h2>
+                                        <p class="text-gray-600">Landasan kami dalam memberikan pelayanan terbaik bagi setiap penghuni Kost Nyaman.</p>
+                                        
+                                </div>
+                            <div class="grid md:grid-cols-2 gap-8">
+                                <div class="group bg-white/70 backdrop-blur-lg rounded-[2.5rem] shadow-2xl transition-all duration-500 border border-gray-200 relative overflow-hidden">
+                                    <div class="px-4 h-10 flex items-center gap-2 bg-gray-100/50 border-b border-gray-200">
+                                        <span class="mac-dot bg-[#FF5F56]"></span>
+                                        <span class="mac-dot bg-[#FFBD2E]"></span>
+                                        <span class="mac-dot bg-[#27C93F]"></span>
+                                    </div>
+                                    <div class="p-10 relative">
+                                        <div class="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                                            <i class="fas fa-eye text-9xl"></i>
+                                        </div>
+                                        <div class="flex items-center gap-4 mb-4">
+                                            <div class="w-14 h-14 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center flex-shrink-0">
+                                                <i class="fas fa-eye text-2xl"></i>
+                                            </div>
+                                            <h3 class="text-2xl font-bold text-gray-900">Visi Utama</h3>
+                                        </div>
+                                        <p class="text-gray-700 leading-relaxed text-lg text-justify">Menciptakan standar baru hunian kost yang modern, bersih, dan inklusif, di mana setiap individu dapat bertumbuh dengan tenang.</p>
+                                        <p class="text-gray-600 mt-4 text-justify">Visi kami adalah menjadi pilihan utama bagi pencari hunian dengan menghadirkan lingkungan yang aman, nyaman, dan mendukung perkembangan pribadi melalui fasilitas berkualitas, layanan profesional, dan komunitas yang ramah.</p>
+                                    </div>
+                                </div>
+
+                                <div class="group bg-white/80 backdrop-blur-lg rounded-[2.5rem] shadow-2xl transition-all duration-500 text-gray-900 relative overflow-hidden border border-gray-200">
+                                    <div class="px-4 h-10 flex items-center gap-2 bg-gray-100/20 border-b border-gray-200">
+                                        <span class="mac-dot bg-[#FF5F56]"></span>
+                                        <span class="mac-dot bg-[#FFBD2E]"></span>
+                                        <span class="mac-dot bg-[#27C93F]"></span>
+                                    </div>
+                                    <div class="p-10 relative">
+                                        <div class="absolute top-0 right-0 p-8 opacity-5">
+                                            <i class="fas fa-rocket text-8xl text-green-500"></i>
+                                        </div>
+                                        <div class="flex items-center gap-4 mb-4">
+                                            <div class="w-14 h-14 bg-green-500/20 text-green-400 rounded-2xl flex items-center justify-center flex-shrink-0">
+                                                <i class="fas fa-rocket text-2xl"></i>
+                                            </div>
+                                            <h3 class="text-2xl font-bold text-gray-900">Misi Layanan</h3>
+                                        </div>
+                                        <p class="text-green-700 mb-4 text-justify">Misi kami fokus pada pelayanan yang responsif dan konsisten: menjaga kebersihan dan keamanan, menyediakan fasilitas yang mendukung produktivitas, serta membangun komunikasi yang transparan dengan penghuni.</p>
+                                        <ul class="space-y-4 opacity-90 text-gray-700">
+                                            <li class="flex items-center space-x-3">
+                                                <i class="fas fa-check text-green-400"></i>
+                                                <span>Respon cepat dalam perbaikan fasilitas.</span>
+                                            </li>
+                                            <li class="flex items-center space-x-3">
+                                                <i class="fas fa-check text-green-400"></i>
+                                                <span>Sistem keamanan digital dan terpantau.</span>
+                                            </li>
+                                            <li class="flex items-center space-x-3">
+                                                <i class="fas fa-check text-green-400"></i>
+                                                <span>Kebersihan area publik setiap hari.</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </main>
+
+    <!-- Separator: Update Info / Fitur Baru -->
+    <div id="section-aturan" class="relative z-20 -mt-10 mb-10 max-w-4xl mx-auto px-4 md:px-6 reveal scroll-mt-32">
+        <div class="bg-white/80 backdrop-blur-lg rounded-2xl md:rounded-[2rem] shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 text-gray-900 border border-gray-200 group overflow-hidden">
+            <div class="px-4 h-10 flex items-center gap-2 bg-gray-100/50 border-b border-gray-200">
+                <span class="mac-dot bg-[#FF5F56]"></span>
+                <span class="mac-dot bg-[#FFBD2E]"></span>
+                <span class="mac-dot bg-[#27C93F]"></span>
+            </div>
+            <div class="p-4 md:p-8 flex items-center justify-between gap-3 md:gap-6">
+                <div class="flex items-center gap-3 md:gap-5">
+                    <div class="w-10 h-10 md:w-16 md:h-16 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 flex-shrink-0">
+                        <i class="fas fa-laptop-code text-base md:text-3xl group-hover:scale-110 group-hover:-rotate-12 transition-transform"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-sm md:text-xl leading-tight">Pusat Informasi Digital</h3>
+                        <p class="text-gray-600 mt-0.5 text-[10px] md:text-base leading-tight line-clamp-2 md:line-clamp-none">Akses aturan, laporan, dan info di portal digital kami.</p>
+                    </div>
+                </div>
+                <a href="aturan&etika.html" class="flex-shrink-0 px-3 py-2 md:px-6 md:py-3 bg-blue-600 text-white font-bold text-xs md:text-base rounded-lg md:rounded-xl hover:bg-blue-700 transition shadow-lg whitespace-nowrap text-center">
+                    Akses Portal
+                </a>
+            </div>
+        </div>
+    </div>
+
+     <!-- Pengembang Section -->
+    <section id="pengembang" class="reveal scroll-mt-24 relative bg-gray-200 -mx-6 px-6 py-20 overflow-hidden mx-w-6xl mx-auto">
+        <!-- Top Wavy Shape -->
+        <div class="absolute top-0 left-0 w-full overflow-hidden leading-[0px]">
+            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="relative block w-[calc(100%+1.3px)] h-[100px] fill-gray-50">
+                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.3-35.83,69.26-2.49,135.94,12.34,204.94,35.83,68.31,23.2,125.33,35.37,186.39,32.83,61.92-2.52,126.87-16.38,184.41-35.83,52.45-17.83,103.61-34.45,158.35-39.84,53.23-5.37,102.22,1.31,155.42,20.18V0Z" opacity=".25"></path>
+                <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5"></path>
+                <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,122.49,0,184.86,20.58,61.42,20.23,121.67,56.86,184.87,93.41C1089.64,139.12,1166.7,131,1200,116.26V0Z"></path>
+            </svg>
+        </div>
+
+        <div class="relative z-10 max-w-6xl mx-auto">
+            <div class="absolute -inset-10 opacity-[0.05] pattern-dots pointer-events-none -z-10"></div>
+            <div class="flex flex-col lg:grid lg:grid-cols-2 lg:gap-16 items-center">
+                <!-- Text Block -->
+                <div class="order-1 lg:col-start-1 w-full">
+                    <div class="space-y-8">
+                        <div class="px-4 sm:px-0">
+                            <span class="text-blue-600 font-bold tracking-widest uppercase text-xs">Web Developer</span>
+                            <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mt-2">Dari Konsep Menjadi Kode</h2>
+                        </div>
+                        <p class="text-base sm:text-lg md:text-xl text-gray-700 leading-relaxed font-light px-4 sm:px-0 text-justify">
+                            Website ini dirancang dan dikembangkan dengan penuh dedikasi untuk memberikan pengalaman digital terbaik, menggabungkan desain modern dengan fungsionalitas yang intuitif.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Image Card -->
+                <div class="order-2 lg:col-start-2 lg:row-span-2 w-full my-8 lg:my-0">
+                    <div class="group relative w-full h-96 sm:h-[28rem] md:h-[32rem] lg:w-[40rem] lg:h-[30rem] perspective-1000 cursor-pointer animate-float-delayed"> 
+                        <div class="relative w-full h-full bg-slate-800 rounded-[1.5rem] sm:rounded-[2rem] md:rounded-[2.5rem] shadow-2xl overflow-hidden z-30 transition-all duration-500 group-hover:-translate-y-2 group-active:scale-95 border border-slate-700">
+                            <div class="px-4 h-10 flex items-center gap-2 bg-slate-900/50 border-b border-slate-700">
+                                <div class="flex items-center gap-2"><span class="mac-dot bg-[#FF5F56]"></span><span class="mac-dot bg-[#FFBD2E]"></span><span class="mac-dot bg-[#27C93F]"></span></div>
+                            </div>
+                            <div class="w-full h-[calc(100%-2.5rem)] relative p-4">
+                                <div class="relative w-full h-full rounded-xl overflow-hidden">
+                                    <img src="https://images.unsplash.com/photo-1555066931-4365d1469c9b?q=80&w=2070&auto=format&fit=crop" alt="Kode di layar" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                                    <div class="absolute bottom-0 left-0 right-0 p-4 sm:p-5 md:p-6 text-white"><p class="font-mono text-sm text-slate-400">"Clean code always looks like it was written by someone who cares."</p><p class="font-mono text-xs text-green-400 mt-2">- Robert C. Martin</p></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Developer Cards -->
+                <div class="order-3 lg:col-start-1 w-full">
+                    <div class="px-4 sm:px-0 flex flex-col sm:flex-row gap-4 mt-6">
+                        <!-- Developer 1 Card -->
+                        <a href="https://www.instagram.com/aryawcksnaa_/" target="_blank" class="group flex items-center gap-4 bg-white hover:bg-gray-100 transition-colors p-4 rounded-2xl shadow-lg w-full border border-gray-200">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=GusAnom" alt="Avatar Pengembang 1" class="w-12 h-12 rounded-full bg-gray-200">
+                            <div><span class="text-base font-semibold text-gray-900">Hubungi Pengembang</span><p class="text-sm text-gray-600">@aryawcksnaa_</p></div>
+                            <i class="fas fa-arrow-right text-gray-400 ml-auto group-hover:text-gray-900 group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                        <!-- Developer 2 Card -->
+                        <a href="https://www.instagram.com/gst.ayuu_ratih/" target="_blank" class="group flex items-center gap-4 bg-white hover:bg-gray-100 transition-colors p-4 rounded-2xl shadow-lg w-full border border-gray-200">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=AyuRatih&gender=female" alt="Avatar Pengembang 2" class="w-12 h-12 rounded-full bg-gray-200">
+                            <div><span class="text-base font-semibold text-gray-900">Hubungi Pengembang</span><p class="text-sm text-gray-600">@gst.ayuu_ratih</p></div>
+                            <i class="fas fa-arrow-right text-gray-400 ml-auto group-hover:text-gray-900 group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Bottom Wavy Shape -->
+        <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-[0px] transform rotate-180">
+            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="relative block w-[calc(100%+1.3px)] h-[100px] fill-gray-50">
+                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.3-35.83,69.26-2.49,135.94,12.34,204.94,35.83,68.31,23.2,125.33,35.37,186.39,32.83,61.92-2.52,126.87-16.38,184.41-35.83,52.45-17.83,103.61-34.45,158.35-39.84,53.23-5.37,102.22,1.31,155.42,20.18V0Z" opacity=".25"></path>
+                <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5"></path>
+                <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,122.49,0,184.86,20.58,61.42,20.23,121.67,56.86,184.87,93.41C1089.64,139.12,1166.7,131,1200,116.26V0Z"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-24 px-6 reveal scroll-mt-24">
+        <div class="max-w-6xl mx-auto w-full">
+            
+            <!-- Header Section -->
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-3 tracking-tight">Pertanyaan yang Sering Diajukan</h2>
+                <p class="text-gray-600 text-lg">Semua yang perlu Anda ketahui tentang Acarya Kost.</p>
+            </div>
+    
+            <!-- Main Content Area: Grid Layout -->
+            <div class="hidden lg:grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- Left Column: Navigation List -->
+                <div class="lg:col-span-4 bg-white-900/70 backdrop-blur-lg border rounded-2xl p-3 shadow-lg">
+                    <div id="faq-list" class="flex flex-col gap-1"></div>
+                </div>
+    
+                <!-- Right Column: Detail Content -->
+                <div class="lg:col-span-8 bg-white-900/70 backdrop-blur-lg border border-black-700 rounded-2xl p-8 lg:p-10 shadow-lg min-h-[400px]"
+>
+                    
+                    <!-- Badge Kategori -->
+                    <div class="mb-5">
+                        <span id="content-category" class="inline-block bg-green-500/10 text-green-400 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide">
+                            <!-- JS will fill this -->
+                        </span>
+                    </div>
+    
+                    <!-- Judul Pertanyaan -->
+                    <h3 id="content-title" class="text-2xl md:text-3xl font-bold text-black mb-6 leading-snug">
+                        <!-- JS will fill this -->
+                    </h3>
+    
+                    <!-- Garis Pemisah -->
+                    <hr class="border-slate-700 mb-6">
+    
+                    <!-- Teks Jawaban -->
+                    <div id="content-answer" class="text-gray-950 leading-relaxed text-lg">
+                        <!-- Konten akan diisi oleh JS -->
+                    </div>
+                </div>
+    
+            </div>
+
+            <!-- Mobile Accordion View -->
+            <div id="mobile-faq- iner" class="lg:hidden space-y-4">
+                <!-- Mobile FAQ items will be injected here by JS -->
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Booking Section -->
+    <section id="booking" class="py-20 px-6 reveal scroll-mt-24 bg-gray-200 relative -mx-6 overflow-hidden mx-w-7xl mx-auto">
+        <!-- Top Wavy Shape -->
+        <div class="absolute top-0 left-0 w-full overflow-hidden leading-[0px]">
+            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="relative block w-[calc(100%+1.3px)] h-[100px] fill-gray-50">
+                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.3-35.83,69.26-2.49,135.94,12.34,204.94,35.83,68.31,23.2,125.33,35.37,186.39,32.83,61.92-2.52,126.87-16.38,184.41-35.83,52.45-17.83,103.61-34.45,158.35-39.84,53.23-5.37,102.22,1.31,155.42,20.18V0Z" opacity=".25"></path>
+                <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5"></path>
+                <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,122.49,0,184.86,20.58,61.42,20.23,121.67,56.86,184.87,93.41C1089.64,139.12,1166.7,131,1200,116.26V0Z"></path>
+            </svg>
+        </div>
+
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-3 tracking-tight">Pesan Kamar Anda</h2>
+                <p class="text-gray-600 text-lg">Amankan tempat Anda di hunian terbaik kami sekarang juga.</p>
+            </div> 
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+                <!-- Info Card (Left Side) -->
+                <div class="hidden lg:block lg:col-span-1 space-y-6 order-last lg:order-first">
+                    <div class="bg-white rounded-[2.5rem] shadow-lg border border-gray-200 overflow-hidden">
+                        <div class="px-4 h-10 flex items-center gap-2 bg-gray-100/50 border-b border-gray-200">
+                            <span class="w-3 h-3 rounded-full bg-[#FF5F56]"></span>
+                            <span class="w-3 h-3 rounded-full bg-[#FFBD2E]"></span>
+                            <span class="w-3 h-3 rounded-full bg-[#27C93F]"></span>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-lg font-bold text-gray-900 mb-4 border-b border-gray-200 pb-2">Info Kontak</h3>
+                            <ul class="space-y-4 text-sm text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fa-solid fa-location-dot text-green-600 mt-1 mr-3 w-5"></i>
+                                    <span>Bali, Buleleng, Singaraja</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fa-solid fa-phone text-green-600 mr-3 w-5"></i>
+                                    <span>+62 878-6726-1660</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fa-solid fa-envelope text-green-600 mr-3 w-5"></i>
+                                    <span>Kostacarya@gmail.com</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+    
+                    <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-[2.5rem] shadow-lg text-white overflow-hidden">
+                        <div class="px-4 h-10 flex items-center gap-2 bg-black/10 border-b border-white/10">
+                            <span class="w-3 h-3 rounded-full bg-[#FF5F56]"></span>
+                            <span class="w-3 h-3 rounded-full bg-[#FFBD2E]"></span>
+                            <span class="w-3 h-3 rounded-full bg-[#27C93F]"></span>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-lg font-bold mb-2">Mengapa Memesan Disini?</h3>
+                            <ul class="space-y-2 text-sm">
+                                <li><i class="fa-solid fa-check mr-2"></i> Harga Terbaik Dijamin</li>
+                                <li><i class="fa-solid fa-check mr-2"></i> Konfirmasi Instan</li>
+                                <li><i class="fa-solid fa-check mr-2"></i> Layanan 24/7</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- Booking Form (Right Side) -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-gray-200">
+                        <div class="bg-gray-100 px-6 py-4 border-b border-gray-200 flex items-center gap-4">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-[#FF5F56]"></span>
+                                <span class="w-3 h-3 rounded-full bg-[#FFBD2E]"></span>
+                                <span class="w-3 h-3 rounded-full bg-[#27C93F]"></span>
+                            </div>
+                            <div>
+                            <h2 class="text-2xl font-bold text-gray-900">Formulir Pemesanan</h2>
+                            <p class="text-gray-600 text-sm">Silakan lengkapi data di bawah ini untuk memesan.</p>
+                            </div>
+                        </div>
+                        
+                        <form id="bookingForm" class="p-6 md:p-8 space-y-6">
+                            
+                            <!-- Personal Details -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div> 
+                                    <label for="fullName" class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                                <div class="relative text-gray-900">
+                                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                            <i class="fa-solid fa-user"></i>
+                                        </span>
+                                    <input type="text" id="fullName" name="nama" required class="pl-10 w-full border-gray-300 rounded-xl shadow-sm focus:ring-green-500 focus:border-green-500 border p-2.5 bg-gray-100 text-gray-900 transition-colors" placeholder="Budi Santoso">
+                                    </div>
+                                </div>
+                                <div> 
+                                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Alamat Email</label>
+                                <div class="relative text-gray-900">
+                                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                            <i class="fa-solid fa-envelope"></i>
+                                        </span>
+                                    <input type="email" id="email" name="email" required class="pl-10 w-full border-gray-300 rounded-xl shadow-sm focus:ring-green-500 focus:border-green-500 border p-2.5 bg-gray-100 text-gray-900 transition-colors" placeholder="budi@email.com">
+                                    </div>
+                                </div>
+                            </div>
+    
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div> 
+                                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Nomor WhatsApp/Telepon</label>
+                                <div class="relative text-gray-900">
+                                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                            <i class="fa-solid fa-phone"></i>
+                                        </span>
+                                    <input type="tel" id="phone" name="no_hp" required class="pl-10 w-full border-gray-300 rounded-xl shadow-sm focus:ring-green-500 focus:border-green-500 border p-2.5 bg-gray-100 text-gray-900 transition-colors" placeholder="0812...">
+                                    </div>
+                                </div>
+                                <div> 
+                                    <label for="kostLocation" class="block text-sm font-medium text-gray-700 mb-1">Pilih Lokasi Kost</label>
+                                    <div class="relative text-gray-900">
+                                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                            <i class="fa-solid fa-map-marker-alt"></i>
+                                        </span>
+                                        <select id="kostLocation" name="lokasi_kost" required class="pl-10 w-full border-gray-300 rounded-xl shadow-sm focus:ring-green-500 focus:border-green-500 border p-2.5 bg-gray-100 text-gray-900 transition-colors">
+                                            <option value="" disabled selected>-- Pilih Lokasi --</option>
+                                            <option value="Acarya Kost 1">Acarya Kost 1 (BTN Banyuning Lestari)</option>
+                                            <option value="Acarya Kost 2">Acarya Kost 2 (Desa Padang Keling)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+    
+                            <!-- Dates and Room Type -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div> 
+                                    <label for="roomType" class="block text-sm font-medium text-gray-700 mb-1">Tipe Sewa & Harga</label>
+                                    <div class="relative text-gray-900">
+                                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                            <i class="fa-solid fa-bed"></i>
+                                        </span>
+                                        <select id="roomType" name="tipe_kamar" required disabled class="pl-10 w-full border-gray-300 rounded-xl shadow-sm focus:ring-green-500 focus:border-green-500 border p-2.5 bg-gray-100 text-gray-400 transition-colors cursor-not-allowed">
+                                            <option value="" disabled selected>-- Pilih Lokasi Dahulu --</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div> 
+                                    <label for="checkIn" class="block text-sm font-medium text-gray-700 mb-1">Tanggal Check-in</label>
+                                <input type="date" id="checkIn" name="tanggal_checkin" required class="w-full border-gray-300 rounded-xl shadow-sm focus:ring-green-500 focus:border-green-500 border p-2.5 text-gray-900 bg-gray-100 transition-colors">
+                                </div>
+                            </div>
+    
+                            <div>
+                                <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Permintaan Khusus (Opsional)</label>
+                            <div class="text-gray-900">
+                                <textarea id="message" name="pesan" rows="3" class="w-full border-gray-300 rounded-xl shadow-sm focus:ring-green-500 focus:border-green-500 border p-2.5 bg-gray-100 text-gray-900 transition-colors" placeholder="Contoh: Saya ingin kamar di lantai atas, bebas asap rokok..."></textarea>
+                            </div>
+                            </div>
+    
+                            <div class="pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition duration-300 transform hover:-translate-y-1 flex justify-center items-center">
+                                    <i class="fa-solid fa-envelope mr-2"></i>
+                                    <span>Kirim via Email</span>
+                                </button>
+                                <button type="button" onclick="sendToWhatsApp()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition duration-300 transform hover:-translate-y-1 flex justify-center items-center">
+                                    <i class="fa-brands fa-whatsapp text-xl mr-2"></i>
+                                    <span>Kirim via WhatsApp</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Wavy Shape -->
+        <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-[0px] transform rotate-180">
+            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="relative block w-[calc(100%+1.3px)] h-[100px] fill-gray-50">
+                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.3-35.83,69.26-2.49,135.94,12.34,204.94,35.83,68.31,23.2,125.33,35.37,186.39,32.83,61.92-2.52,126.87-16.38,184.41-35.83,52.45-17.83,103.61-34.45,158.35-39.84,53.23-5.37,102.22,1.31,155.42,20.18V0Z" opacity=".25"></path>
+                <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5"></path>
+                <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,122.49,0,184.86,20.58,61.42,20.23,121.67,56.86,184.87,93.41C1089.64,139.12,1166.7,131,1200,116.26V0Z"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Testimoni -->
+
+    <!-- Section Container -->
+    <section id="testimoni" class="py-16 relative group reveal overflow-hidden scroll-mt-24">
+        <div class="absolute inset-0 opacity-[0.03] pattern-dots pointer-events-none -z-10"></div>
+        
+        <div class="px-4 md:px-8">
+            <!-- Header Section -->
+            <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-green-600 mb-4">Kata Mereka Tentang Kost Kami</h2>
+            <p class="text-gray -700 max-w-2xl mx-auto">
+                    Dengar langsung pengalaman nyaman dari para penghuni yang sudah tinggal bersama kami.
+                </p>
+            </div>
+        </div>
+
+        <!-- Slider Container (full-bleed) -->
+        <div class="relative overflow-hidden py-4 w-screen left-1/2 -translate-x-1/2 scroll-mt-32">
+        <div class="relative overflow-hidden py-4 w-full scroll-mt-32">
+            
+            <!-- Gradient Fade Mask Kiri & Kanan --> 
+            <div class="hidden md:block absolute top-0 bottom-0 left-0 w-0 bg-gradient-to-r from-white-50 to-transparent z-10 pointer-events-none transition-colors duration-300"></div>
+            <div class="hidden md:block absolute top-0 bottom-0 right-0 w-0 bg-gradient-to-l from-white-50 to-transparent z-10 pointer-events-none transition-colors duration-300"></div>
+            <div class="hidden md:block absolute top-0 bottom-0 left-0 w-16 bg-gradient-to-r from-gray-50 to-transparent z-10 pointer-events-none transition-colors duration-300"></div>
+            <div class="hidden md:block absolute top-0 bottom-0 right-0 w-16 bg-gradient-to-l from-gray-50 to-transparent z-10 pointer-events-none transition-colors duration-300"></div>
+            
+            <div id="slider-container" class="overflow-hidden py-4">
+                <div id="slider-track" class="flex animate-scroll">
+                    <!-- Cards will be inserted here by JS -->
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <script>
+        // Data Testimoni (7 Orang Penghuni)
+        const testimonials = [
+            {
+                name: "Andi Saputra",
+                role: "Mahasiswa Tingkat Akhir",
+                image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Andi",
+                text: "Wi-Fi di sini kenceng banget, ngebantu banget buat ngerjain skripsi sampai malam. Ibu kostnya juga ramah, sering ngasih makanan kalau ada acara.",
+                rating: 5,
+                stayDuration: "2 Tahun"
+            },
+            {
+                name: "Siti Aminah",
+                role: "Karyawati Bank",
+                image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Siti&gender=female",
+                text: "Keamanan 24 jam dan ada CCTV bikin aku merasa aman pulang kerja malam. Lingkungannya tenang, pas banget buat istirahat.",
+                rating: 5,
+                stayDuration: "1 Tahun"
+            },
+            {
+                name: "Budi Santoso",
+                role: "Freelancer Desain",
+                image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Budi",
+                text: "Listrik stabil jarang mati lampu, penting banget buat kerjaanku. Parkiran motor juga luas dan ada atapnya, jadi motor nggak kehujanan.",
+                rating: 4,
+                stayDuration: "8 Bulan"
+            },
+            {
+                name: "Rina Wijaya",
+                role: "Mahasiswi Baru",
+                image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Rina&gender=female",
+                text: "Lokasinya strategis banget, cuma 5 menit jalan kaki ke kampus. Banyak tempat makan murah di sekitar kost, cocok buat kantong mahasiswa.",
+                rating: 5,
+                stayDuration: "6 Bulan"
+            },
+            {
+                name: "Dimas Anggara",
+                role: "Gamer / Streamer",
+                image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Dimas",
+                text: "Sirkulasi udara di kamar bagus, nggak pengap. Kamar mandinya juga bersih banget karena rutin dibersihkan penjaga kost.",
+                rating: 5,
+                stayDuration: "1.5 Tahun"
+            },
+            {
+                name: "Putri Larasati",
+                role: "Nakes (Perawat)",
+                image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Putri&gender=female",
+                text: "Air bersih dan lancar, nggak pernah kekeringan walaupun musim kemarau. Tetangga kamar juga sopan-sopan dan nggak berisik.",
+                rating: 4,
+                stayDuration: "1 Tahun"
+            },
+            {
+                name: "Joko Anwar",
+                role: "Karyawan Swasta",
+                image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Joko",
+                text: "Harga sewa sangat worth it dengan fasilitas yang didapat. Ada dapur umum yang bersih jadi bisa masak mie instan kapan aja.",
+                rating: 5,
+                stayDuration: "3 Tahun"
+            }
+        ];
+
+        const track = document.getElementById('slider-track');
+
+        // Function to generate stars
+        const getStars = (rating) => {
+            let starsHtml = '';
+            for (let i = 0; i < 5; i++) {
+                if (i < rating) {
+                    starsHtml += '<i class="fas fa-star text-yellow-400 text-sm"></i>';
+                } else {
+                    starsHtml += '<i class="far fa-star text-gray-300 text-sm"></i>';
+                }
+            }
+            return starsHtml;
+        };
+
+        // Render Cards
+        const renderCards = () => {
+            track.innerHTML = testimonials.map((t) => `
+                <div class="testimonial-card-wrapper flex-shrink-0 w-[300px] md:w-[350px] p-3">
+                    <div class="bg-white-900/70 backdrop-blur-lg rounded-3xl shadow-md border border-slate-700 h-full flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                        <div class="px-4 h-10 flex items-center gap-2 bg-white-900/50 border-b border-gray-25   0">
+                            <span class="mac-dot bg-[#FF5F56]"></span>
+                            <span class="mac-dot bg-[#FFBD2E]"></span>
+                            <span class="mac-dot bg-[#27C93F]"></span>
+                        </div>
+                        <div class="p-6 flex-grow flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center gap-4 mb-4">
+                                    <img src="${t.image}" alt="${t.name}" class="w-14 h-14 rounded-full bg-green-50 border-2 border-green-100">
+                                    <div>
+                                        <h4 class="font-bold text-black">${t.name}</h4>
+                                        <p class="text-xs text-green-600 font-semibold">${t.role}</p>
+                                    </div>
+                                </div>
+                                <div class="mb-3">${getStars(t.rating)}</div>
+                                <p class="text-gray-700 text-sm leading-relaxed italic">"${t.text}"</p>
+                            </div>
+                            <div class="mt-6 pt-4 border-t border-gray-200 flex items-center justify-between">
+                                <span class="text-xs text-slate-400"><i class="fas fa-clock mr-1"></i> Penghuni ${t.stayDuration}</span>
+                                <i class="fas fa-quote-right text-slate-200 text-2xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        // Initialize Testimoni Cards
+        renderCards();
+        
+        // Clone semua card testimoni untuk efek infinite scroll (marquee)
+        if (track) {
+            const cards = Array.from(track.children);
+            cards.forEach(card => {
+                const clone = card.cloneNode(true);
+                track.appendChild(clone);
+            });
+        }
+
+        // Scroll Animation Logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const reveals = document.querySelectorAll('.reveal');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    } else {
+                        entry.target.classList.remove('active');
+                    }
+                });
+            }, { threshold: 0.1 }); // Trigger when 10% visible
+
+            reveals.forEach(el => observer.observe(el));
+        });
+
+        // ===============================================
+        // FAQ Logic
+        // ===============================================
+        const faqData = [
+            {
+                id: 1,
+                category: 'Lokasi',
+                question: 'Di mana saja lokasi Acarya Kost?',
+                answer: 'Saat ini kami memiliki dua lokasi strategis di Singaraja: Acarya Kost 1 di BTN Banyuning Lestari yang ramai dan dinamis, serta Acarya Kost 2 di Desa Padang Keling yang menawarkan suasana lebih tenang dan privat.'
+            },
+            {
+                id: 2,
+                category: 'Fasilitas',
+                question: 'Apa saja fasilitas standar di setiap kamar?',
+                answer: 'Setiap kamar di kedua lokasi sudah dilengkapi dengan fasilitas esensial seperti AC, kamar mandi dalam, tempat tidur, lemari pakaian, dan meja belajar. Selain itu, kami menyediakan WiFi berkecepatan tinggi di seluruh area kost.'
+            },
+            {
+                id: 3,
+                category: 'Harga',
+                question: 'Apakah ada biaya tambahan selain biaya sewa?',
+                answer: 'Harga sewa yang kami tawarkan sudah transparan. Biaya listrik dan air tidak termasuk dalam paket kecuali untuk acarya ARJ 2. Tidak ada biaya tersembunyi lainnya.'
+            },
+            {
+                id: 4,
+                category: 'Pemesanan',
+                question: 'Bagaimana cara memesan kamar di Acarya Kost?',
+                answer: 'Anda bisa langsung memesan melalui halaman Booking di website ini atau menghubungi kami via WhatsApp. Tim kami akan segera merespon untuk konfirmasi ketersediaan dan proses pembayaran DP.'
+            },
+            {
+                id: 5,
+                category: 'Keamanan',
+                question: 'Bagaimana sistem keamanan di Acarya Kost?',
+                answer: 'Keamanan penghuni adalah prioritas kami. Kedua lokasi dilengkapi dengan CCTV 24/7 di area umum dan akses gerbang yang terpantau untuk memastikan lingkungan yang aman dan nyaman.'
+            },
+            {
+                id: 6,
+                category: 'Peraturan',
+                question: 'Apakah boleh membawa teman menginap?',
+                answer: 'Kami memiliki aturan terkait tamu yang menginap untuk menjaga kenyamanan bersama. Tamu diizinkan berkunjung hingga batas waktu yang ditentukan. Untuk informasi lebih detail, silakan merujuk pada halaman Aturan & Etika di portal digital kami.'
+            },
+            {
+                id: 7,
+                category: 'Layanan',
+                question: 'Apakah ada layanan kebersihan?',
+                answer: 'Ya, kami menyediakan layanan kebersihan rutin untuk area umum seperti lorong, dapur bersama, dan area parkir. Kebersihan kamar menjadi tanggung jawab masing-masing penghuni.'
+            },
+            {
+                id: 8,
+                category: 'Komunitas',
+                question: 'Apakah ada kegiatan untuk para penghuni?',
+                answer: 'Tentu! Kami secara rutin mengadakan kegiatan kekeluargaan seperti nonton bareng atau acara bakar-bakar untuk mempererat hubungan antar penghuni. Jadwal kegiatan dapat dilihat di portal informasi kami.'
+            }
+        ];
+
+        let activeId = faqData[0].id;
+
+        const listContainer = document.getElementById('faq-list');
+        const contentCategory = document.getElementById('content-category');
+        const contentTitle = document.getElementById('content-title');
+        const contentAnswer = document.getElementById('content-answer');
+        const mobileFaqContainer = document.getElementById('mobile-faq-container');
+
+        function renderList() {
+            if (!listContainer) return; // Guard clause
+            listContainer.innerHTML = '';
+            
+            faqData.forEach(item => {
+                const isActive = item.id === activeId;
+                
+                const button = document.createElement('button');
+                button.className = `w-full text-left p-4 rounded-xl flex items-center justify-between transition-colors duration-200 group ${
+                    isActive 
+                    ? 'bg-slate-800' 
+                    : 'bg-transparent hover:bg-gray-100'
+                }`;
+                
+                const spanText = document.createElement('span');
+                spanText.className = `text-[15px] pr-4 ${isActive ? 'font-semibold text-white' : 'font-normal text-slate-400'}`;
+                spanText.textContent = item.question;
+                
+                const iconSvg = document.createElement('div');
+                iconSvg.className = `flex-shrink-0 text-slate-500 transition-opacity duration-200 ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'}`;
+                iconSvg.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>`;
+
+                button.appendChild(spanText);
+                button.appendChild(iconSvg);
+
+                button.addEventListener('click', () => {
+                    if (activeId !== item.id) {
+                        activeId = item.id;
+                        renderList();
+                        updateContent();
+                    }
+                });
+
+                listContainer.appendChild(button);
+            });
+        }
+
+        function updateContent() {
+            if (!contentAnswer) return; // Guard clause
+            const activeData = faqData.find(item => item.id === activeId);
+            if (!activeData) return;
+
+            contentAnswer.style.opacity = '0';
+            
+            setTimeout(() => {
+                if(contentCategory) contentCategory.textContent = activeData.category;
+                if(contentTitle) contentTitle.textContent = activeData.question;
+                if(contentAnswer) contentAnswer.textContent = activeData.answer;
+                
+                contentAnswer.style.opacity = '1';
+            }, 150);
+        }
+
+        function renderMobileFaq() {
+            if (!mobileFaqContainer) return;
+
+            let faqHtml = '';
+            faqData.forEach(item => {
+                faqHtml += `
+                    <details class="group bg-white/70 backdrop-blur-lg border border-gray-200 rounded-2xl p-6 cursor-pointer">
+                        <summary class="flex justify-between items-center font-semibold text-lg text-gray-900 list-none">
+                            ${item.question}
+                            <span class="transition group-open:rotate-180">
+                                <i class="fa-solid fa-chevron-down text-green-400"></i>
+                            </span>
+                        </summary>
+                        <p class="text-gray-700 mt-4 leading-relaxed">${item.answer}</p>
+                    </details>
+                `;
+            });
+            mobileFaqContainer.innerHTML = faqHtml;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize FAQ
+            if (document.getElementById('faq')) {
+                renderList();
+                updateContent();
+                renderMobileFaq();
+            }
+
+            // Initialize Booking Form if it exists
+            if (document.getElementById('bookingForm')) {
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('checkIn').setAttribute('min', today);
+
+                const form = document.getElementById('bookingForm');
+                const submitBtn = document.getElementById('submitBtn');
+                const modal = document.getElementById('successModal');
+                const modalName = document.getElementById('modalName');
+
+                const roomOptions = {
+                    "Acarya Kost 1": [
+                        { value: "Bulanan - Acarya 1", text: "Bulanan - Rp 950.000/bln" },
+                        { value: "Tahunan - Acarya 1", text: "Tahunan - Rp 11.400.000/tahun" }
+                    ],
+                    "Acarya Kost 2": [
+                        { value: "Bulanan - Acarya 2", text: "Bulanan - Rp 1.200.000/bln" },
+                        { value: "Tahunan - Acarya 2", text: "Tahunan - Rp 13.000.000/tahun" }
+                    ]
+                };
+
+                const kostLocationSelect = document.getElementById('kostLocation');
+                const roomTypeSelect = document.getElementById('roomType');
+
+                kostLocationSelect.addEventListener('change', function() {
+                    const selectedLocation = this.value;
+                    const options = roomOptions[selectedLocation];
+                    
+                    roomTypeSelect.innerHTML = '<option value="" disabled selected>-- Pilih Tipe Sewa --</option>';
+                    
+                    if (options) {
+                        options.forEach(opt => {
+                            const optionElement = document.createElement('option');
+                            optionElement.value = opt.value;
+                            optionElement.textContent = opt.text;
+                            roomTypeSelect.appendChild(optionElement);
+                        });
+                        roomTypeSelect.disabled = false;
+                        roomTypeSelect.classList.remove('bg-gray-100', 'text-gray-400', 'cursor-not-allowed');
+                        roomTypeSelect.classList.add('bg-gray-100');
+                    }
+                });
+
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const name = document.getElementById('fullName').value;
+
+                    const originalBtnText = submitBtn.innerHTML;
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Memproses...';
+                    submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+
+                    const formSpreeID = "mkoggzbo"; 
+
+                    if (formSpreeID === "FORM_ID_ANDA") {
+                        alert("PENGATURAN DIPERLUKAN:\n\nAnda belum mengganti 'FORM_ID_ANDA' dengan ID Formspree asli.");
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnText;
+                        submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                        return;
+                    }
+
+                    fetch(`https://formspree.io/f/${formSpreeID}`, {
+                        method: "POST",
+                        body: new FormData(form),
+                        headers: { 'Accept': 'application/json' }
+                    }).then(response => {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnText;
+                        submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+
+                        if (response.ok) {
+                            modalName.textContent = name;
+                            modal.classList.remove('hidden');
+                            modal.classList.add('visible');
+                            form.reset();
+                        } else {
+                            alert("Maaf, terjadi kesalahan saat mengirim pesan. Pastikan ID Formspree sudah benar.");
+                        }
+                    }).catch(error => {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnText;
+                        submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                        alert("Maaf, terjadi kesalahan koneksi.");
+                    });
+                });
+
+                // Make functions global so inline HTML can call them
+                window.sendToWhatsApp = function() {
+                    if (!form.checkValidity()) {
+                        form.reportValidity();
+                        return;
+                    }
+                    
+                    const name = document.getElementById('fullName').value;
+                    const email = document.getElementById('email').value;
+                    const phone = document.getElementById('phone').value;
+                    const location = document.getElementById('kostLocation').value;
+                    const room = document.getElementById('roomType').value;
+                    const checkIn = document.getElementById('checkIn').value;
+                    const message = document.getElementById('message').value;
+
+                    const waText = `Halo Acarya Kost, saya ingin melakukan pemesanan kamar dengan detail berikut:\n\n*Nama:* ${name}\n*Email:* ${email}\n*No. HP/WA:* ${phone}\n*Lokasi Kost:* ${location}\n*Tipe Sewa:* ${room}\n*Tanggal Check-in:* ${checkIn}\n*Permintaan Khusus:* ${message ? message : '-'}\n\nMohon konfirmasinya. Terima kasih!`;
+                    
+                    const encodedText = encodeURIComponent(waText);
+                    window.open(`https://wa.me/6287867261660?text=${encodedText}`, '_blank');
+                }
+
+                window.closeModal = function() {
+                    modal.classList.remove('visible');
+                    modal.classList.add('hidden');
+                }
+
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        closeModal();
+                    }
+                });
+            }
+        });
+
+    </script>
+
+    <!-- Notification Modal -->
+    <div id="successModal" class="modal hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4">
+        <div class="bg-slate-800 rounded-[2.5rem] shadow-2xl p-8 max-w-sm w-full text-center transform transition-all scale-100 border-t-4 border-slate-700">
+            <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-6">
+                <i class="fa-solid fa-check text-2xl text-green-600"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Pemesanan Berhasil!</h3>
+            <p class="text-gray-700 mb-6">
+                Terima kasih, <span id="modalName" class="font-semibold text-gray-900"></span><br>
+                <span class="text-green-600 font-medium">Pesan Anda sedang diproses.</span><br>
+                Silakan cek email Anda untuk detail pembayaran dan konfirmasi.
+            </p>
+            <button onclick="closeModal()" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-xl transition">
+                Tutup
+            </button>
+        </div>
+    </div>
+
+    <div id="shared-footer"></div>
+
+    <!-- Notifikasi Saran Desktop -->
+    <div id="desktopSuggestion" class="fixed inset-0 z-[120] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 px-4">
+        <div id="desktopSuggestionContent" class="bg-slate-800 rounded-[2rem] p-8 max-w-sm w-full shadow-2xl transform scale-95 transition-transform duration-300 border border-slate-700 text-center">
+            <div class="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+                <i class="fas fa-desktop text-3xl text-blue-500"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-3">Saran Tampilan</h3>
+            <p class="text-gray-700 mb-6 text-sm leading-relaxed">
+                Untuk pengalaman visual dan eksplorasi yang maksimal, kami menyarankan Anda membuka website ini menggunakan <strong>Desktop atau Laptop</strong>.
+            </p>
+            <div class="flex items-center justify-center gap-2 mb-6 text-sm text-gray-600">
+                <input type="checkbox" id="dontShowAgain" class="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500 focus:ring-green-600 ring-offset-white focus:ring-2 bg-gray-200 border-gray-300 cursor-pointer">
+                <label for="dontShowAgain" class="cursor-pointer">Jangan tampilkan pesan ini lagi</label>
+            </div>
+            <button onclick="closeDesktopSuggestion()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg hover:shadow-green-500/30 transform hover:-translate-y-1">
+                Mengerti, Lanjutkan
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Logika Notifikasi Saran Desktop
+        function checkDesktopSuggestion() {
+            // Cek jika ukuran layar kecil (< 768px) dan belum di-set 'jangan tampilkan lagi'
+            if (window.innerWidth < 768 && !localStorage.getItem('desktopSuggestionClosedForever') && !sessionStorage.getItem('desktopSuggestionClosed')) {
+                const modal = document.getElementById('desktopSuggestion');
+                const content = document.getElementById('desktopSuggestionContent');
+                
+                if (modal && modal.classList.contains('hidden')) {
+                    modal.classList.remove('hidden');
+                    // Timeout sedikit agar transisi opacity & transform berjalan mulus
+                    setTimeout(() => {
+                        modal.classList.remove('opacity-0');
+                        if (content) {
+                            content.classList.remove('scale-95');
+                            content.classList.add('scale-100');
+                        }
+                    }, 50);
+                }
+            }
+        }
+
+        // Jalankan saat pertama load dan setiap kali ukuran layar ditarik/dikecilkan
+        checkDesktopSuggestion();
+        window.addEventListener('resize', checkDesktopSuggestion);
+
+        function closeDesktopSuggestion() {
+            const modal = document.getElementById('desktopSuggestion');
+            const content = document.getElementById('desktopSuggestionContent');
+            const dontShowAgain = document.getElementById('dontShowAgain');
+            
+            if (modal) {
+                modal.classList.add('opacity-0');
+                content.classList.remove('scale-100');
+                content.classList.add('scale-95');
+                
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300); // Sesuai durasi transisi Tailwind (duration-300)
+                
+                // Simpan di session storage agar tidak muncul lagi saat refresh
+                sessionStorage.setItem('desktopSuggestionClosed', 'true');
+
+                // Jika checkbox dicentang, simpan di localStorage secara permanen
+                if (dontShowAgain && dontShowAgain.checked) {
+                    localStorage.setItem('desktopSuggestionClosedForever', 'true');
+                }
+            }
+        }
+
+        // Simple navbar interaction on scroll
+        window.onscroll = function() {
+            const navInnerDiv = document.querySelector('nav > div.max-w-7xl'); 
+            const navGlassDiv = document.querySelector('nav .glass'); // Elemen div dengan efek glass
+
+            if (navInnerDiv && navGlassDiv) {
+                if (window.scrollY > 50) {
+                    navInnerDiv.classList.remove('py-4');
+                    navInnerDiv.classList.add('py-2');
+                    navGlassDiv.classList.add('bg-white/95'); // Lebih buram saat scroll
+                } else {
+                    navInnerDiv.classList.add('py-4');
+                    navInnerDiv.classList.remove('py-2');
+                    navGlassDiv.classList.remove('bg-white/95');
+                }
+            }
+        };
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const open = document.getElementById('menuOpen');
+            const close = document.getElementById('menuClose');
+            if (!menu) return;
+            menu.classList.toggle('hidden');
+            open.classList.toggle('hidden');
+            close.classList.toggle('hidden');
+        }
+
+        // Close mobile menu when resizing to desktop
+        window.addEventListener('resize', () => {
+            const menu = document.getElementById('mobileMenu');
+            const openIcon = document.getElementById('menuOpen');
+            const closeIcon = document.getElementById('menuClose');
+            if (window.innerWidth >= 1536 && menu && !menu.classList.contains('hidden')) { // Changed from 1024 to 1536 (2xl)
+                menu.classList.add('hidden');
+                openIcon.classList.remove('hidden');
+                closeIcon.classList.add('hidden');
+            }
+        });
+
+        // Menutup menu mobile secara otomatis saat salah satu link diklik
+        document.querySelectorAll('#mobileMenu a').forEach(link => {
+            link.addEventListener('click', () => {
+                // Paksa tutup menu (bukan toggle) untuk memastikan menu tertutup
+                const menu = document.getElementById('mobileMenu');
+                const open = document.getElementById('menuOpen');
+                const close = document.getElementById('menuClose');
+                if (menu) menu.classList.add('hidden');
+                if (open) open.classList.remove('hidden');
+                if (close) close.classList.add('hidden');
+            });
+        });
+    </script>
+
+    <script>
+        // Script 3D dari baru.html
+        window.onload = function () {
+            const container = document.getElementById('cube-container');
+            if (!container) return;
+
+            // Setup Scene, Camera, and Renderer
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.z = 22;
+
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+
+            // Create a group for the Kost building
+            const buildingGroup = new THREE.Group();
+            scene.add(buildingGroup);
+
+            // Materials for the wireframe tech aesthetic
+            const lineMaterial = new THREE.LineBasicMaterial({
+                color: 0xffffff,
+                transparent: true,
+                opacity: 0.15
+            });
+            const pointsMaterial = new THREE.PointsMaterial({
+                color: 0xffffff,
+                size: 0.06,
+                transparent: true,
+                opacity: 0.7
+            });
+
+            // Helper function to create and add building parts
+            function addBuildingPart(geometry, x, y, z, rotX = 0, rotY = 0, rotZ = 0) {
+                const wireframe = new THREE.WireframeGeometry(geometry);
+                const lines = new THREE.LineSegments(wireframe, lineMaterial);
+                const points = new THREE.Points(geometry, pointsMaterial);
+                
+                lines.position.set(x, y, z);
+                points.position.set(x, y, z);
+                lines.rotation.set(rotX, rotY, rotZ);
+                points.rotation.set(rotX, rotY, rotZ);
+                
+                buildingGroup.add(lines);
+                buildingGroup.add(points);
+            }
+
+            // 1. Bangunan Utama Kost-kostan (2 Lantai memanjang)
+            addBuildingPart(new THREE.BoxGeometry(24, 6, 5, 8, 2, 2), 0, 0, -2.5);
+
+            // 2. Selasar / Balkon (Lorong memanjang Lantai 2)
+            addBuildingPart(new THREE.BoxGeometry(24, 0.2, 2.5, 8, 1, 1), 0, 0, 1.25);
+
+            // 3. Tiang Penyangga Lorong & Handrail Pagar
+            for(let i=0; i<=6; i++) {
+                let xPos = -12 + (i * 4);
+                // Tiang dari lantai 1 ke atap lorong lantai 2
+                addBuildingPart(new THREE.BoxGeometry(0.2, 6, 0.2), xPos, 0, 2.4);
+            }
+            // Handrail / Pagar lorong lantai 2
+            addBuildingPart(new THREE.BoxGeometry(24, 0.1, 0.1, 8), 0, 0.8, 2.4);
+
+            // 4. Kamar-kamar Kost (Deretan Pintu & Jendela) - 6 kamar per lantai
+            for (let floor = 0; floor < 2; floor++) {
+                let yPos = floor === 0 ? -1.5 : 1.5; // Lantai 1 (bawah) atau Lantai 2 (atas)
+                for (let room = 0; room < 6; room++) {
+                    let xPos = -10 + (room * 4);
+                    
+                    // Pintu Kamar Kost
+                    addBuildingPart(new THREE.BoxGeometry(1.2, 2.2, 0.2, 1, 1, 1), xPos - 0.5, yPos - 0.4, 0);
+                    
+                    // Jendela Kamar (Biasanya di sebelah pintu)
+                    addBuildingPart(new THREE.BoxGeometry(1.2, 1.2, 0.2, 1, 1, 1), xPos + 1.2, yPos + 0.1, 0);
+                }
+            }
+
+            // 5. Tangga Eksterior (Di sisi kanan bangunan untuk naik ke lt 2)
+            addBuildingPart(new THREE.BoxGeometry(2, 4.5, 3.5, 2, 4, 1), 13, -1.5, 0.5, -Math.PI/6, 0, 0);
+
+            // 6. Toren Air (Detail Ikonik Kost-kostan Indonesia) ditaruh di atap
+            addBuildingPart(new THREE.CylinderGeometry(0.8, 0.8, 1.5, 8, 1), -9, 4, -2.5); // Tabung Toren
+            addBuildingPart(new THREE.BoxGeometry(1.5, 1, 1.5, 1, 1, 1), -9, 3.2, -2.5); // Dudukan Toren
+
+            // Initial tilt (Sudut isometrik agar bentuk kos-kosan terlihat jelas)
+            buildingGroup.rotation.x = Math.PI / 8;
+            buildingGroup.rotation.y = -Math.PI / 4;
+            buildingGroup.scale.set(0.65, 0.65, 0.65); // Sesuaikan skala dengan layar
+
+            let mouseX = 0;
+            let mouseY = 0;
+            const windowHalfX = window.innerWidth / 2;
+            const windowHalfY = window.innerHeight / 2;
+
+            // Track mouse movement
+            document.addEventListener('mousemove', (event) => {
+                mouseX = (event.clientX - windowHalfX) * 0.001;
+                mouseY = (event.clientY - windowHalfY) * 0.001;
+            });
+
+            const animate = () => {
+                requestAnimationFrame(animate);
+                buildingGroup.position.y = Math.sin(Date.now() * 0.001) * 0.3;
+                buildingGroup.rotation.x += (Math.PI / 6 + mouseY * 0.3 - buildingGroup.rotation.x) * 0.05;
+                buildingGroup.rotation.y += (-Math.PI / 5 + mouseX * 0.5 - buildingGroup.rotation.y) * 0.05;
+                renderer.render(scene, camera);
+            };
+
+            window.addEventListener('resize', () => {
+                if (!container) return;
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+
+            animate();
+        };
+    </script>
+
+    <!-- Floating Quick Action (Speed Dial) -->
+    <div class="fixed bottom-6 right-6 z-[100] flex flex-col items-end gap-3 group p-2 rounded-3xl transition-all duration-300">
+        <!-- Secondary Buttons (Hidden by default, show on hover) -->
+        <div class="flex flex-col gap-3 items-end origin-bottom scale-0 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-300 pointer-events-none group-hover:pointer-events-auto"> 
+            <a href="https://wa.me/6287867261660" target="_blank" class="flex items-center gap-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-100 border border-gray-200 transition-all transform hover:-translate-x-1">
+                <span class="text-sm font-bold text-gray-800">Chat Admin</span>
+                <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white"><i class="fab fa-whatsapp"></i></div>
+            </a>
+            <a href="#booking" class="flex items-center gap-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-100 border border-gray-200 transition-all transform hover:-translate-x-1">
+                <span class="text-sm font-bold text-gray-800">Pesan Kamar</span>
+                <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white"><i class="fas fa-bed"></i></div>
+            </a>
+            <a href="aturan&etika.html" class="flex items-center gap-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-100 border border-gray-200 transition-all transform hover:-translate-x-1">
+                <span class="text-sm font-bold text-gray-800">Pusat Info</span>
+                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white"><i class="fas fa-info"></i></div>
+            </a>
+        </div>
+        <!-- Main Button -->
+        <button class="w-14 h-14 bg-gray-800 text-white rounded-full shadow-2xl flex items-center justify-center text-2xl hover:bg-gray-700 hover:scale-110 transition-all focus:outline-none border-2 border-gray-200/50">
+            <i class="fas fa-bolt group-hover:hidden"></i>
+            <i class="fas fa-times hidden group-hover:block transition-transform duration-300 rotate-90 group-hover:rotate-0"></i>
+        </button>
+    </div>
+
+    <script src="footer-inject.js"></script>
+</body>
+</html>

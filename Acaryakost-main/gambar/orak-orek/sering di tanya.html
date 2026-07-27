@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ Pemesanan Vila Bali</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand-green-light': '#F0F6F1', // Warna background item aktif
+                        'brand-green-text': '#52825D',  // Warna teks untuk badge 'Umum'
+                        'brand-green-badge': '#E3EFE5', // Warna background badge 'Umum'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Transisi halus untuk perubahan konten */
+        #content-answer {
+            transition: opacity 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-50/50 min-h-screen text-gray-800 font-sans p-4 md:p-8">
+
+    <div class="max-w-6xl mx-auto w-full pt-10">
+        
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-3 tracking-tight">Pertanyaan yang Sering Diajukan</h2>
+            <p class="text-gray-500 text-lg">Segala hal yang perlu Anda ketahui tentang pemesanan vila di Bali</p>
+        </div>
+
+        <!-- Main Content Area: Grid Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- Left Column: Navigation List -->
+            <div class="lg:col-span-4 bg-white border border-gray-200 rounded-2xl p-3 shadow-sm">
+                <!-- Daftar item akan di-render di sini oleh JavaScript -->
+                <div id="faq-list" class="flex flex-col gap-1"></div>
+            </div>
+
+            <!-- Right Column: Detail Content -->
+            <div class="lg:col-span-8 bg-white border border-gray-200 rounded-2xl p-8 lg:p-10 shadow-sm min-h-[400px]">
+                
+                <!-- Badge Kategori -->
+                <div class="mb-5">
+                    <span id="content-category" class="inline-block bg-brand-green-badge text-brand-green-text text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide">
+                        Umum
+                    </span>
+                </div>
+
+                <!-- Judul Pertanyaan -->
+                <h3 id="content-title" class="text-2xl md:text-3xl font-bold text-gray-900 mb-6 leading-snug">
+                    Wilayah Bali mana saja yang Anda layani?
+                </h3>
+
+                <!-- Garis Pemisah -->
+                <hr class="border-gray-100 mb-6">
+
+                <!-- Teks Jawaban -->
+                <div id="content-answer" class="text-gray-600 leading-relaxed text-lg">
+                    <!-- Konten akan diisi oleh JS -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Data FAQ
+        const faqData = [
+            {
+                id: 1,
+                category: 'Umum',
+                question: 'Wilayah Bali mana saja yang Anda layani?',
+                answer: 'Kami memiliki villa mewah di seluruh Bali termasuk kawasan populer seperti Seminyak, Canggu, Uluwatu, Ubud, Sanur, Nusa Dua, Jimbaran, dan Denpasar. Setiap lokasi menawarkan pengalaman unik - mulai dari vila tepi pantai di Seminyak hingga tempat peristirahatan di hutan di Ubud dan properti di puncak tebing di Uluwatu.'
+            },
+            {
+                id: 2,
+                category: 'Lokasi',
+                question: 'Daerah mana di Bali yang terbaik untuk memesan vila?',
+                answer: 'Pemilihan daerah sangat bergantung pada preferensi Anda. Canggu cocok untuk selancar dan kafe trendi, Seminyak untuk kehidupan malam dan belanja, Ubud untuk budaya dan ketenangan, serta Uluwatu untuk pemandangan tebing yang menakjubkan dan pantai berpasir putih.'
+            },
+            {
+                id: 3,
+                category: 'Harga',
+                question: 'Apakah saya mendapatkan harga terbaik jika memesan langsung?',
+                answer: 'Ya, memesan langsung melalui platform kami menjamin Anda mendapatkan harga terbaik tanpa biaya komisi pihak ketiga. Kami juga sering menawarkan keuntungan tambahan seperti layanan antar-jemput bandara gratis atau sarapan untuk pemesanan langsung.'
+            },
+            {
+                id: 4,
+                category: 'Pembayaran',
+                question: 'Apakah ada biaya tersembunyi?',
+                answer: 'Tidak, kami menjunjung tinggi transparansi. Harga yang Anda lihat pada saat konfirmasi pemesanan adalah harga akhir. Pajak dan biaya layanan sudah termasuk, kecuali dinyatakan lain dengan jelas sebelum Anda melakukan pembayaran.'
+            },
+            {
+                id: 5,
+                category: 'Fasilitas',
+                question: 'Villa mana di Bali yang menawarkan kolam renang pribadi dan akses langsung ke pantai?',
+                answer: 'Sebagian besar koleksi vila mewah kami dilengkapi dengan kolam renang pribadi. Untuk akses langsung ke pantai (beachfront), kami memiliki pilihan eksklusif terutama di daerah Seminyak, Canggu (Batubolong/Echow), dan Nusa Dua. Silakan gunakan filter pencarian kami untuk menemukan vila tersebut.'
+            },
+            {
+                id: 6,
+                category: 'Fasilitas',
+                question: 'Apakah vila-vila tersebut memiliki kolam renang pribadi?',
+                answer: 'Ya, hampir 95% dari koleksi properti kami adalah vila yang dilengkapi dengan kolam renang pribadi secara eksklusif untuk digunakan oleh tamu yang memesan vila tersebut, tanpa harus berbagi dengan tamu lain.'
+            },
+            {
+                id: 7,
+                category: 'Pemesanan',
+                question: 'Bisakah saya mengecek ketersediaan secara online?',
+                answer: 'Tentu saja. Kalender ketersediaan di setiap halaman vila diperbarui secara real-time. Anda dapat memasukkan tanggal kedatangan dan keberangkatan Anda untuk langsung melihat apakah vila tersebut tersedia.'
+            },
+            {
+                id: 8,
+                category: 'Layanan',
+                question: 'Apakah vila-vila tersebut dikelola secara profesional?',
+                answer: 'Semua vila dalam portofolio kami dikelola oleh tim manajemen properti profesional atau staf vila yang berdedikasi (termasuk manajer vila, housekeeping, dan keamanan) untuk memastikan standar kebersihan dan pelayanan tertinggi.'
+            }
+        ];
+
+        // Status aktif saat ini
+        let activeId = faqData[0].id;
+
+        // Elemen DOM
+        const listContainer = document.getElementById('faq-list');
+        const contentCategory = document.getElementById('content-category');
+        const contentTitle = document.getElementById('content-title');
+        const contentAnswer = document.getElementById('content-answer');
+
+        function renderList() {
+            listContainer.innerHTML = '';
+            
+            faqData.forEach(item => {
+                const isActive = item.id === activeId;
+                
+                // Membuat elemen tombol untuk setiap item
+                const button = document.createElement('button');
+                button.className = `w-full text-left p-4 rounded-xl flex items-center justify-between transition-colors duration-200 group ${
+                    isActive 
+                    ? 'bg-brand-green-light text-gray-900' 
+                    : 'bg-transparent text-gray-600 hover:bg-gray-50'
+                }`;
+                
+                // Teks pertanyaan
+                const spanText = document.createElement('span');
+                spanText.className = `text-[15px] pr-4 ${isActive ? 'font-medium' : 'font-normal'}`;
+                spanText.textContent = item.question;
+                
+                // Ikon Chevron (hanya muncul/terlihat jelas jika aktif)
+                const iconSvg = document.createElement('div');
+                iconSvg.className = `flex-shrink-0 text-gray-400 transition-opacity duration-200 ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'}`;
+                iconSvg.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 18l6-6-6-6"/>
+                    </svg>
+                `;
+
+                button.appendChild(spanText);
+                button.appendChild(iconSvg);
+
+                // Event listener untuk klik
+                button.addEventListener('click', () => {
+                    if (activeId !== item.id) {
+                        activeId = item.id;
+                        renderList(); // Re-render list untuk memperbarui gaya aktif
+                        updateContent(); // Perbarui panel konten
+                    }
+                });
+
+                listContainer.appendChild(button);
+            });
+        }
+
+        function updateContent() {
+            const activeData = faqData.find(item => item.id === activeId);
+            if (!activeData) return;
+
+            // Efek fade out tipis sebelum mengganti konten
+            contentAnswer.style.opacity = '0';
+            
+            setTimeout(() => {
+                contentCategory.textContent = activeData.category;
+                contentTitle.textContent = activeData.question;
+                contentAnswer.textContent = activeData.answer;
+                
+                // Efek fade in kembali
+                contentAnswer.style.opacity = '1';
+            }, 150); // Menunggu sebentar (150ms) agar transisi terlihat
+        }
+
+        // Inisialisasi saat pertama kali dimuat
+        renderList();
+        updateContent();
+
+    </script>
+</body>
+</html>

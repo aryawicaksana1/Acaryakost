@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Manajemen - Acarya Kost</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- html2pdf untuk konversi ke PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        acarya: {
+                            light: '#4ade80', // green-400
+                            DEFAULT: '#16a34a', // green-600
+                            dark: '#15803d', // green-700
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        
+        /* Custom Scrollbar for better UI */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Styling khusus untuk cetakan nota agar terlihat klasik/monospaced */
+        .nota-preview {
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .receipt-paper {
+            background-color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e5e7eb;
+        }
+
+        @media print {
+            /* Sembunyikan semua elemen kecuali modal cetak */
+            body > *:not(#receiptModal) {
+                display: none;
+            }
+
+            /* Atur ulang gaya modal agar memenuhi halaman cetak */
+            #receiptModal {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: white;
+                display: block;
+                padding: 0;
+                margin: 0;
+                overflow: visible;
+            }
+
+            #receiptModalContent {
+                width: 100%;
+                max-width: 100%;
+                height: 100%;
+                box-shadow: none;
+                border: none;
+                transform: none;
+                opacity: 1;
+            }
+
+            /* Sembunyikan tombol aksi di dalam modal */
+            #receiptModal .flex.gap-4,
+            #receiptModal .text-xs.text-gray-500.mt-3 {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-acarya text-white shadow-md z-10 sticky top-0">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <a href="../../index.html" class="flex items-center gap-3 group" title="Kembali ke Website Utama">
+                    <i class="fa-solid fa-house-chimney text-2xl group-hover:text-acarya-light transition"></i>
+                    <h1 class="text-2xl font-bold tracking-tight group-hover:text-acarya-light transition">Acarya Kost</h1>
+                </a>
+            </div>
+            <div class="text-sm font-medium opacity-90 hidden sm:block">
+                Sistem Pencatatan Pembayaran
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-6 flex flex-col md:flex-row gap-6">
+        
+        <!-- Sidebar / Form Input -->
+        <aside class="w-full md:w-1/3 flex flex-col gap-4">
+            
+            <!-- Input Form -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="p-5 border-b border-gray-100 sticky top-0 bg-white z-10">
+                    <h2 class="text-lg font-semibold text-gray-700 flex items-center gap-2">
+                        <i class="fa-solid fa-file-invoice-dollar text-acarya"></i> Catat Pembayaran Baru
+                    </h2>
+                </div>
+                
+                <form id="paymentForm" class="p-5 space-y-4">
+                    
+                    <!-- Lokasi Kost -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Pilih Lokasi Kost *</label>
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="location" value="Acarya 1" class="text-acarya focus:ring-acarya h-4 w-4" checked onchange="toggleWaterInput()">
+                                <span class="text-sm">Acarya 1 (Ada bayar air)</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="location" value="Acarya 2" class="text-acarya focus:ring-acarya h-4 w-4" onchange="toggleWaterInput()">
+                                <span class="text-sm">Acarya 2 (Air gratis)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Nama Penyewa -->
+                        <div class="col-span-2 sm:col-span-1">
+                            <label for="tenantName" class="block text-sm font-medium text-gray-700 mb-1">Nama Penyewa *</label>
+                            <input type="text" id="tenantName" required placeholder="Contoh: Budi" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-acarya focus:border-transparent text-sm">
+                        </div>
+                        
+                        <!-- No Kamar -->
+                        <div class="col-span-2 sm:col-span-1">
+                            <label for="roomNumber" class="block text-sm font-medium text-gray-700 mb-1">Nomor Kamar *</label>
+                            <input type="text" id="roomNumber" required placeholder="Contoh: A1" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-acarya focus:border-transparent text-sm">
+                        </div>
+                    </div>
+
+                    <!-- Periode & Jenis Sewa -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label for="periodMonth" class="block text-sm font-medium text-gray-700 mb-1">Bulan *</label>
+                            <select id="periodMonth" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-acarya focus:border-transparent text-sm bg-white">
+                                <option value="Januari">Januari</option>
+                                <option value="Februari">Februari</option>
+                                <option value="Maret">Maret</option>
+                                <option value="April">April</option>
+                                <option value="Mei">Mei</option>
+                                <option value="Juni">Juni</option>
+                                <option value="Juli">Juli</option>
+                                <option value="Agustus">Agustus</option>
+                                <option value="September">September</option>
+                                <option value="Oktober">Oktober</option>
+                                <option value="November">November</option>
+                                <option value="Desember">Desember</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="periodYear" class="block text-sm font-medium text-gray-700 mb-1">Tahun *</label>
+                            <input type="number" id="periodYear" required min="2020" max="2100" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-acarya focus:border-transparent text-sm bg-white">
+                        </div>
+                        <div>
+                            <label for="rentType" class="block text-sm font-medium text-gray-700 mb-1">Jenis Sewa *</label>
+                            <select id="rentType" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-acarya focus:border-transparent text-sm bg-white">
+                                <option value="Bulanan">Bulanan</option>
+                                <option value="Tahunan">Tahunan</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-gray-200 pt-4 mt-2">
+                        <p class="text-sm font-semibold text-gray-600 mb-3">Rincian Nominal Pembayaran</p>
+                        
+                        <!-- Nominal Sewa Kost -->
+                        <div class="mb-3">
+                            <label for="rentAmount" class="block text-sm font-medium text-gray-700 mb-1">Biaya Sewa Kost (Rp) *</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-500 sm:text-sm">Rp</span>
+                                </div>
+                                <input type="number" id="rentAmount" required min="0" class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-acarya focus:border-transparent text-sm" placeholder="0">
+                            </div>
+                        </div>
+
+                        <!-- Nominal Listrik -->
+                        <div class="mb-3">
+                            <label for="electricityAmount" class="block text-sm font-medium text-gray-700 mb-1">Biaya Listrik (Rp)</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-500 sm:text-sm">Rp</span>
+                                </div>
+                                <input type="number" id="electricityAmount" min="0" class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-acarya focus:border-transparent text-sm" placeholder="0 (Kosongkan jika tidak ada)">
+                            </div>
+                        </div>
+
+                        <!-- Nominal Air (Khusus Acarya 1) -->
+                        <div id="waterInputContainer" class="mb-3 fade-in">
+                            <label for="waterAmount" class="block text-sm font-medium text-gray-700 mb-1">Biaya Air (Rp) <span class="text-xs font-normal text-acarya-dark bg-acarya-light/20 px-2 py-0.5 rounded ml-1">Khusus Acarya 1</span></label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-500 sm:text-sm">Rp</span>
+                                </div>
+                                <input type="number" id="waterAmount" min="0" class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-acarya focus:border-transparent text-sm" placeholder="0 (Kosongkan jika tidak ada)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-acarya hover:bg-acarya-dark text-white font-semibold py-2.5 px-4 rounded-lg shadow transition-colors flex justify-center items-center gap-2 mt-4">
+                        <i class="fa-solid fa-plus"></i> Simpan Pembayaran
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Main Content Area / Data Table -->
+        <section class="w-full md:w-2/3 bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col">
+            <div class="p-5 border-b border-gray-100 flex justify-between items-center bg-white">
+                <h2 class="text-lg font-semibold text-gray-700 flex items-center gap-2">
+                    <i class="fa-solid fa-list-ul text-acarya"></i> Riwayat Pembayaran
+                </h2>
+                <a href="https://docs.google.com/spreadsheets/d/1aT5WSysk6iEvy-Ry-A5UNwK9rNRVIKN2RtNIQ6-S7LQ/edit?usp=sharing" target="_blank" rel="noopener noreferrer" class="bg-white hover:bg-gray-100 text-gray-600 font-medium py-2 px-3 rounded-lg border border-gray-200 text-sm transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-table-list"></i> <span>Buka Sheet</span>
+                </a>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50 sticky top-0 z-10 shadow-sm">
+                        <tr>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Input</th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Penyewa / Kamar</th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lokasi / Periode</th>
+                            <th scope="col" class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Rincian Pembayaran</th>
+                            <th scope="col" class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                            <th scope="col" class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="paymentTableBody" class="bg-white divide-y divide-gray-200">
+                        <!-- Data rows will be injected here via JS -->
+                        <tr id="emptyStateRow">
+                            <td colspan="6" class="px-4 py-12 text-center text-gray-500">
+                                <i class="fa-solid fa-box-open text-4xl mb-3 text-gray-300 block"></i>
+                                <p>Belum ada data pembayaran.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="p-4 border-t border-gray-100 bg-gray-50 text-xs text-gray-500 text-center">
+                Data disimpan secara lokal di browser perangkat Anda.
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Custom Modal for Delete Confirmation -->
+    <div id="deleteModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4 p-6 transform scale-95 opacity-0 transition-all duration-200" id="deleteModalContent">
+            <div class="text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                    <i class="fa-solid fa-triangle-exclamation text-red-600 text-xl"></i>
+                </div>
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">Hapus Data Pembayaran</h3>
+                <p class="text-sm text-gray-500">Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.</p>
+            </div>
+            <div class="mt-6 flex gap-3">
+                <button type="button" onclick="closeDeleteModal()" class="flex-1 bg-white text-gray-700 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-sm transition-colors">Batal</button>
+                <button type="button" id="confirmDeleteBtn" class="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 font-medium text-sm transition-colors">Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div id="receiptModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4 overflow-y-auto">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl transform scale-95 opacity-0 transition-all duration-200 relative" id="receiptModalContent">
+            
+            <button onclick="closeReceiptModal()" class="absolute top-3 right-4 text-gray-400 hover:text-gray-600 z-20">
+                <i class="fa-solid fa-xmark text-2xl"></i>
+            </button>
+            
+            <div class="p-6">
+                <div class="bg-gray-100 p-6 rounded-xl border border-gray-200 nota-preview mb-4 flex justify-center overflow-x-auto">
+                    
+                    <!-- Area yang akan di-convert ke PDF -->
+                    <div id="receiptContent" class="receipt-paper w-full max-w-md p-8 text-black">
+                        <!-- Header Nota -->
+                        <div class="text-center mb-6">
+                            <img src="gambar/logo kost hijau.png" alt="Logo Toko" class="mx-auto mb-4 h-20 w-auto" onerror="this.style.display='none'">
+                            <h1 id="prevStoreName" class="text-2xl font-bold uppercase tracking-wider mb-1">NAMA KOST</h1>
+                            <p id="prevStoreAddress" class="text-sm">-</p>
+                            <p id="prevStorePhone" class="text-sm">Telp: -</p>
+                        </div>
+                        
+                        <div class="border-b-2 border-dashed border-gray-400 mb-4"></div>
+
+                        <!-- Info Transaksi -->
+                        <div class="flex justify-between text-sm mb-4">
+                            <div>
+                                <p>No   : <span id="prevReceiptNumber">-</span></p>
+                                <p>Tgl  : <span id="prevReceiptDate">-</span></p>
+                            </div>
+                            <div class="text-right">
+                                <p>Yth. <span id="prevCustomerName">-</span></p>
+                            </div>
+                        </div>
+
+                        <div class="border-b-2 border-dashed border-gray-400 mb-4"></div>
+
+                        <!-- Tabel Barang -->
+                        <table class="w-full text-sm mb-4">
+                            <thead>
+                                <tr class="text-left">
+                                    <th class="pb-2 font-semibold">Item</th>
+                                    <th class="pb-2 font-semibold text-right">Harga</th>
+                                </tr>
+                            </thead>
+                            <tbody id="prevItemsList"></tbody>
+                        </table>
+
+                        <div class="border-b-2 border-dashed border-gray-400 mb-4"></div>
+
+                        <!-- Perhitungan Total -->
+                        <div class="flex justify-between font-bold text-base mt-2 pt-2 border-t border-gray-300">
+                            <span>TOTAL</span>
+                            <span id="prevGrandTotal">Rp 0</span>
+                        </div>
+
+                        <div class="border-b-2 border-dashed border-gray-400 my-4"></div>
+
+                        <!-- Footer / Catatan -->
+                        <div class="text-center text-sm">
+                            <p id="prevNotes" class="italic mb-4 text-gray-600"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <button onclick="downloadPDF()" class="flex-1 bg-acarya hover:bg-acarya-dark text-white py-3 px-4 rounded-lg font-medium flex items-center justify-center gap-2 transition shadow-md"><i data-lucide="download" class="w-5 h-5"></i> Download PDF</button>
+                    <button onclick="printReceipt()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 px-4 rounded-lg font-medium flex items-center justify-center gap-2 transition shadow-md"><i data-lucide="printer" class="w-5 h-5"></i> Cetak</button>
+                </div>
+                <p class="text-xs text-gray-500 mt-3 text-center">Format PDF dioptimalkan untuk ukuran kertas A5.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State variables
+        let payments = [];
+        let currentMonth = new Date().toLocaleString('id-ID', { month: 'long' });
+        let currentYear = new Date().getFullYear();
+        let deleteIdPending = null;
+
+        // TAUTAN GOOGLE APPS SCRIPT
+        // Nanti ganti 'ISI_DENGAN_URL_WEB_APP_GOOGLE_SCRIPT_ANDA' dengan URL hasil Deploy Google Script
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbxUo0LYPVat5-KrYXQDkPf_tgRXsetA6cu-yvt41PCkW8qpzB6J9cZaA2eIvJONqjDa7A/exec';
+
+        // Data Kost (dari nota.html)
+        const kostInfo = {
+            'Acarya 1': {
+                name: 'acarya 1',
+                address: 'Jl. Pulau Timor, desa padang, keling, Kabupaten Buleleng, Bali 81115',
+                phone: '+62 878-6726-1660',
+                logo: 'gambar/logo kost hijau.png'
+            },
+            'Acarya 2': {
+                name: 'acarya 2',
+                address: 'Perumahan Banyuning lestari blok K1, Banyuning, Kec. Buleleng, Singaraja, Bali 81119',
+                phone: '+62 878-6726-1660',
+                logo: 'gambar/logo kost hijau.png'
+            }
+        };
+        // DOM Elements
+        const form = document.getElementById('paymentForm');
+        const waterInputContainer = document.getElementById('waterInputContainer');
+        const waterInput = document.getElementById('waterAmount');
+        const tableBody = document.getElementById('paymentTableBody');
+        const emptyStateRow = document.getElementById('emptyStateRow');
+        
+        // Modal Elements
+        const deleteModal = document.getElementById('deleteModal');
+        const deleteModalContent = document.getElementById('deleteModalContent');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        const receiptModal = document.getElementById('receiptModal');
+        const receiptModalContent = document.getElementById('receiptModalContent');
+
+
+        // Initialization
+        function init() {
+            // Set default month in select
+            const monthSelect = document.getElementById('periodMonth');
+            for(let i=0; i<monthSelect.options.length; i++) {
+                if(monthSelect.options[i].value === currentMonth) {
+                    monthSelect.selectedIndex = i;
+                    break;
+                }
+            }
+
+            // Set default year
+            document.getElementById('periodYear').value = currentYear;
+
+            // Load data from local storage
+            const savedData = localStorage.getItem('acaryaKostData');
+            if (savedData) {
+                try {
+                    payments = JSON.parse(savedData);
+                } catch (e) {
+                    console.error("Gagal membaca data dari LocalStorage", e);
+                    payments = [];
+                }
+            }
+
+            // Initial render
+            toggleWaterInput();
+            renderTable();
+
+            // Inisialisasi ikon Lucide
+            lucide.createIcons();
+        }
+
+        // Helper: Format Rupiah
+        const formatRupiah = (number) => {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(number);
+        };
+
+        // Helper: Format Date
+        const formatDate = (dateString) => {
+            const options = { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+            return new Date(dateString).toLocaleDateString('id-ID', options);
+        };
+
+        // Helper: Format Date for Receipt (from nota.html)
+        const formatReceiptDate = (dateString) => {
+            if (!dateString) return '-';
+            const options = { day: 'numeric', month: 'short', year: 'numeric' };
+            return new Date(dateString).toLocaleDateString('id-ID', options);
+        };
+
+        /**
+         * Fungsi inti untuk membuat Short Unique ID (Mirip NanoID)
+         */
+        function generateShortId(length = 8) {
+            const alphabet = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
+            let result = '';
+            const randomValues = new Uint32Array(length);
+            window.crypto.getRandomValues(randomValues);
+            for (let i = 0; i < length; i++) {
+                result += alphabet[randomValues[i] % alphabet.length];
+            }
+            return result;
+        }
+        // Toggle Water Input Visibility based on Location
+        function toggleWaterInput() {
+            const isAcarya1 = document.querySelector('input[name="location"][value="Acarya 1"]').checked;
+            if (isAcarya1) {
+                waterInputContainer.style.display = 'block';
+            } else {
+                waterInputContainer.style.display = 'none';
+                waterInput.value = ''; // Clear value when hidden
+            }
+        }
+
+        // Form Submit Handler
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Get values
+            const location = document.querySelector('input[name="location"]:checked').value;
+            const tenantName = document.getElementById('tenantName').value.trim();
+            const roomNumber = document.getElementById('roomNumber').value.trim();
+            const periodMonth = document.getElementById('periodMonth').value;
+            const periodYear = document.getElementById('periodYear').value;
+            const rentType = document.getElementById('rentType').value;
+            
+            const rentAmount = parseInt(document.getElementById('rentAmount').value) || 0;
+            const electricityAmount = parseInt(document.getElementById('electricityAmount').value) || 0;
+            const waterAmount = location === 'Acarya 1' ? (parseInt(document.getElementById('waterAmount').value) || 0) : 0;
+            
+            const totalAmount = rentAmount + electricityAmount + waterAmount;
+
+            // Create new record
+            const newPayment = {
+                id: Date.now().toString(),
+                invoiceId: 'INV-' + generateShortId(8),
+                date: new Date().toISOString(),
+                location,
+                tenantName,
+                roomNumber,
+                periodMonth,
+                periodYear,
+                rentType,
+                rentAmount,
+                electricityAmount,
+                waterAmount,
+                totalAmount
+            };
+
+            // Loading style to button
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan ke Sheets...';
+            submitBtn.disabled = true;
+
+            // Send to Google Apps Script
+            if (GAS_URL !== 'ISI_DENGAN_URL_WEB_APP_GOOGLE_SCRIPT_ANDA') {
+                fetch(GAS_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(newPayment)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    finalizeSubmit(newPayment, submitBtn, originalBtnText);
+                })
+                .catch(error => {
+                    console.error('Error saving to GSheet:', error);
+                    // Jika gagal mengirim ke sheets, tetap simpan di memori lokal
+                    finalizeSubmit(newPayment, submitBtn, originalBtnText);
+                });
+            } else {
+                finalizeSubmit(newPayment, submitBtn, originalBtnText);
+            }
+        });
+
+        function finalizeSubmit(newPayment, submitBtn, originalBtnText) {
+            // Save to state and local storage
+            payments.unshift(newPayment); // Add to beginning of array
+            saveData();
+
+            // Reset form
+            form.reset();
+            
+            // Restore default month and year
+            const monthSelect = document.getElementById('periodMonth');
+            for(let i=0; i<monthSelect.options.length; i++) {
+                if(monthSelect.options[i].value === currentMonth) {
+                    monthSelect.selectedIndex = i;
+                    break;
+                }
+            }
+            document.getElementById('periodYear').value = currentYear;
+            
+            // Restore location selection default (Acarya 1)
+            document.querySelector('input[name="location"][value="Acarya 1"]').checked = true;
+            toggleWaterInput();
+
+            // Restore button
+            submitBtn.innerHTML = originalBtnText;
+            submitBtn.disabled = false;
+
+            // Update UI
+            renderTable();
+        }
+
+        function saveData() {
+            localStorage.setItem('acaryaKostData', JSON.stringify(payments));
+        }
+
+        // Render Table
+        function renderTable() {
+            // Filter data
+            const filteredData = payments;
+
+            // Clear table (except empty state)
+            const rows = document.querySelectorAll('.data-row');
+            rows.forEach(row => row.remove());
+
+            if (filteredData.length === 0) {
+                emptyStateRow.style.display = 'table-row';
+            } else {
+                emptyStateRow.style.display = 'none';
+                
+                filteredData.forEach(p => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'data-row hover:bg-gray-50 transition-colors fade-in';
+                    
+                    // Location Badge CSS
+                    const badgeClass = p.location === 'Acarya 1' 
+                        ? 'bg-blue-100 text-blue-800' 
+                        : 'bg-orange-100 text-orange-800';
+
+                    // Breakdown details
+                    let detailsHTML = `<div class="text-xs text-gray-500">Sewa: ${formatRupiah(p.rentAmount)}</div>`;
+                    if (p.electricityAmount > 0) detailsHTML += `<div class="text-xs text-gray-500">Listrik: ${formatRupiah(p.electricityAmount)}</div>`;
+                    if (p.waterAmount > 0) detailsHTML += `<div class="text-xs text-blue-500">Air: ${formatRupiah(p.waterAmount)}</div>`;
+
+                    tr.innerHTML = `
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                            ${formatDate(p.date)}
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">${p.tenantName}</div>
+                            <div class="text-xs text-gray-500">Kamar: <span class="font-semibold">${p.roomNumber}</span></div>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${badgeClass} mb-1">
+                                ${p.location}
+                            </span>
+                            <div class="text-xs font-medium text-gray-600 bg-gray-100 rounded px-1.5 py-0.5 inline-block">
+                                ${p.periodMonth} ${p.periodYear || ''} (${p.rentType})
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-right text-sm">
+                            ${detailsHTML}
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-bold text-gray-800">
+                            ${formatRupiah(p.totalAmount)}
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm font-medium">
+                            <div class="flex justify-center items-center gap-2">
+                                <button onclick="showReceiptModal('${p.id}')" class="text-green-600 hover:text-green-800 hover:bg-green-50 p-2 rounded-lg transition-colors" title="Cetak Nota">
+                                    <i class="fa-solid fa-receipt"></i>
+                                </button>
+                                <button onclick="openDeleteModal('${p.id}')" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-colors" title="Hapus Data">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tableBody.appendChild(tr);
+                });
+            }
+        }
+
+        // Delete Modal Logic
+        function openDeleteModal(id) {
+            deleteIdPending = id;
+            deleteModal.classList.remove('hidden');
+            deleteModal.classList.add('flex');
+            // Slight delay for animation
+            setTimeout(() => {
+                deleteModalContent.classList.remove('scale-95', 'opacity-0');
+                deleteModalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeDeleteModal() {
+            deleteModalContent.classList.remove('scale-100', 'opacity-100');
+            deleteModalContent.classList.add('scale-95', 'opacity-0');
+            
+            setTimeout(() => {
+                deleteModal.classList.add('hidden');
+                deleteModal.classList.remove('flex');
+                deleteIdPending = null;
+            }, 200); // match duration
+        }
+
+        confirmDeleteBtn.addEventListener('click', () => {
+            if (deleteIdPending) {
+                payments = payments.filter(p => p.id !== deleteIdPending);
+                saveData();
+                renderTable();
+                closeDeleteModal();
+            }
+        });
+
+        // --- NEW RECEIPT MODAL LOGIC ---
+
+        function showReceiptModal(id) {
+            const payment = payments.find(p => p.id === id);
+            if (!payment) return;
+
+            const kost = kostInfo[payment.location];
+
+            // Populate Header
+            document.querySelector('#receiptModal #prevStoreName').innerText = kost.name.toUpperCase();
+            document.querySelector('#receiptModal #prevStoreAddress').innerText = kost.address;
+            document.querySelector('#receiptModal #prevStorePhone').innerText = `Telp: ${kost.phone}`;
+            const logoElement = document.querySelector('#receiptModal img');
+            logoElement.src = kost.logo;
+            logoElement.style.display = 'block';
+
+            // Populate Transaction Info
+            document.querySelector('#receiptModal #prevReceiptNumber').innerText = payment.invoiceId || '-';
+            document.querySelector('#receiptModal #prevReceiptDate').innerText = formatReceiptDate(payment.date);
+            document.querySelector('#receiptModal #prevCustomerName').innerText = payment.tenantName;
+
+            // Populate Items
+            const itemsTbody = document.querySelector('#receiptModal #prevItemsList');
+            itemsTbody.innerHTML = '';
+            
+            const items = [
+                { name: `Sewa Kost ${payment.rentType} (${payment.periodMonth} ${payment.periodYear})`, price: payment.rentAmount },
+                { name: 'Biaya Listrik', price: payment.electricityAmount },
+                { name: 'Biaya Air', price: payment.waterAmount }
+            ];
+
+            items.forEach(item => {
+                if (item.price > 0) {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="py-1 break-words">${item.name}</td>
+                        <td class="py-1 text-right">${formatRupiah(item.price)}</td>
+                    `;
+                    itemsTbody.appendChild(tr);
+                }
+            });
+
+            // Populate Total
+            document.querySelector('#receiptModal #prevGrandTotal').innerText = formatRupiah(payment.totalAmount);
+
+            // Populate Notes
+            document.querySelector('#receiptModal #prevNotes').innerText = `Invoice ini dapat Anda cetak sebagai bukti transaksi pada ${kost.name}.`;
+
+            // Show Modal
+            receiptModal.classList.remove('hidden');
+            receiptModal.classList.add('flex');
+            setTimeout(() => {
+                receiptModalContent.classList.remove('scale-95', 'opacity-0');
+                receiptModalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeReceiptModal() {
+            receiptModalContent.classList.remove('scale-100', 'opacity-100');
+            receiptModalContent.classList.add('scale-95', 'opacity-0');
+            
+            setTimeout(() => {
+                receiptModal.classList.add('hidden');
+                receiptModal.classList.remove('flex');
+            }, 200);
+        }
+
+        // PDF and Print functions (from nota.html)
+        function downloadPDF() {
+            const paymentId = document.querySelector('#receiptModal #prevReceiptNumber').innerText;
+            const customerName = document.querySelector('#receiptModal #prevCustomerName').innerText;
+            const element = document.getElementById('receiptContent');
+            
+            const opt = {
+                margin:       [0.5, 0.5, 0.5, 0.5],
+                filename:     `Nota_${paymentId}_${customerName}.pdf`.replace(/\s+/g, '_'),
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, scrollX: 0, scrollY: 0 },
+                jsPDF:        { unit: 'in', format: 'a5', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save();
+        }
+
+        function printReceipt() {
+            window.print();
+        }
+
+        // Start Application
+        window.onload = init;
+
+    </script>
+</body>
+</html>

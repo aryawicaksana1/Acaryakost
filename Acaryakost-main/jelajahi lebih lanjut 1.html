@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACARYA KOST 1 - Hunian Premium Singaraja</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"> 
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            scroll-behavior: smooth;
+        }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-color: rgba(0, 0, 0, 0.05); transition: background-color 0.3s ease; }
+        nav.scrolled .glass { background: rgba(255, 255, 255, 0.95); }
+
+        /* Custom Scrollbar Hide */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Lightbox styles from tata-letak.html */
+        #lightbox {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            backdrop-filter: blur(8px);
+        }
+        
+        #lightbox.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        body.modal-open {
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-slate-900 transition-colors duration-300 overflow-x-hidden">
+    <nav class="fixed w-full z-50 top-0 transition-all duration-300">
+        <div id="nav-container" class="max-w-7xl mx-auto px-6 lg:px-12 py-4 transition-all duration-300">
+            <div class="glass border border-gray-200/50 rounded-2xl px-6 py-3 flex justify-between items-center shadow-lg relative">
+                <div class="flex items-center gap-2">
+                    <img src="gambar/logo kost hijau.png" alt="Logo" class="h-10 w-auto object-contain rounded-md">
+                    <span class="text-xl font-extrabold tracking-tight text-gray-900">Kost<span class="text-green-600">Acarya</span></span>
+                </div>
+                <!-- Desktop Menu & Buttons -->
+                <div class="hidden 2xl:flex items-center space-x-4">
+                    <div class="flex items-center space-x-8">
+                        <a href="index.html" class="text-sm font-semibold text-gray-700 hover:text-green-600 transition">Home</a>
+                        <a href="index.html#booking" class="text-sm font-semibold text-gray-700 hover:text-green-600 transition">Booking</a>
+                        <a href="#layanan-fasilitas" class="text-sm font-semibold text-gray-700 hover:text-green-600 transition">Fasilitas</a>
+                        <a href="#layanan-lokasi" class="text-sm font-semibold text-gray-700 hover:text-green-600 transition">Layanan Lokasi</a>
+                        <a href="#harga" class="text-sm font-semibold text-gray-700 hover:text-green-600 transition">Harga</a>
+                    </div>
+                    <a href="sosial.html" class="bg-green-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-green-500 transition-all shadow-md active:scale-95">Hubungi Kami</a>
+                    <a href="buat login yang perfect/login.html" class="bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-700 transition-all shadow-md active:scale-95">Login Admin</a>
+                </div>
+
+                <!-- Mobile Hamburger -->
+                <div class="2xl:hidden flex items-center">
+                    <button id="mobileMenuButton" onclick="toggleMobileMenu()" class="text-gray-800 hover:text-green-600 focus:outline-none p-2">
+                        <i id="menuOpen" class="fa-solid fa-bars text-xl"></i>
+                        <i id="menuClose" class="fa-solid fa-xmark text-xl hidden"></i>
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Dropdown -->
+                <div id="mobileMenu" class="2xl:hidden hidden absolute right-6 top-full mt-2 w-64 rounded-2xl bg-white/95 border border-gray-200 shadow-xl overflow-hidden z-50" style="backdrop-filter: blur(10px);">
+                    <div class="px-4 py-3 space-y-2">
+                        <a href="index.html" class="block text-gray-800 font-semibold py-2 px-3 rounded-lg hover:bg-gray-100 transition">Home</a>
+                        <a href="index.html#booking" class="block text-gray-800 font-semibold py-2 px-3 rounded-lg hover:bg-gray-100 transition">Booking</a>
+                        <a href="#fasilitas" class="block text-gray-800 font-semibold py-2 px-3 rounded-lg hover:bg-gray-100 transition">Fasilitas</a>
+                        <a href="#testimoni" class="block text-gray-800 font-semibold py-2 px-3 rounded-lg hover:bg-gray-100 transition">Testimoni</a>
+                        <a href="sosial.html" class="block text-white bg-green-600 text-center rounded-lg py-3 font-bold mt-2 hover:bg-green-700 transition">Hubungi Kami</a>
+                        <a href="buat login yang perfect/login.html" class="block text-white bg-gray-800 text-center rounded-lg py-3 font-bold mt-2 hover:bg-gray-700 transition">Login Admin</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-40">
+        
+        <div class="mb-6 flex flex-col items-start gap-4">
+            <!-- Badges -->
+            <div class="flex flex-wrap gap-2">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-100">
+                    <i class="fa-solid fa-location-dot text-[10px]"></i> Acarya Kost 1
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-100">
+                    <i class="fa-solid fa-star text-[10px]"></i> 4.9 (Pengalaman Terbaik)
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-red-50 text-red-700 border border-green-100">
+                    <i class="fa-solid fa-location-dot text-[10px]"></i> sudah full
+                </span>
+            </div>
+            
+            <!-- Judul -->
+            <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">Acarya Kost 1 - BTN Banyuning Lestari</h1>
+        </div>
+
+        <!-- Galeri Gambar Grid (Di luar struktur grid 2-kolom sebelumnya agar bisa full width) -->
+        <div class="mb-8 grid grid-cols-2 grid-rows-3 sm:grid-cols-4 sm:grid-rows-2 gap-2 h-[600px] sm:h-[400px] md:h-[500px] rounded-2xl overflow-hidden">
+            <!-- Gambar Utama Besar (Kiri) -->
+            <div class="col-span-2 row-span-1 sm:col-span-2 sm:row-span-2 relative group">
+                <img src="gambar/kumpulan webp/keseluruhan kost 2-converted-from-png.webp" alt="Tampilan Keseluruhan Acarya Kost 1" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
+            </div>
+            
+            <!-- Gambar Kecil Atas Tengah -->
+            <div class="col-span-1 row-span-1 relative group">
+                 <img src="gambar/interior acarya 1/1.jpeg" alt="Kamar Mandi Dalam" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                 <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
+            </div>
+            
+            <!-- Gambar Kecil Bawah Tengah -->
+            <div class="col-span-1 row-span-1 relative group">
+                 <img src="gambar/interior acarya 1/2.jpeg" alt="Dapur Dalam" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                 <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
+            </div>
+
+            <!-- Gambar Kecil Atas Kanan -->
+            <div class="col-span-1 row-span-1 relative group">
+                 <img src="gambar/interior acarya 1/3.jpeg" alt="Kasur" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                 <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
+            </div>
+
+            <!-- Gambar Kecil Bawah Kanan (dengan tombol "Lihat Semua Foto") -->
+            <div class="col-span-1 row-span-1 relative cursor-pointer group" onclick="openLightbox(this, true)">
+                 <img src="gambar/interior acarya 1/kamar mandi.jpeg" alt="Meja Belajar" class="w-full h-full object-cover">
+                 <!-- Overlay Gelap dan Tombol -->
+                 <div class="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-white transition-colors group-hover:bg-black/60">
+                     <i class="fa-regular fa-image text-3xl mb-2"></i>
+                     <span class="font-medium text-sm">Lihat Semua Foto</span>
+                 </div>
+            </div>
+        </div>
+
+        <!-- HAPUS items-start pada baris ini agar sticky bisa bekerja -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <div class="lg:col-span-2 space-y-8">
+                
+                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-1.5 h-6 bg-green-500 rounded-full"></div>
+                        <h2 class="text-xl font-bold text-slate-900">Sorotan Utama</h2>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Item 1 -->
+                        <div class="flex gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100 hover:border-green-100 hover:bg-green-50/50 transition-colors">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-slate-900 text-sm mb-1">Lingkungan Ramai & Dinamis</h3>
+                                <p class="text-xs text-slate-500 leading-relaxed">Cocok untuk yang suka bersosialisasi dan mencari teman baru.</p>
+                            </div>
+                        </div>
+                        <!-- Item 2 -->
+                        <div class="flex gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100 hover:border-green-100 hover:bg-green-50/50 transition-colors">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center">
+                                <i class="fa-solid fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-slate-900 text-sm mb-1">Lokasi Strategis</h3>
+                                <p class="text-xs text-slate-500 leading-relaxed">Dekat dengan pusat kota, kampus, dan berbagai fasilitas umum.</p>
+                            </div>
+                        </div>
+                        <!-- Item 3 -->
+                        <div class="flex gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100 hover:border-green-100 hover:bg-green-50/50 transition-colors">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center">
+                                <i class="fa-solid fa-couch"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-slate-900 text-sm mb-1">Ruang Sosial Hidup</h3>
+                                <p class="text-xs text-slate-500 leading-relaxed">Tersedia area komunal untuk diskusi, belajar kelompok, atau sekadar bersantai.</p>
+                            </div>
+                        </div>
+                        <!-- Item 4 -->
+                        <div class="flex gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100 hover:border-green-100 hover:bg-green-50/50 transition-colors">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center">
+                                <i class="fa-solid fa-wallet"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-slate-900 text-sm mb-1">Harga Terjangkau</h3>
+                                <p class="text-xs text-slate-500 leading-relaxed">Menawarkan nilai terbaik dengan fasilitas lengkap di kelasnya.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-1.5 h-6 bg-green-500 rounded-full"></div>
+                        <h2 class="text-xl font-bold text-slate-900">Deskripsi Lengkap</h2>
+                    </div>
+                    
+                    <div class="prose prose-sm prose-slate max-w-none text-slate-600 space-y-4">
+                        <p>
+                            Hunian yang ramai dengan fasilitas yang lengkap. Kami menghadirkan konsep hunian yang dinamis di mana privasi kamar Anda berpadu sempurna dengan ruang sosial yang hidup. Tata ruang kami memaksimalkan interaksi. Bagi Anda yang mencintai diskusi, haus akan wawasan baru, dan menikmati energi lingkungan yang ramai, ini adalah tempat yang tepat untuk tumbuh dan memperluas jaringan.
+                        </p>
+                        <h3 class="text-lg font-bold text-slate-900 mt-6 mb-2">Termasuk</h3>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>Kamar full furnished (AC, Tempat Tidur, Lemari, Meja Belajar, Rak Sepatu)</li>
+                            <li>Kamar Mandi Dalam dengan Shower</li>
+                            <li>Dapur pribadi di dalam kamar</li>
+                            <li>Akses High-Speed WiFi di seluruh area</li>
+                            <li>Jasa Pembuangan Sampah</li>
+                        </ul>
+
+                        <h3 class="text-lg font-bold text-slate-900 mt-6 mb-2">Dikecualikan</h3>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>Layanan pembersihan kamar (biaya tambahan)</li>
+                            <li>layanan laundry</li>
+                            <li>kebersihan kamar</li>
+
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="layanan-fasilitas" class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+                    <h2 class="text-xl font-bold text-slate-900 mb-6">Layanan & Fasilitas</h2>
+
+                    <!-- Fasilitas Paling Populer -->
+                    <div class="mb-8">
+                        <h3 class="font-bold text-slate-900 flex items-center gap-2 mb-4">
+                            <i class="fa-solid fa-fire text-amber-500"></i> Fasilitas paling populer
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-3 gap-x-6 text-[13px] text-slate-700">
+                            <!-- Kolom 1 -->
+                            <div class="space-y-3">
+                                <div class="flex items-start gap-2">
+                                    <i class="fa-solid fa-square-parking text-green-400 mt-0.5 w-4 text-center"></i>
+                                    <span>Parkir umum <span class="text-[10px] font-semibold bg-cyan-50 text-cyan-700 px-1.5 py-0.5 rounded ml-1 border border-cyan-100">Gratis</span></span>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <i class="fa-solid fa-wifi text-green-400 mt-0.5 w-4 text-center"></i>
+                                    <span>Wi-Fi di area umum <span class="text-[10px] font-semibold bg-cyan-50 text-cyan-700 px-1.5 py-0.5 rounded ml-1 border border-cyan-100">Gratis</span></span>
+                                </div>
+
+                                <div class="flex items-start gap-2">
+                                    <i class="fa-solid fa-eye text-slate-400 mt-0.5 w-4 text-center"></i>
+                                    <span>survei tempat kos <span class="text-[10px] font-semibold bg-cyan-50 text-cyan-700 px-1.5 py-0.5 rounded ml-1 border border-cyan-100">Gratis</span></span>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <i class="fa-solid fa-smoking text-green-400 mt-0.5 w-4 text-center"></i>
+                                    <span>Area merokok <span class="text-[10px] font-medium bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded ml-1">umum</span></span>
+                                </div>
+                            </div>
+                            <!-- Kolom 2 -->
+                            <div class="space-y-3">
+                                <div class="flex items-start gap-2">
+                                    <i class="fa-solid fa-suitcase-rolling text-slate-400 mt-0.5 w-4 text-center"></i>
+                                    <span>Servis Kamar <span class="text-[10px] font-semibold bg-cyan-50 text-cyan-700 px-1.5 py-0.5 rounded ml-1 border border-cyan-100">Gratis</span></span>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <i class="fa-solid fa-mask-face text-slate-400 mt-0.5 w-4 text-center"></i>
+                                    <span>Tempat belajar umum <span class="text-[10px] font-medium bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded ml-1">umum</span></span>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <i class="fa-solid fa-bicycle text-slate-400 mt-0.5 w-4 text-center"></i>
+                                    <span>Sewa sepeda <span class="text-[10px] font-semibold bg-cyan-50 text-cyan-700 px-1.5 py-0.5 rounded ml-1 border border-cyan-100">Biaya tambahan </span></span>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <i class="fa-solid fa-users-rectangle text-slate-400 mt-0.5 w-4 text-center"></i>
+                                    <span>Area Bersantai</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fasilitas Lainnya -->
+                    <div class="pt-4 border-t border-slate-100">
+                        <h3 class="font-bold text-slate-900 flex items-center gap-2 mb-6 text-base">
+                            <i class="fa-solid fa-table-cells-large text-green-600 text-sm"></i> Fasilitas lainnya
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-8 text-[13px] text-slate-700">
+                            
+                            <!-- Kolom Kiri -->
+                            <div>
+                                <!-- Internet -->
+                                <div class="mb-6">
+                                    <h4 class="font-semibold text-slate-900 mb-2 flex items-center gap-2"><i class="fa-solid fa-wifi w-4 text-center text-slate-500"></i> Internet</h4>
+                                    <ul class="space-y-2">
+                                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-slate-400 mt-0.5 text-[10px]"></i> <span>Wi-Fi di area umum <span class="text-[10px] font-semibold bg-cyan-50 text-cyan-700 px-1.5 py-0.5 rounded ml-1 border border-cyan-100">Gratis</span></span></li>
+                                    </ul>
+                                </div>
+
+                                <!-- Parkir -->
+                                <div class="mb-6">
+                                    <h4 class="font-semibold text-slate-900 mb-2 flex items-center gap-2"><i class="fa-solid fa-square-parking w-4 text-center text-slate-500"></i> Parkir</h4>
+                                    <p class="text-slate-500 text-xs mb-2 leading-relaxed">Parkir umum, penempatan kendaaraan bersama</p>
+                                    <ul class="space-y-2">
+                                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-slate-400 mt-0.5 text-[10px]"></i> <span>Parkir halaman luar <span class="text-[10px] font-semibold bg-cyan-50 text-cyan-700 px-1.5 py-0.5 rounded ml-1 border border-cyan-100">Tamu</span></span></li>
+                                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-slate-400 mt-0.5 text-[10px]"></i> </span>Parkir area umum <span class="text-[10px] font-semibold bg-cyan-50 text-cyan-700 px-1.5 py-0.5 rounded ml-1 border border-cyan-100">Gratis</span></span></li>
+                                    </ul>
+                                </div>
+
+                                <!-- Transportasi -->
+                                <div>
+                                    <h4 class="font-semibold text-slate-900 mb-2 flex items-center gap-2"><i class="fa-solid fa-van-shuttle w-4 text-center text-slate-500"></i> Transportasi</h4>
+                                    <ul class="space-y-2">
+                                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-slate-400 mt-0.5 text-[10px]"></i> Sewa sepeda <span class="text-[10px] font-medium bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded ml-1">Biaya tambahan</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Kolom Tengah -->
+                            <div>
+                                <!-- Layanan Resepsionis -->
+                                <div class="mb-6">
+                                    <h4 class="font-semibold text-slate-900 mb-2 flex items-center gap-2"><i class="fa-solid fa-bell-concierge w-4 text-center text-slate-500"></i> Layanan resepsionis</h4>
+                                    <ul class="space-y-2">
+                                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-slate-400 mt-0.5 text-[10px]"></i> Layanan survei tempat</li>
+                                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-slate-400 mt-0.5 text-[10px]"></i> Layanan informasi</li>
+                                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-slate-400 mt-0.5 text-[10px]"></i> Check-in dan check-out</li>
+                                    </ul>
+                                </div>
+
+                                <!-- Bahasa yang digunakan -->
+                                <div class="mb-6">
+                                    <h4 class="font-semibold text-slate-900 mb-2 flex items-center gap-2"><i class="fa-solid fa-globe w-4 text-center text-slate-500"></i> Bahasa yang digunakan</h4>
+                                    <ul class="space-y-2">
+                                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-slate-400 mt-0.5 text-[10px]"></i> Indonesia</li>
+                                    </ul>
+                                </div>
+
+                                <!-- Aktivitas -->
+                                <div>
+                                    <h4 class="font-semibold text-slate-900 mb-2 flex items-center gap-2"><i class="fa-solid fa-ticket w-4 text-center text-slate-500"></i> Aktivitas</h4>
+                                    <ul class="space-y-2">
+                                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-slate-400 mt-0.5 text-[10px]"></i> <span>Acara Kekeluargaan  <span class="text-[10px] font-medium bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded ml-1">Biaya tambahan</span></span></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Kolom Kanan -->
+                            <div>
+                                <!-- Area Publik -->
+                                <div class="mb-6">
+                                    <h4 class="font-semibold text-slate-900 mb-2 flex items-center gap-2"><i class="fa-solid fa-tree w-4 text-center text-slate-500"></i> Area publik</h4>
+                                    <ul class="space-y-2">
+                                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-slate-400 mt-0.5 text-[10px]"></i>Tempat Bersantai</li>
+                                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-slate-400 mt-0.5 text-[10px]"></i> Area merokok</li>
+                                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-slate-400 mt-0.5 text-[10px]"></i>Tempat Belajar</li>
+                                    </ul>
+                                </div>
+
+                                <!-- Layanan Kebersihan -->
+                                <div class="mb-6">
+                                    <h4 class="font-semibold text-slate-900 mb-2 flex items-center gap-2"><i class="fa-solid fa-broom w-4 text-center text-slate-500"></i> Layanan kebersihan</h4>
+                                    <ul class="space-y-2">
+                                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-slate-400 mt-0.5 text-[10px]"></i> Pemebersihan Area Umum</li>
+                                        <li class="flex items-start gap-2"><i class="fa-solid fa-times text-slate-400 mt-0.5 text-[10px]"></i> Layanan laundry </li>
+                                    </ul>
+                                </div>
+
+                                <!-- Keamanan & Keselamatan -->
+                                <div>
+                                    <h4 class="font-semibold text-slate-900 mb-2 flex items-center gap-2"><i class="fa-solid fa-shield-halved w-4 text-center text-green-600"></i> Keamanan & keselamatan</h4>
+                                    <ul class="space-y-2">
+                                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-slate-400 mt-0.5 text-[10px]"></i> CCTV di area umum</li>
+                                        <li class="flex items-start gap-2"><i class="fa-solid fa-times text-slate-400 mt-0.5 text-[10px]"></i> Kotak P3K</li>
+                                        <li class="flex items-start gap-2"><i class="fa-solid fa-times text-slate-400 mt-0.5 text-[10px]"></i> Alat pemadam api ringan</li>
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 divide-y divide-slate-100">
+                    
+                    <!-- Bagian 1: Kebijakan -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 py-8 first:pt-0">
+                        <div class="md:col-span-1">
+                            <h2 class="text-lg font-bold text-slate-900">Kebijakan</h2>
+                        </div>
+                        <div class="md:col-span-3 text-sm text-slate-700 space-y-6">
+                            <!-- Grid Check-in / Check-out -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div>
+                                    <h3 class="font-bold text-slate-900 mb-2">Check-in (masuk)</h3>
+                                    <ul class="space-y-1">
+                                        <li>Waktu check-in kamar mulai pukul: 14.00; Batas waktu kedatangan pukul: 21.00.</li>
+                                        <li>Check-in lebih awal tergantung pada ketersediaan kamar yang sudah dibersihkan.</li>
+                                        <li>Terdapat kemungkinan biaya tambahan jika check-in dilakukan di luar jam operasional penjaga.</li>
+                                        <li>Tersedia lapor-masuk tanpa sentuh</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-slate-900 mb-2">Check-out (Selesai)</h3>
+                                    <ul class="space-y-1">
+                                        <li>Pengosongan kamar maksimal pukul 12.00 siang pada hari terakhir masa sewa.</li>
+                                        <li>Proses penyerahan kunci bisa diletakkan di atas kilometer listrik atau didiamkan menggantung di pintu</li>
+                                        <li>Perpanjangan waktu sewa tergantung ketersediaan kamar</li>
+                                        <li>Keterlambatan pengosongan kamar dari waktu yang ditentukan dapat dikenakan biaya tambahan 20.000</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Petunjuk Khusus -->
+                            <div>
+                                <h3 class="font-bold text-slate-900 mb-1">Petunjuk kumpul khusus</h3>
+                                <p class="mb-2">Penghuni baru diharap menghubungi pengelola kost setidaknya 24 jam sebelum tiba untuk mengatur prosedur serah terima kunci kamar</p>
+                                <p class="mb-2">Tamu yang ingin melakukan survei lokasi harus membuat janji temu terlebih dahulu agar bisa disambut oleh pengelola.</p>
+                            </div>
+
+                            <!-- Renovasi dan Cuaca -->
+                            <div>
+                                <h3 class="font-bold text-slate-900 mb-1">Aturan Lingkungan & Jam Malam</h3>
+                                <p>Demi keamanan dan kenyamanan bersama, gerbang harus di tutup setelah di buka. kami tidak membatasi penghuni kost untuk bepergian kapanpun.</p>
+                                <p>Pada saat Hari Raya Nyepi (mulai pukul 6 pagi), gerbang akan ditutup total dan seluruh penghuni diwajibkan mematuhi peraturan desa adat setempat untuk tidak keluar dari area kost.</p>
+                            </div>
+
+                            <!-- Akses -->
+                            <div>
+                                <h3 class="font-bold text-slate-900 mb-1">Metode akses</h3>
+                                <p>Setiap penghuni akan dibekali kunci fisik untuk kamar masing-masing dan kunci akses untuk gerbang utama.</p>
+                            </div>
+
+                            <!-- Hewan Peliharaan -->
+                            <div>
+                                <h3 class="font-bold text-slate-900 mb-1">Hewan peliharaan</h3>
+                                <p> Demi menjaga kebersihan dan kenyamanan seluruh penghuni, hewan peliharaan tidak diperkenankan untuk dibawa masuk ke area properti.</p>
+                            </div>
+
+                            <!-- Anak dan Perlengkapan -->
+                            <div>
+                                <h3 class="font-bold text-slate-900 mb-1">Tamu dan Teman Menginap</h3>
+                                <p class="mb-1">Anak-anak diperbolehkan. Anak hingga usia 5 tahun dapat ikut gratis jika dipangku oleh orang tua atau wali.</p>
+                                <p class="mb-1">Jaket pelampung ukuran anak-anak tersedia dengan permintaan khusus secara gratis.</p>
+                            </div>
+
+                            <!-- Pembayaran -->
+                            <div>
+                                <h3 class="font-bold text-slate-900 mb-2">Jenis pembayaran diterima</h3>
+                                <div class="flex flex-wrap gap-3 items-center text-3xl">
+                                    <!-- QRIS -->
+                                    <div class="border rounded-lg flex items-center justify-center bg-white h-10 px-2 shadow-sm">
+                                        <img src="gambar/QRIS_Logo (1).svg" alt="QRIS Logo" class="h-7 w-auto">
+                                    </div>
+                                    <!-- BRI -->
+                                    <div class="border rounded-lg flex items-center justify-center bg-white h-10 w-16 shadow-sm">
+                                        <img src="gambar/BANK_BRI_logo.svg" alt="BRI Logo" class="h-7 w-auto">
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bagian 2: Informasi Penting -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 py-8 border-t border-slate-100">
+                        <div class="md:col-span-1">
+                            <h2 class="text-lg font-bold text-slate-900">Informasi penting</h2>
+                        </div>
+                        <div class="md:col-span-3 text-sm text-slate-700 space-y-6">
+                            
+                            <div>
+                                <h3 class="font-bold text-slate-900 mb-1">Biaya</h3>
+                                <p class="mb-2">Calon penghuni diminta untuk menyelesaikan pembayaran deposit di awal masa pendaftaran.</p>
+                                <ul class="list-disc pl-5 mb-2 space-y-1">
+                                    <li>Deposit pemesanan IDR 1.000.000 </li>
+                                    <li>uang yang sudah di depositkan tidak dapat di ambil kembali</li>
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h3 class="font-bold text-slate-900 mb-1">Anda harus tahu</h3>
+                                <p class="mb-2">Biaya penambahan orang dapat berlaku dan berbeda-beda menurut kebijakan penyedia.</p>
+                                <p class="mb-2">Tanda pengenal berfoto asli yang dikeluarkan oleh pemerintah (KTP/Kartu Mahasiswa) sangat diperlukan saat lapor masuk.</p>
+                                <p class="mb-2">Pemenuhan permintaan khusus bergantung pada ketersediaan sewaktu tiba di lokasi menimbulkan biaya tambahan</p>
+                                <p class="mb-2">Penyedia ini menerima kartu kredit, transfer bank, dan uang tunai.</p>
+                            </div>
+
+                            <div>
+                                <h3 class="font-bold text-slate-900 mb-1">Perlu diketahui</h3>
+                                <p class="mb-2">Lingkungan kost sangat mengedepankan ketenangan, sehingga penghuni dilarang membuat keributan yang mengganggu kamar lain.</p>
+                                <p>Dilarang keras membawa atau menggunakan barang terlarang sesuai ketentuan hukum yang berlaku di dalam properti.</p>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Bagian 3: Pertanyaan Umum (FAQ) -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 py-8 border-t border-slate-100 last:pb-0">
+                        <div class="md:col-span-1">
+                            <h2 class="text-lg font-bold text-slate-900">Pertanyaan umum</h2>
+                        </div>
+                        <div class="md:col-span-3 text-sm text-slate-700">
+                            <!-- Accordion Items -->
+                            <details class="group border-b border-slate-100 pb-3 mb-3 cursor-pointer">
+                                <summary class="flex justify-between items-center font-medium list-none text-slate-800 hover:text-blue-600">
+                                    <span><i class="fa-solid fa-chevron-down text-[10px] mr-2 text-slate-400 group-open:-rotate-180 transition-transform"></i> Apakah biaya sewa bulanan sudah termasuk tagihan listrik?</span>
+                                </summary>
+                                <div class="text-slate-600 mt-2 pl-5 text-sm leading-relaxed">Belum dikarenakan penggunnaan listrik tiap penghuni berbeda" tergantung pemakaiyannya</div>
+                            </details>
+
+                            <details class="group border-b border-slate-100 pb-3 mb-3 cursor-pointer">
+                                <summary class="flex justify-between items-center font-medium list-none text-slate-800 hover:text-blue-600">
+                                    <span><i class="fa-solid fa-chevron-down text-[10px] mr-2 text-slate-400 group-open:-rotate-180 transition-transform"></i> Apakah tersedia fasilitas dapur umum untuk penghuni?</span>
+                                </summary>
+                                <div class="text-slate-600 mt-2 pl-5 text-sm leading-relaxed">kami menyediakan fasilitas dapur umum pada kost acarya 1, tetapi untuk kost acarya 2 tidak dikarenakan pada masing" kamar sudah terdapat fasilitas dapur yang lengkap.</div>
+                            </details>
+
+                            <details class="group border-b border-slate-100 pb-3 mb-3 cursor-pointer">
+                                <summary class="flex justify-between items-center font-medium list-none text-slate-800 hover:text-blue-600">
+                                    <span><i class="fa-solid fa-chevron-down text-[10px] mr-2 text-slate-400 group-open:-rotate-180 transition-transform"></i> Berapa maksimal kapasitas parkir kendaraan roda dua?</span>
+                                </summary>
+                                <div class="text-slate-600 mt-2 pl-5 text-sm leading-relaxed">untuk daya tampung kendaraan pada tiap lokasi kost berbeda. Untuk Acarya 1 bisa menampung 11 motor dan untuk acarya 2 bisa menampung 18 motor. sehingga pada masing" kamar mendapatkan 1 jatah tempat parkir motor</div>
+                            </details>
+                            
+                            <details class="group border-b border-slate-100 pb-3 mb-3 cursor-pointer">
+                                <summary class="flex justify-between items-center font-medium list-none text-slate-800 hover:text-blue-600">
+                                    <span><i class="fa-solid fa-chevron-down text-[10px] mr-2 text-slate-400 group-open:-rotate-180 transition-transform"></i> Apakah ada akses Wi-Fi berkecepatan tinggi yang disediakan secara gratis?</span>
+                                </summary>
+                                <div class="text-slate-600 mt-2 pl-5 text-sm leading-relaxed">Kami Menyediakan Wifi yang dapat mendukung aktifitas penghuni kost.</div>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="layanan-lokasi"class="bg-slate-50/50 rounded-2xl p-6 sm:p-8 border border-slate-200">
+                        <h2 class="text-xl font-bold text-slate-900 mb-6">Location</h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+                            <!-- Landmarks -->
+                            <div>
+                                <h3 class="font-bold text-slate-900 mb-4 flex items-center gap-2">
+                                    <i class="fa-solid fa-location-dot text-slate-600"></i> Landmarks
+                                </h3>
+                                <ul class="space-y-3 text-[13px] text-slate-700">
+                                    <li class="flex justify-between items-center"><span>Ganesh Temple</span> <span class="text-slate-500">390m</span></li>
+                                    <li class="flex justify-between items-center"><span>Lovina Pratama Trans</span> <span class="text-slate-500">460m</span></li>
+                                    <li class="flex justify-between items-center"><span>Vulcano Club</span> <span class="text-slate-500">610m</span></li>
+                                    <li class="flex justify-between items-center"><span>SEAMIND DOLPHIN SWIM</span> <span class="text-slate-500">710m</span></li>
+                                    <li class="flex justify-between items-center"><span>New Tirta Dive and Snorkeling Lovina</span> <span class="text-slate-500">860m</span></li>
+                                    <li class="flex justify-between items-center"><span>Made Lovina Dolphin</span> <span class="text-slate-500">960m</span></li>
+                                    <li class="flex justify-between items-center"><span>MRX LOVINA BALI</span> <span class="text-slate-500">1.0 km</span></li>
+                                    <li class="flex justify-between items-center"><span>Wisata Dolphin Lovina</span> <span class="text-slate-500">1.0 km</span></li>
+                                    <li class="flex justify-between items-center"><span>Dolphin Watching Lovina</span> <span class="text-slate-500">1.0 km</span></li>
+                                    <li class="flex justify-between items-center"><span>Celuk Agung Beach Anturan</span> <span class="text-slate-500">1.0 km</span></li>
+                                    <li class="flex justify-between items-center"><span>Watching Dolphin Lovina With Budi</span> <span class="text-slate-500">1.0 km</span></li>
+                                    <li class="flex justify-between items-center"><span>tana captain dolphin tour</span> <span class="text-slate-500">1.1 km</span></li>
+                                    <li class="flex justify-between items-center"><span>Lovina Bali Transport</span> <span class="text-slate-500">1.5 km</span></li>
+                                    <li class="flex justify-between items-center"><span>Lovina Dolphin Statue</span> <span class="text-slate-500">1.9 km</span></li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Dining -->
+                            <div>
+                                <h3 class="font-bold text-slate-900 mb-4 flex items-center gap-2">
+                                    <i class="fa-solid fa-utensils text-slate-600 text-sm"></i> Dining
+                                </h3>
+                                <ul class="space-y-3 text-[13px] text-slate-700">
+                                    <li class="flex justify-between items-center"><span>Lemongrass Resto</span> <span class="text-slate-500">230m</span></li>
+                                    <li class="flex justify-between items-center"><span>Warung Cokot Babi Guling</span> <span class="text-slate-500">360m</span></li>
+                                    <li class="flex justify-between items-center"><span>Warung Bali 9</span> <span class="text-slate-500">530m</span></li>
+                                    <li class="flex justify-between items-center"><span>Warung Dolphin</span> <span class="text-slate-500">720m</span></li>
+                                    <li class="flex justify-between items-center"><span>The 10th Table</span> <span class="text-slate-500">940m</span></li>
+                                    <li class="flex justify-between items-center"><span>The Artha Kitchen</span> <span class="text-slate-500">1.0 km</span></li>
+                                    <li class="flex justify-between items-center"><span>Mentari Lovina Bar and Kitchen</span> <span class="text-slate-500">1.1 km</span></li>
+                                    <li class="flex justify-between items-center"><span>Secret Garden Restaurant</span> <span class="text-slate-500">1.1 km</span></li>
+                                    <li class="flex justify-between items-center"><span>Warung Lina</span> <span class="text-slate-500">1.2 km</span></li>
+                                    <li class="flex justify-between items-center"><span>Bakery Lovina</span> <span class="text-slate-500">1.3 km</span></li>
+                                    <li class="flex justify-between items-center"><span>Buda Bakery & Resto</span> <span class="text-slate-500">1.3 km</span></li>
+                                    <li class="flex justify-between items-center"><span>Warung Wayan W.W</span> <span class="text-slate-500">1.4 km</span></li>
+                                    <li class="flex justify-between items-center"><span>Warung Jegeg</span> <span class="text-slate-500">1.4 km</span></li>
+                                    <li class="flex justify-between items-center"><span>Warung Ayu Lovina Beach</span> <span class="text-slate-500">1.4 km</span></li>
+                                </ul>
+                            </div>
+                        </div>
+    
+                        <div class="mt-8 text-center pt-2">
+                            <a href="#" class="text-green-600 hover:text-green-700 font-medium text-sm flex items-center justify-center gap-1 transition-colors">
+                                Tampilkan di Peta <i class="fa-regular fa-circle-right"></i>
+                            </a>
+                        </div>
+                </div>
+
+                <div id="harga" class="py-8 relative">
+                    <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-lg border border-slate-200">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-6 text-center">Pay List</h2>
+                        
+                        <div class="space-y-6">
+                            <!-- Opsi Bulanan -->
+                            <div class="p-6 rounded-xl border border-gray-200 bg-gray-50">
+                                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                                    <div>
+                                        <h3 class="text-lg font-bold text-slate-800">Sewa Bulanan</h3>
+                                        <p class="text-sm text-gray-600 mt-1">Fleksibel tanpa komitmen jangka panjang.</p>
+                                    </div>
+                                    <div class="text-left sm:text-right">
+                                        <div class="text-2xl font-extrabold text-green-600">Rp 1.500.000</div>
+                                        <div class="text-xs font-normal text-gray-500">/bulan</div>
+                                    </div>
+                                </div>
+                            </div>
+                
+                            <!-- Opsi Tahunan -->
+                            <div class="p-6 rounded-xl border-2 border-green-500 bg-green-50/50 relative">
+                                 <div class="absolute top-0 right-0 bg-green-500 text-white text-[10px] px-3 py-1 font-bold rounded-bl-xl">DIPERIORITASKAN</div>
+                                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                                    <div>
+                                        <h3 class="text-lg font-bold text-slate-800">Sewa Tahunan</h3>
+                                        <p class="text-sm text-gray-600 mt-1">Lebih hemat dan dapat dicicil.</p>
+                                    </div>
+                                    <div class="text-left sm:text-right">
+                                        <div class="text-2xl font-extrabold text-green-600">Rp 12.500.000</div>
+                                        <div class="text-xs font-normal text-gray-500">/tahun</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                
+                        <div class="mt-8 text-center">
+                            <a href="index.html#booking" class="w-full sm:w-auto inline-block text-center bg-green-600 text-white py-4 px-10 rounded-xl font-bold hover:bg-green-500 transition shadow-lg shadow-green-500/20">
+                                Pesan Sekarang
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            
+
+            <div class="lg:col-span-1 h-full">
+                <!-- Sticky Container -->
+                <div class="sticky top-40">
+                    <div class="bg-white rounded-2xl p-6 shadow-md border border-slate-200 shadow-slate-200/50">
+                        <div class="text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Konsultasi & Pemesanan Aman</div>
+                        <h2 class="text-xl font-bold text-slate-900 mb-4 pb-4 border-b border-slate-100">Jaminan Harga Terbaik</h2>
+                        
+                        <p class="text-sm text-slate-600 mb-6 leading-relaxed">
+                            Amankan kamar Anda sekarang sebelum kehabisan. Hubungi kami untuk konfirmasi ketersediaan dan proses booking yang mudah.
+                        </p>
+                        
+                        <a href="https://wa.me/6287867261660" target="_blank" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl transition-colors shadow-sm flex items-center justify-center gap-2">
+                            <i class="fa-brands fa-whatsapp text-lg"></i>
+                            Cek Ketersediaan & Pesan
+                        </a>
+                        
+                        <p class="text-[11px] text-slate-500 mt-4 flex items-start gap-2 leading-tight">
+                            <i class="fa-solid fa-shield-halved text-green-500 mt-0.5"></i>
+                            Permintaan Anda akan segera diproses melalui dukungan WhatsApp langsung resmi kami.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="shared-footer"></div>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="fixed inset-0 z-[200] bg-black/90 p-4 sm:p-8 hidden" onclick="closeLightbox(event)">
+        <button class="absolute top-6 right-6 text-gray-300 hover:text-white bg-black/50 hover:bg-black/80 rounded-full p-2 transition-colors z-[210]" aria-label="Tutup Galeri">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+
+        <!-- Single Image Viewer -->
+        <div id="single-image-viewer" class="w-full h-full flex items-center justify-center">
+            <button onclick="showPrevImage(event)" class="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 text-gray-300 hover:text-white bg-black/40 hover:bg-black/60 rounded-full p-3 transition-colors z-[210]">
+                <i class="fa-solid fa-chevron-left text-xl w-6 h-6 flex items-center justify-center"></i>
+            </button>
+            <button onclick="showNextImage(event)" class="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 text-gray-300 hover:text-white bg-black/40 hover:bg-black/60 rounded-full p-3 transition-colors z-[210]">
+                <i class="fa-solid fa-chevron-right text-xl w-6 h-6 flex items-center justify-center"></i>
+            </button>
+            <div class="relative max-w-5xl w-full h-full flex items-center justify-center pointer-events-none z-[205]">
+                <div id="lightbox-loader" class="absolute inset-0 flex items-center justify-center text-white">
+                    <svg class="animate-spin h-10 w-10 text-white/50" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </div>
+                <div id="lightbox-img-container" class="max-w-full max-h-full rounded-lg shadow-2xl overflow-hidden pointer-events-auto">
+                    <img id="lightbox-img" src="" alt="Gambar Diperbesar" class="block w-full h-auto opacity-0 transition-opacity duration-300">
+                </div>
+            </div>
+        </div>
+
+        <!-- Grid Image Viewer -->
+        <div id="grid-image-viewer" class="w-full h-full max-w-7xl mx-auto hidden overflow-y-auto no-scrollbar">
+            <div id="lightbox-grid-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 p-4">
+                <!-- Gambar akan dimasukkan oleh JavaScript di sini -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile Menu Logic
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const openIcon = document.getElementById('menuOpen');
+            const closeIcon = document.getElementById('menuClose');
+            
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                openIcon.classList.add('hidden');
+                closeIcon.classList.remove('hidden');
+            } else {
+                menu.classList.add('hidden');
+                openIcon.classList.remove('hidden');
+                closeIcon.classList.add('hidden');
+            }
+        }
+
+        // Lightbox Logic
+        const lightbox = document.getElementById('lightbox');
+        const singleImageViewer = document.getElementById('single-image-viewer');
+        const gridImageViewer = document.getElementById('grid-image-viewer');
+        const lightboxGridContainer = document.getElementById('lightbox-grid-container');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const loader = document.getElementById('lightbox-loader');
+        const body = document.body;
+        const lightboxImgContainer = document.getElementById('lightbox-img-container');
+        
+        let currentImageIndex = 0;
+        const galleryImages = [
+            'gambar/interior acarya 1/1.jpeg',
+            'gambar/interior acarya 1/2.jpeg',
+            'gambar/interior acarya 1/3.jpeg',
+            'gambar/interior acarya 1/kamar mandi.jpeg',
+            'gambar/interior acarya 1/5.jpeg',
+            // Foto tambahan
+            'gambar/kumpulan webp/interior acarya 2/nongkrong-converted-from-png.webp',
+            'gambar/kumpulan webp/interior acarya 2/lemari tangga-converted-from-png.webp',
+            'gambar/kumpulan webp/acarya 2 sore-converted-from-png.webp',
+            // Anda bisa menambahkan lebih banyak foto di sini
+            'gambar/kumpulan webp/interior acarya 1/foto_tambahan_1.webp',
+            'gambar/kumpulan webp/interior acarya 1/foto_tambahan_2.webp'
+        ];
+
+        function showImage(index) {
+            if (index < 0 || index >= galleryImages.length) return;
+
+            const highResSrc = galleryImages[index];
+            const altText = "Gambar Galeri " + (index + 1);
+
+            lightboxImgContainer.style.height = 'auto';
+            lightboxImg.style.opacity = '0';
+            loader.style.display = 'flex';
+
+            lightboxImg.src = highResSrc;
+            lightboxImg.alt = altText;
+
+            lightboxImg.onload = () => {
+                loader.style.display = 'none';
+                lightboxImg.style.opacity = '1';
+            };
+        }
+
+        function openLightbox(element, isSeeAll = false) {
+            if (isSeeAll) {
+                // Tampilkan tampilan grid
+                singleImageViewer.classList.add('hidden');
+                gridImageViewer.classList.remove('hidden');
+                
+                lightboxGridContainer.innerHTML = ''; // Kosongkan grid sebelum diisi
+                galleryImages.forEach((src, index) => {
+                    const imgWrapper = document.createElement('div');
+                    imgWrapper.className = 'aspect-w-1 aspect-h-1 rounded-lg overflow-hidden';
+                    imgWrapper.innerHTML = `<img src="${src}" alt="Galeri ${index + 1}" class="w-full h-full object-cover">`;
+                    lightboxGridContainer.appendChild(imgWrapper);
+                });
+
+                lightbox.classList.remove('hidden');
+                setTimeout(() => {
+                    lightbox.classList.add('active');
+                    body.classList.add('modal-open');
+                }, 10);
+            }
+            // Jika isSeeAll false, tidak melakukan apa-apa karena gambar lain tidak bisa diklik
+        }
+
+        function showNextImage(event) {
+            event.stopPropagation();
+            currentImageIndex = (currentImageIndex + 1) % galleryImages.length;
+            showImage(currentImageIndex);
+        }
+
+        function showPrevImage(event) {
+            event.stopPropagation();
+            currentImageIndex = (currentImageIndex - 1 + galleryImages.length) % galleryImages.length;
+            showImage(currentImageIndex);
+        }
+
+        function closeLightbox(event) {
+            if (event.target === lightbox || event.target.closest('button[aria-label="Tutup Galeri"]')) { 
+                lightbox.classList.remove('active');
+                body.classList.remove('modal-open');
+                setTimeout(() => {
+                    lightbox.classList.add('hidden');
+                    lightboxImg.src = '';
+                    lightboxGridContainer.innerHTML = '';
+                }, 300);
+            }
+        }
+    </script>
+
+    <script src="footer-inject.js"></script>
+    </body>
+</html>

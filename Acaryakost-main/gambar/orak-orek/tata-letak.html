@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeri 6 Gambar - Bento Layout</title>
+    
+    <!-- Memuat Tailwind CSS untuk styling yang cepat dan responsif -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Memuat font Inter dari Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Warna latar belakang abu-abu sangat muda yang bersih */
+        }
+
+        /* Styling khusus untuk modal lightbox agar transisinya halus */
+        #lightbox {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            backdrop-filter: blur(8px); /* Efek blur di latar belakang */
+        }
+        
+        #lightbox.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #lightbox-img {
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #lightbox.active #lightbox-img {
+            transform: scale(1);
+        }
+
+        /* Menyembunyikan scrollbar saat modal terbuka */
+        body.modal-open {
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col items-center justify-center py-12">
+
+    <div class="max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header Galeri -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 mb-4">Galeri Pazel Estetik</h1>
+            <p class="text-lg text-slate-500 max-w-2xl mx-auto">
+                Tata letak bergaya susunan pazel yang dirancang khusus untuk foto <strong>potret (vertikal)</strong>. Klik gambar mana saja untuk melihatnya lebih detail.
+            </p>
+        </header>
+
+        <!-- 
+            GRID PUZZLE SYSTEM (PORTRAIT MODE):
+            - Mobile: 1 kolom
+            - Tablet (sm): 2 kolom dengan sistem masonry
+            - Desktop (lg): 4 kolom simetris. Semua gambar menggunakan col-span-1 agar bentuknya tidak ada yang memanjang ke samping (landscape), sangat ideal untuk foto potret.
+        -->
+        <main class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 auto-rows-[250px] lg:auto-rows-[220px] grid-flow-dense">
+            
+            <!-- GAMBAR 1 (Kiri Luar) - Potret Sangat Tinggi -->
+            <div class="group relative overflow-hidden rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 sm:col-span-1 sm:row-span-2 lg:col-start-1 lg:row-start-1 lg:row-span-3 cursor-pointer" onclick="openLightbox(this)">
+                <img src="https://picsum.photos/id/1012/800/1600" 
+                     onerror="this.onerror=null;this.src='https://placehold.co/800x1600/1e293b/ffffff?text=Potret+Tinggi';" 
+                     alt="Potret Orang" 
+                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-full="https://picsum.photos/id/1012/1200/2400">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                    <span class="text-white font-medium text-lg flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        Perbesar
+                    </span>
+                </div>
+            </div>
+
+            <!-- GAMBAR 2 (Tengah Kiri Atas) - Potret Standar -->
+            <div class="group relative overflow-hidden rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 sm:col-span-1 sm:row-span-2 lg:col-start-2 lg:row-start-1 lg:row-span-2 cursor-pointer" onclick="openLightbox(this)">
+                <img src="https://picsum.photos/id/1025/800/1200" 
+                     onerror="this.onerror=null;this.src='https://placehold.co/800x1200/334155/ffffff?text=Potret+Standar';" 
+                     alt="Anjing di Hutan" 
+                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-full="https://picsum.photos/id/1025/1200/1800">
+                <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <div class="bg-white/30 backdrop-blur-sm p-3 rounded-full text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GAMBAR 3 (Tengah Kiri Bawah) - Kotak/Square -->
+            <div class="group relative overflow-hidden rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 sm:col-span-1 sm:row-span-1 lg:col-start-2 lg:row-start-3 lg:row-span-1 cursor-pointer" onclick="openLightbox(this)">
+                <img src="https://picsum.photos/id/1035/800/800" 
+                     onerror="this.onerror=null;this.src='https://placehold.co/800x800/475569/ffffff?text=Kotak';" 
+                     alt="Air Terjun" 
+                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-full="https://picsum.photos/id/1035/1200/1200">
+                <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <div class="bg-white/30 backdrop-blur-sm p-3 rounded-full text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GAMBAR 4 (Tengah Kanan Atas) - Kotak/Square -->
+            <div class="group relative overflow-hidden rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 sm:col-span-1 sm:row-span-1 lg:col-start-3 lg:row-start-1 lg:row-span-1 cursor-pointer" onclick="openLightbox(this)">
+                <img src="https://picsum.photos/id/1062/800/800" 
+                     onerror="this.onerror=null;this.src='https://placehold.co/800x800/64748b/ffffff?text=Kotak';" 
+                     alt="Anjing" 
+                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-full="https://picsum.photos/id/1062/1200/1200">
+                <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <div class="bg-white/30 backdrop-blur-sm p-3 rounded-full text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GAMBAR 5 (Tengah Kanan Bawah) - Potret Standar -->
+            <div class="group relative overflow-hidden rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 sm:col-span-1 sm:row-span-2 lg:col-start-3 lg:row-start-2 lg:row-span-2 cursor-pointer" onclick="openLightbox(this)">
+                <img src="https://picsum.photos/id/1069/800/1200" 
+                     onerror="this.onerror=null;this.src='https://placehold.co/800x1200/94a3b8/ffffff?text=Potret+Standar';" 
+                     alt="Ubur-ubur" 
+                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-full="https://picsum.photos/id/1069/1200/1800">
+                <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <div class="bg-white/30 backdrop-blur-sm p-3 rounded-full text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GAMBAR 6 (Kanan Luar) - Potret Sangat Tinggi -->
+            <div class="group relative overflow-hidden rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 sm:col-span-1 sm:row-span-2 lg:col-start-4 lg:row-start-1 lg:row-span-3 cursor-pointer" onclick="openLightbox(this)">
+                <img src="https://picsum.photos/id/1084/800/1600" 
+                     onerror="this.onerror=null;this.src='https://placehold.co/800x1600/cbd5e1/1e293b?text=Potret+Tinggi';" 
+                     alt="Walrus" 
+                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-full="https://picsum.photos/id/1084/1200/2400">
+                <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <div class="bg-white/30 backdrop-blur-sm p-3 rounded-full text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Elemen Modal (Lightbox) yang tersembunyi secara default -->
+    <div id="lightbox" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 sm:p-8" onclick="closeLightbox(event)">
+        <!-- Tombol Tutup -->
+        <button class="absolute top-6 right-6 text-white/70 hover:text-white bg-black/50 hover:bg-black/80 rounded-full p-2 transition-colors z-50" aria-label="Tutup Galeri">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        
+        <!-- Wadah Gambar -->
+        <div class="relative max-w-5xl w-full h-full flex items-center justify-center pointer-events-none">
+            <!-- Menambahkan status Loading Spinner -->
+            <div id="lightbox-loader" class="absolute inset-0 flex items-center justify-center text-white">
+                <svg class="animate-spin h-10 w-10 text-white/50" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </div>
+            
+            <img id="lightbox-img" src="" alt="Gambar Diperbesar" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl pointer-events-auto opacity-0 transition-opacity duration-300">
+        </div>
+    </div>
+
+    <script>
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const loader = document.getElementById('lightbox-loader');
+        const body = document.body;
+
+        // Fungsi untuk membuka Lightbox
+        function openLightbox(element) {
+            // Ambil URL gambar ukuran penuh dari atribut data-full, atau fallback ke src biasa
+            const imgElement = element.querySelector('img');
+            const highResSrc = imgElement.getAttribute('data-full') || imgElement.src;
+            const altText = imgElement.alt;
+
+            // Tampilkan loader dan sembunyikan gambar sementara memuat
+            lightboxImg.style.opacity = '0';
+            loader.style.display = 'flex';
+            
+            lightboxImg.src = highResSrc;
+            lightboxImg.alt = altText;
+            
+            // Tampilkan Modal
+            lightbox.classList.add('active');
+            body.classList.add('modal-open');
+
+            // Saat gambar selesai dimuat, sembunyikan loader dan tampilkan gambar
+            lightboxImg.onload = () => {
+                loader.style.display = 'none';
+                lightboxImg.style.opacity = '1';
+            };
+        }
+
+        // Fungsi untuk menutup Lightbox
+        function closeLightbox(event) {
+            // Hanya tutup jika yang diklik adalah background modal (bukan gambarnya langsung)
+            if (event.target === lightbox || event.target.tagName.toLowerCase() === 'button' || event.target.closest('button')) {
+                lightbox.classList.remove('active');
+                body.classList.remove('modal-open');
+                
+                // Jeda sebentar sebelum mengosongkan source agar animasi transisi terlihat halus
+                setTimeout(() => {
+                    lightboxImg.src = '';
+                }, 300);
+            }
+        }
+
+        // Menutup lightbox menggunakan tombol "Escape" pada keyboard
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape" && lightbox.classList.contains('active')) {
+                lightbox.classList.remove('active');
+                body.classList.remove('modal-open');
+                setTimeout(() => {
+                    lightboxImg.src = '';
+                }, 300);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resend | Email for developers</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Using Inter for UI and JetBrains Mono for Code - similar to Resend's font stack -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        black: '#000000',
+                        white: '#ffffff',
+                        zinc: {
+                            50: '#fafafa',
+                            100: '#f4f4f5',
+                            200: '#e4e4e7',
+                            300: '#d4d4d8',
+                            400: '#a1a1aa',
+                            500: '#71717a',
+                            600: '#52525b',
+                            700: '#3f3f46',
+                            800: '#27272a',
+                            900: '#18181b',
+                            950: '#09090b',
+                        }
+                    },
+                    letterSpacing: {
+                        tighter: '-.04em',
+                        tight: '-.02em',
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+
+        ::selection {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        /* Resend's signature top glow */
+        .top-glow {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            height: 600px;
+            background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(22, 163, 74, 0.2), transparent);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Subtle grid background */
+        .bg-grid {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        }
+
+        /* Glassmorphism Navbar */
+        .nav-glass {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Buttons matching Resend */
+        .btn-primary {
+            background-color: #ffffff;
+            color: #000000;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.2);
+            transition: all 0.15s ease;
+        }
+        .btn-primary:hover {
+            background-color: #f4f4f5; /* zinc-100 */
+        }
+
+        .btn-secondary {
+            background-color: #000000;
+            color: #ffffff;
+            border: 1px solid #27272a; /* zinc-800 */
+            transition: all 0.15s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #18181b; /* zinc-900 */
+            border-color: #3f3f46; /* zinc-700 */
+        }
+
+        /* Accurate Syntax Highlighting (Dark Theme) */
+        .sh-keyword { color: #F472B6; } /* Pink */
+        .sh-string { color: #A78BFA; }  /* Purple/Blue */
+        .sh-function { color: #60A5FA; } /* Light Blue */
+        .sh-variable { color: #E5E7EB; } /* Light Gray */
+        .sh-punctuation { color: #6B7280; } /* Gray */
+        .sh-property { color: #34D399; } /* Green */
+        .sh-comment { color: #71717A; font-style: italic; }
+
+        /* MacOS Window Dots */
+        .mac-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .code-window-shadow {
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 30px 60px -10px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body class="relative min-h-screen flex flex-col font-sans">
+
+    <!-- Background Elements -->
+    <div class="top-glow"></div>
+    <div class="bg-grid"></div>
+    
+    <!-- 3D Cube Container -->
+    <div id="cube-container" class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[800px] h-[600px] pointer-events-none z-0 mix-blend-screen opacity-70"></div>
+
+    <nav class="nav-glass fixed top-0 w-full z-50 flex justify-center">
+        <div class="w-full max-w-[1200px] px-6 h-14 flex items-center justify-between">
+            <!-- Left: Logo & Links -->
+            <div class="flex items-center gap-8">
+                <a href="#" class="flex items-center gap-2 group">
+                    <!-- Resend Logo (Approximation using pure CSS/Phosphor) -->
+                    <div class="w-6 h-6 bg-white rounded-[4px] flex items-center justify-center group-hover:bg-zinc-200 transition-colors">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22 6C22 4.9 21.1 4 20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6ZM20 6L12 11L4 6H20ZM20 18H4V8L12 13L20 8V18Z" fill="black"/>
+                        </svg>
+                    </div>
+                    <span class="font-medium text-sm">Resend</span>
+                </a>
+
+                <div class="hidden md:flex items-center gap-6 text-[13px] font-medium text-zinc-400">
+                    <a href="#" class="hover:text-white transition-colors">About</a>
+                    <a href="#" class="hover:text-white transition-colors">Customers</a>
+                    <a href="#" class="hover:text-white transition-colors">Changelog</a>
+                    <a href="#" class="hover:text-white transition-colors">Pricing</a>
+                    <a href="#" class="hover:text-white transition-colors">Docs</a>
+                </div>
+            </div>
+
+            <!-- Right: Auth Actions -->
+            <div class="flex items-center gap-4 text-[13px] font-medium">
+                <a href="#" class="hidden md:block text-zinc-400 hover:text-white transition-colors">Sign in</a>
+                <a href="#" class="btn-primary px-3 py-1.5 rounded-md">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-1 w-full flex flex-col items-center pt-32 md:pt-40 pb-20 px-4 md:px-6 relative">
+        
+        <div class="w-full max-w-[800px] flex flex-col items-center text-center z-10 opacity-0 animate-fade-in-up">
+            
+            <!-- Announcement Badge -->
+            <a href="#" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800/80 transition-colors mb-8 group">
+                <span class="flex items-center justify-center w-4 h-4 rounded-full bg-zinc-800 group-hover:bg-zinc-700 transition-colors">
+                    <i class="ph-fill ph-lightning text-[10px] text-zinc-300"></i>
+                </span>
+                <span class="text-[13px] font-medium text-zinc-300">Introducing Webhooks 2.0</span>
+                <i class="ph ph-arrow-right text-zinc-500 text-xs group-hover:translate-x-0.5 transition-transform"></i>
+            </a>
+            
+            <!-- Huge Headline -->
+            <h1 class="text-[56px] md:text-[80px] font-bold tracking-tighter leading-[1.05] text-white mb-6">
+                Email for developers
+            </h1>
+            
+            <!-- Subtitle -->
+            <p class="text-lg md:text-[21px] text-zinc-400 max-w-[640px] font-normal leading-relaxed mb-10">
+                The best API to reach humans instead of spam folders. Build, test, and deliver transactional emails at scale.
+            </p>
+            
+            <!-- CTA Buttons -->
+            <div class="flex items-center gap-4">
+                <a href="#" class="btn-primary h-10 px-5 rounded-md font-medium text-[14px] flex items-center justify-center">
+                    Get Started
+                </a>
+                <a href="#" class="btn-secondary h-10 px-5 rounded-md font-medium text-[14px] flex items-center justify-center gap-2">
+                    <i class="ph ph-code"></i>
+                    Documentation
+                </a>
+            </div>
+        </div>
+
+        <div class="w-full max-w-[900px] mt-24 relative z-10 opacity-0 animate-fade-in-up" style="animation-delay: 0.15s;">
+            <!-- Realistic Mac Window wrapper -->
+            <div class="bg-[#09090b] rounded-xl overflow-hidden code-window-shadow border border-zinc-800/80">
+                
+                <!-- Window Header / Tabs -->
+                <div class="flex items-center justify-between px-4 h-12 bg-[#09090b] border-b border-zinc-800/80">
+                    <div class="flex items-center gap-2 w-24">
+                        <span class="mac-dot bg-[#FF5F56]"></span>
+                        <span class="mac-dot bg-[#FFBD2E]"></span>
+                        <span class="mac-dot bg-[#27C93F]"></span>
+                    </div>
+                    
+                    <!-- File Tabs -->
+                    <div class="flex items-center h-full">
+                        <div class="h-full flex items-center px-4 border-b-2 border-white text-[13px] font-medium text-zinc-200 gap-2 cursor-pointer bg-zinc-900/30">
+                            <i class="ph-fill ph-file-ts text-blue-400"></i>
+                            send-email.ts
+                        </div>
+                        <div class="h-full flex items-center px-4 border-b-2 border-transparent text-[13px] font-medium text-zinc-500 hover:text-zinc-300 gap-2 cursor-pointer transition-colors">
+                            <i class="ph-fill ph-file-js text-yellow-400"></i>
+                            send-email.js
+                        </div>
+                    </div>
+                    
+                    <div class="w-24 flex justify-end">
+                        <button class="text-zinc-500 hover:text-zinc-300 transition-colors">
+                            <i class="ph ph-copy text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Code Area -->
+                <div class="p-6 md:p-8 overflow-x-auto text-[13px] md:text-[14px] font-mono leading-[1.7]">
+<pre><code><span class="sh-keyword">import</span> <span class="sh-punctuation">{</span> <span class="sh-variable">Resend</span> <span class="sh-punctuation">}</span> <span class="sh-keyword">from</span> <span class="sh-string">'resend'</span><span class="sh-punctuation">;</span>
+
+<span class="sh-keyword">const</span> <span class="sh-variable">resend</span> <span class="sh-punctuation">=</span> <span class="sh-keyword">new</span> <span class="sh-variable">Resend</span><span class="sh-punctuation">(</span><span class="sh-string">'re_123456789'</span><span class="sh-punctuation">);</span>
+
+<span class="sh-variable">resend</span><span class="sh-punctuation">.</span><span class="sh-property">emails</span><span class="sh-punctuation">.</span><span class="sh-function">send</span><span class="sh-punctuation">({</span>
+  <span class="sh-property">from</span><span class="sh-punctuation">:</span> <span class="sh-string">'onboarding@resend.dev'</span><span class="sh-punctuation">,</span>
+  <span class="sh-property">to</span><span class="sh-punctuation">:</span> <span class="sh-string">'steve@apple.com'</span><span class="sh-punctuation">,</span>
+  <span class="sh-property">subject</span><span class="sh-punctuation">:</span> <span class="sh-string">'Hello World'</span><span class="sh-punctuation">,</span>
+  <span class="sh-property">html</span><span class="sh-punctuation">:</span> <span class="sh-string">'&lt;p&gt;Congrats on sending your &lt;strong&gt;first email&lt;/strong&gt;!&lt;/p&gt;'</span>
+<span class="sh-punctuation">});</span></code></pre>
+                </div>
+            </div>
+            
+            <!-- Floating Success notification mimicking Resend's interactive elements -->
+            <div class="absolute -right-4 md:-right-12 -bottom-6 bg-[#18181b] border border-zinc-800 rounded-lg shadow-2xl p-4 flex items-start gap-3 w-72 transform rotate-2 animate-fade-in-up" style="animation-delay: 0.5s;">
+                <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <i class="ph-fill ph-check-circle text-green-500 text-lg"></i>
+                </div>
+                <div>
+                    <p class="text-[13px] font-medium text-white">Email delivered</p>
+                    <p class="text-[12px] text-zinc-400 mt-1">Successfully sent to steve@apple.com in 143ms.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full max-w-[1000px] mt-40 text-center opacity-0 animate-fade-in-up" style="animation-delay: 0.3s;">
+            <p class="text-[13px] text-zinc-500 font-medium mb-8">Trusted by teams at</p>
+            <div class="flex flex-wrap justify-center items-center gap-x-12 gap-y-8 opacity-60">
+                <!-- Using Text placeholders carefully styled to look like monochrome logos -->
+                <div class="flex items-center gap-1.5 hover:opacity-100 transition-opacity cursor-default">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L22 20H2L12 2Z" fill="currentColor"/></svg>
+                    <span class="text-xl font-bold tracking-tight">Vercel</span>
+                </div>
+                <div class="flex items-center gap-1.5 hover:opacity-100 transition-opacity cursor-default">
+                    <div class="w-6 h-6 rounded-full border-[4px] border-current flex items-center justify-center"><div class="w-2 h-2 bg-current rounded-full"></div></div>
+                    <span class="text-xl font-bold tracking-tight">Supabase</span>
+                </div>
+                <div class="flex items-center gap-1.5 hover:opacity-100 transition-opacity cursor-default">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 21L21 3M3 12h18M12 3v18"/></svg>
+                    <span class="text-xl font-bold tracking-tight">Linear</span>
+                </div>
+                <div class="flex items-center gap-1.5 hover:opacity-100 transition-opacity cursor-default">
+                    <i class="ph-fill ph-infinity text-3xl"></i>
+                    <span class="text-xl font-bold tracking-tight">Raycast</span>
+                </div>
+                <div class="flex items-center gap-1.5 hover:opacity-100 transition-opacity cursor-default">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+                    <span class="text-xl font-bold tracking-tight">Arc</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full max-w-[1000px] mt-40">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                <!-- Feature Card 1 -->
+                <div class="bg-[#09090b] border border-zinc-800/80 rounded-2xl p-8 hover:bg-[#111113] transition-colors group">
+                    <div class="w-10 h-10 bg-zinc-900 border border-zinc-800 rounded-lg flex items-center justify-center mb-6 text-white group-hover:border-zinc-600 transition-colors">
+                        <i class="ph ph-lightning text-xl text-zinc-300"></i>
+                    </div>
+                    <h3 class="text-[17px] font-semibold mb-2 text-white tracking-tight">Develop faster</h3>
+                    <p class="text-zinc-400 text-[14px] leading-relaxed">
+                        Send emails directly from your application using our SDKs. Available for Node.js, Ruby, Python, PHP, Go, and Java.
+                    </p>
+                </div>
+
+                <!-- Feature Card 2 -->
+                <div class="bg-[#09090b] border border-zinc-800/80 rounded-2xl p-8 hover:bg-[#111113] transition-colors group">
+                    <div class="w-10 h-10 bg-zinc-900 border border-zinc-800 rounded-lg flex items-center justify-center mb-6 text-white group-hover:border-zinc-600 transition-colors">
+                        <i class="ph ph-chart-line-up text-xl text-zinc-300"></i>
+                    </div>
+                    <h3 class="text-[17px] font-semibold mb-2 text-white tracking-tight">Track performance</h3>
+                    <p class="text-zinc-400 text-[14px] leading-relaxed">
+                        Monitor delivery, open rates, and click-throughs in real-time. Understand exactly what happens after you hit send.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="w-full border-t border-zinc-800/50 bg-[#000] py-10 flex justify-center mt-20">
+        <div class="w-full max-w-[1200px] px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22 6C22 4.9 21.1 4 20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6ZM20 6L12 11L4 6H20ZM20 18H4V8L12 13L20 8V18Z" fill="white"/>
+                </svg>
+                <span class="font-medium text-[13px] text-zinc-300">Resend Inc.</span>
+            </div>
+            
+            <div class="flex gap-6 text-[13px] text-zinc-500 font-medium">
+                <a href="#" class="hover:text-zinc-300 transition-colors">Twitter</a>
+                <a href="#" class="hover:text-zinc-300 transition-colors">GitHub</a>
+                <a href="#" class="hover:text-zinc-300 transition-colors">Discord</a>
+                <a href="#" class="hover:text-zinc-300 transition-colors">Privacy</a>
+                <a href="#" class="hover:text-zinc-300 transition-colors">Terms</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        window.onload = function () {
+            const container = document.getElementById('cube-container');
+            if (!container) return;
+
+            // Setup Scene, Camera, and Renderer
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.z = 22;
+
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+
+            // Create a group for the Kost building
+            const buildingGroup = new THREE.Group();
+            scene.add(buildingGroup);
+
+            // Materials for the wireframe tech aesthetic
+            const lineMaterial = new THREE.LineBasicMaterial({
+                color: 0xffffff,
+                transparent: true,
+                opacity: 0.15
+            });
+            const pointsMaterial = new THREE.PointsMaterial({
+                color: 0xffffff,
+                size: 0.06,
+                transparent: true,
+                opacity: 0.7
+            });
+
+            // Helper function to create and add building parts
+            function addBuildingPart(geometry, x, y, z, rotX = 0, rotY = 0, rotZ = 0) {
+                const wireframe = new THREE.WireframeGeometry(geometry);
+                const lines = new THREE.LineSegments(wireframe, lineMaterial);
+                const points = new THREE.Points(geometry, pointsMaterial);
+                
+                lines.position.set(x, y, z);
+                points.position.set(x, y, z);
+                lines.rotation.set(rotX, rotY, rotZ);
+                points.rotation.set(rotX, rotY, rotZ);
+                
+                buildingGroup.add(lines);
+                buildingGroup.add(points);
+            }
+
+            // 1. Bangunan Utama Kost-kostan (2 Lantai memanjang)
+            addBuildingPart(new THREE.BoxGeometry(24, 6, 5, 8, 2, 2), 0, 0, -2.5);
+
+            // 2. Selasar / Balkon (Lorong memanjang Lantai 2)
+            addBuildingPart(new THREE.BoxGeometry(24, 0.2, 2.5, 8, 1, 1), 0, 0, 1.25);
+
+            // 3. Tiang Penyangga Lorong & Handrail Pagar
+            for(let i=0; i<=6; i++) {
+                let xPos = -12 + (i * 4);
+                // Tiang dari lantai 1 ke atap lorong lantai 2
+                addBuildingPart(new THREE.BoxGeometry(0.2, 6, 0.2), xPos, 0, 2.4);
+            }
+            // Handrail / Pagar lorong lantai 2
+            addBuildingPart(new THREE.BoxGeometry(24, 0.1, 0.1, 8), 0, 0.8, 2.4);
+
+            // 4. Kamar-kamar Kost (Deretan Pintu & Jendela) - 6 kamar per lantai
+            for (let floor = 0; floor < 2; floor++) {
+                let yPos = floor === 0 ? -1.5 : 1.5; // Lantai 1 (bawah) atau Lantai 2 (atas)
+                for (let room = 0; room < 6; room++) {
+                    let xPos = -10 + (room * 4);
+                    
+                    // Pintu Kamar Kost
+                    addBuildingPart(new THREE.BoxGeometry(1.2, 2.2, 0.2, 1, 1, 1), xPos - 0.5, yPos - 0.4, 0);
+                    
+                    // Jendela Kamar (Biasanya di sebelah pintu)
+                    addBuildingPart(new THREE.BoxGeometry(1.2, 1.2, 0.2, 1, 1, 1), xPos + 1.2, yPos + 0.1, 0);
+                }
+            }
+
+            // 5. Tangga Eksterior (Di sisi kanan bangunan untuk naik ke lt 2)
+            addBuildingPart(new THREE.BoxGeometry(2, 4.5, 3.5, 2, 4, 1), 13, -1.5, 0.5, -Math.PI/6, 0, 0);
+
+            // 6. Toren Air (Detail Ikonik Kost-kostan Indonesia) ditaruh di atap
+            addBuildingPart(new THREE.CylinderGeometry(0.8, 0.8, 1.5, 8, 1), -9, 4, -2.5); // Tabung Toren
+            addBuildingPart(new THREE.BoxGeometry(1.5, 1, 1.5, 1, 1, 1), -9, 3.2, -2.5); // Dudukan Toren
+
+            // 7. Halaman, Pagar Depan & Area Parkir Motor
+            addBuildingPart(new THREE.BoxGeometry(28, 0.1, 12, 8, 1, 4), 0, -3, 3); // Paving block halaman
+            addBuildingPart(new THREE.BoxGeometry(10, 1.5, 0.2, 4, 1, 1), -9, -2.25, 9); // Pagar kiri
+            addBuildingPart(new THREE.BoxGeometry(10, 1.5, 0.2, 4, 1, 1), 9, -2.25, 9);  // Pagar kanan (ada celah gerbang di tengah)
+            
+            // 3 Kotak kecil merepresentasikan motor anak kost yang sedang parkir
+            addBuildingPart(new THREE.BoxGeometry(0.8, 1.2, 2.2), -5, -2.4, 5);
+            addBuildingPart(new THREE.BoxGeometry(0.8, 1.2, 2.2), -3, -2.4, 5);
+            addBuildingPart(new THREE.BoxGeometry(0.8, 1.2, 2.2), -1, -2.4, 5);
+
+            // 8. Grid tanah (Memberikan kesan blueprint / alas)
+            const gridHelper = new THREE.GridHelper(40, 20, 0xffffff, 0xffffff);
+            gridHelper.material.transparent = true;
+            gridHelper.material.opacity = 0.05;
+            gridHelper.position.y = -3.5;
+            buildingGroup.add(gridHelper);
+
+            // Initial tilt (Sudut isometrik agar bentuk kos-kosan terlihat jelas)
+            buildingGroup.rotation.x = Math.PI / 8;
+            buildingGroup.rotation.y = -Math.PI / 4;
+            buildingGroup.scale.set(0.65, 0.65, 0.65); // Sesuaikan skala dengan layar
+
+            let mouseX = 0;
+            let mouseY = 0;
+            let targetX = 0;
+            let targetY = 0;
+            const windowHalfX = window.innerWidth / 2;
+            const windowHalfY = window.innerHeight / 2;
+
+            // Track mouse movement
+            document.addEventListener('mousemove', (event) => {
+                mouseX = (event.clientX - windowHalfX) * 0.001;
+                mouseY = (event.clientY - windowHalfY) * 0.001;
+            });
+
+            const animate = () => {
+                requestAnimationFrame(animate);
+
+                // Efek mengambang (Floating/Bobbing) yang sangat halus ke atas dan bawah
+                buildingGroup.position.y = Math.sin(Date.now() * 0.001) * 0.3;
+
+                // Smooth Parallax from mouse
+                targetX = mouseX * 0.5;
+                targetY = mouseY * 0.5;
+                
+                // Rotasi interaktif mengikuti mouse seperti blueprint arsitektur 3D
+                buildingGroup.rotation.x += (Math.PI / 6 + mouseY * 0.3 - buildingGroup.rotation.x) * 0.05;
+                buildingGroup.rotation.y += (-Math.PI / 5 + mouseX * 0.5 - buildingGroup.rotation.y) * 0.05;
+
+                renderer.render(scene, camera);
+            };
+
+            // Handle Window Resize
+            window.addEventListener('resize', () => {
+                if (!container) return;
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+
+            // Start animation
+            animate();
+        };
+    </script>
+</body>
+</html>
