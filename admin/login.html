@@ -196,9 +196,12 @@
             checkHitbox(getMousePos(e));
         });
 
-        hiddenInput.addEventListener('input', (e) => {
+        // PERBAIKAN: Ganti dari 'input' ke 'keyup' untuk sinkronisasi yang lebih baik di mobile.
+        // Event 'keyup' lebih konsisten dieksekusi per-ketukan tombol daripada 'input'
+        // yang kadang bisa 'batching' (menumpuk) input di beberapa browser mobile.
+        window.addEventListener('keyup', (e) => {
             if (state.activeInput) {
-                state[state.activeInput] = e.target.value;
+                state[state.activeInput] = hiddenInput.value;
             }
         });
 
