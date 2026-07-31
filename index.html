@@ -1696,16 +1696,8 @@
 
     <!-- Floating Quick Action (Speed Dial) -->
     <div class="fixed bottom-6 right-6 z-[100] flex flex-col items-end gap-3 group p-2 rounded-3xl transition-all duration-300">
-        <!-- Secondary Buttons (Hidden by default, show on hover) -->
-        <div class="flex flex-col gap-3 items-end origin-bottom scale-0 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-300 pointer-events-none group-hover:pointer-events-auto">
-            <!-- Music Control Button -->
-            <button id="musicControlButton" class="flex items-center gap-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-100 border border-gray-200 transition-all transform hover:-translate-x-1">
-                <span id="musicControlText" class="text-sm font-bold text-gray-800">Putar Musik</span>
-                <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white">
-                    <i id="musicPlayIcon" class="fas fa-play"></i>
-                    <i id="musicPauseIcon" class="fas fa-pause hidden"></i>
-                </div>
-            </button>
+        <!-- Secondary Buttons (Hidden by default, show on click) -->
+        <div id="quickAccessSecondaryMenu" class="flex flex-col gap-3 items-end origin-bottom scale-0 opacity-0 transition-all duration-300 pointer-events-none">
 
             <a href="https://wa.me/6287867261660" target="_blank" class="flex items-center gap-3 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-100 border border-gray-200 transition-all transform hover:-translate-x-1">
                 <span class="text-sm font-bold text-gray-800">Chat Admin</span>
@@ -1721,62 +1713,34 @@
             </a>
         </div>
         <!-- Main Button -->
-        <button class="w-14 h-14 bg-gray-800 text-white rounded-full shadow-2xl flex items-center justify-center text-2xl hover:bg-gray-700 hover:scale-110 transition-all focus:outline-none border-2 border-gray-200/50">
-            <i class="fas fa-bolt group-hover:hidden"></i>
-            <i class="fas fa-times hidden group-hover:block transition-transform duration-300 rotate-90 group-hover:rotate-0"></i>
+        <button id="quickActionButton" class="w-14 h-14 bg-gray-800 text-white rounded-full shadow-2xl flex items-center justify-center text-2xl hover:bg-gray-700 hover:scale-110 transition-all focus:outline-none border-2 border-gray-200/50">
+            <i id="quickActionOpenIcon" class="fas fa-bolt"></i>
+            <i id="quickActionCloseIcon" class="fas fa-times hidden transition-transform duration-300 rotate-90"></i>
         </button>
     </div>
 
-    <audio id="bgMusic" loop>
-        <source src="gambar/Wastra _ The Art of Balinese Textile.mp3" type="audio/mpeg">
-        Browser Anda tidak mendukung elemen audio.
-    </audio>
-
     <script>
-        // Background Music Logic
         document.addEventListener('DOMContentLoaded', () => {
-            const audio = document.getElementById('bgMusic');
-            const musicControlButton = document.getElementById('musicControlButton');
-            const musicControlText = document.getElementById('musicControlText');
-            const musicPlayIcon = document.getElementById('musicPlayIcon');
-            const musicPauseIcon = document.getElementById('musicPauseIcon');
-            
-            let isPlaying = false;
+            // Quick Access Button Logic
+            const quickActionButton = document.getElementById('quickActionButton');
+            const quickAccessSecondaryMenu = document.getElementById('quickAccessSecondaryMenu');
+            const quickActionOpenIcon = document.getElementById('quickActionOpenIcon');
+            const quickActionCloseIcon = document.getElementById('quickActionCloseIcon');
 
-            const setPlayingState = () => {
-                isPlaying = true;
-                musicControlText.innerText = 'Jeda Musik';
-                musicPlayIcon.classList.add('hidden');
-                musicPauseIcon.classList.remove('hidden');
-            };
+            quickActionButton.addEventListener('click', () => {
+                quickAccessSecondaryMenu.classList.toggle('scale-0');
+                quickAccessSecondaryMenu.classList.toggle('opacity-0');
+                quickAccessSecondaryMenu.classList.toggle('pointer-events-none');
 
-            const setPausedState = () => {
-                isPlaying = false;
-                musicControlText.innerText = 'Putar Musik';
-                musicPlayIcon.classList.remove('hidden');
-                musicPauseIcon.classList.add('hidden');
-            };
+                quickActionOpenIcon.classList.toggle('hidden');
+                quickActionCloseIcon.classList.toggle('hidden');
+            });
 
-            const tryAutoplay = async () => {
-                try {
-                    await audio.play();
-                    setPlayingState();
-                } catch (error) {
-                    console.warn("Autoplay musik dicegah oleh browser.", error);
-                    setPausedState(); // Set to paused state initially if autoplay fails
-                }
-            };
-
-            // Attempt autoplay on load, but with a slight delay
-            setTimeout(tryAutoplay, 1000);
-
-            // Event listener for the control button
-            musicControlButton.addEventListener('click', () => {
-                if (isPlaying) {
-                    audio.pause();
-                    setPausedState();
-                } else {
-                    audio.play().then(setPlayingState).catch(e => console.error("Gagal memutar musik:", e));
+            // Close quick access menu if clicked outside
+            document.addEventListener('click', (event) => {
+                if (!quickActionButton.contains(event.target) && !quickAccessSecondaryMenu.contains(event.target)) {
+                    // If the menu is open, close it
+                    if (!quickAccessSecondaryMenu.classList.contains('scale-0')) quickActionButton.click();
                 }
             });
         });
