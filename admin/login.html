@@ -2,408 +2,105 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Canvas Login Acarya</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Halaman Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body, html {
-            width: 100%;
-            height: 100%;
-            overflow: hidden; 
-            background-color: #0f172a; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        canvas {
-            display: block;
-            width: 100vw;
-            height: 100vh;
-        }
-        /* PERBAIKAN: Jangan taruh di -1000px agar browser mobile mau fokus */
-        #hidden-input {
-            position: fixed; /* Use fixed to ensure it's relative to viewport */
-            top: -9999px;    /* Move it far off-screen */
-            left: -9999px;   /* Move it far off-screen */
-            width: 1px;      /* Keep it minimal but present */
-            height: 1px;
-            opacity: 0;
-            pointer-events: none; /* Ensure it doesn't capture events */
-            z-index: -1;     /* Keep it behind everything */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
         }
     </style>
 </head>
-<body>
+<body class="flex items-center justify-center min-h-screen p-4">
 
-    <canvas id="gameCanvas"></canvas>
-    <input type="text" id="hidden-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    <div class="w-full max-w-sm bg-white p-8 rounded-2xl shadow-xl">
+        
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-800">Masuk Akun</h1>
+        </div>
+
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="mb-4">
+                <label for="username" class="block text-sm font-semibold text-gray-700 mb-2">Username</label>
+                <input type="text" id="username" required placeholder="Username"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none transition">
+            </div>
+
+            <div class="mb-6">
+                <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+                <input type="password" id="password" required placeholder="Password"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none transition">
+            </div>
+
+            <button type="submit" id="submitBtn"
+                class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">
+                Masuk
+            </button>
+
+            <a href="../index.html" class="block w-full text-center mt-3 bg-white border border-gray-300 text-gray-700 font-semibold py-3 rounded-lg hover:bg-gray-50 transition duration-300 shadow-sm">
+                Kembali ke Beranda
+            </a>
+        </form>
+        
+        <div id="messageBox" class="hidden mt-4 p-3 rounded-lg text-sm text-center font-medium"></div>
+    </div>
 
     <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const hiddenInput = document.getElementById('hidden-input');
-
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
-        const VALID_USERNAME = "011000100110111101110011011000010110001101100001011100100111100101100001";
-        const VALID_PASSWORD = "011000100110111101110011001100010011001000110011";
-
-        const state = {
-            username: "",
-            password: "",
-            activeInput: null, 
-            cursorVisible: true,
-            lastCursorToggle: 0,
-            hoveredButton: false,
-            hoveredBackButton: false,
-            message: "",
-            messageType: "",
-            messageTimer: 0,
-            mouseX: 0,
-            mouseY: 0,
-            uiOffset: 0, 
-            particles: []
-        };
-
-        const ui = {
-            cardWidth: 380,
-            cardHeight: 520,
-            inputWidth: 300,
-            inputHeight: 50,
-            btnHeight: 50,
-            radius: 15
-        };
-
-        for (let i = 0; i < 15; i++) {
-            state.particles.push({
-                x: Math.random() * window.innerWidth,
-                y: Math.random() * window.innerHeight,
-                radius: Math.random() * 80 + 40,
-                vx: (Math.random() - 0.5) * 1.5,
-                vy: (Math.random() - 0.5) * 1.5,
-                color: `rgba(${Math.floor(Math.random()*100 + 50)}, ${Math.floor(Math.random()*100 + 100)}, 255, 0.15)`
-            });
-        }
-
-        function roundRect(ctx, x, y, width, height, radius) {
-            ctx.beginPath();
-            ctx.moveTo(x + radius, y);
-            ctx.lineTo(x + width - radius, y);
-            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-            ctx.lineTo(x + width, y + height - radius);
-            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-            ctx.lineTo(x + radius, y + height);
-            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-            ctx.lineTo(x, y + radius);
-            ctx.quadraticCurveTo(x, y, x + radius, y);
-            ctx.closePath();
-        }
-
-        function getMousePos(evt) {
-            const rect = canvas.getBoundingClientRect();
-            let clientX = evt.clientX;
-            let clientY = evt.clientY;
-            
-            if (evt.changedTouches && evt.changedTouches.length > 0) {
-                clientX = evt.changedTouches[0].clientX;
-                clientY = evt.changedTouches[0].clientY;
-            } else if (evt.touches && evt.touches.length > 0) {
-                clientX = evt.touches[0].clientX;
-                clientY = evt.touches[0].clientY;
-            }
-
-            return { x: clientX - rect.left, y: clientY - rect.top };
-        }
-
-        function handlePointerMove(e) {
-            const pos = getMousePos(e);
-            state.mouseX = pos.x;
-            state.mouseY = pos.y;
-        }
-
-        function checkHitbox(pos) {
-            const cx = canvas.width / 2;
-            // PERBAIKAN: Gunakan targetOffset untuk perhitungan hitbox agar konsisten dengan posisi akhir UI saat keyboard muncul
-            const isMobile = window.innerWidth <= 768;
-            const effectiveUiOffset = (state.activeInput && isMobile) ? -120 : 0;
-            const cy = (canvas.height / 2) + effectiveUiOffset;
-            const startY = cy - 80;
-
-            const cardWidth = Math.min(ui.cardWidth, canvas.width - 40);
-            const inputWidth = Math.min(ui.inputWidth, cardWidth - 40);
-
-            if (pos.x > cx - inputWidth/2 && pos.x < cx + inputWidth/2 &&
-                pos.y > startY && pos.y < startY + ui.inputHeight) {
-                
-                state.activeInput = 'username';
-                hiddenInput.type = "text";
-                hiddenInput.value = state.username;
-                hiddenInput.selectionStart = hiddenInput.selectionEnd = hiddenInput.value.length;
-                hiddenInput.focus();
-                return;
-            }
-
-            if (pos.x > cx - inputWidth/2 && pos.x < cx + inputWidth/2 &&
-                pos.y > startY + 80 && pos.y < startY + 80 + ui.inputHeight) {
-                state.activeInput = 'password';
-                hiddenInput.type = "password"; 
-                hiddenInput.value = state.password;
-                hiddenInput.selectionStart = hiddenInput.selectionEnd = hiddenInput.value.length;
-                hiddenInput.focus();
-                return;
-            }
-            // ... sisa kodenya tetap sama
-
-            if (pos.x > cx - inputWidth/2 && pos.x < cx + inputWidth/2 &&
-                pos.y > startY + 170 && pos.y < startY + 170 + ui.btnHeight) {
-                processLogin();
-                return;
-            }
-
-            const backBtnY = startY + 170 + ui.btnHeight + 10;
-            if (pos.x > cx - inputWidth/2 && pos.x < cx + inputWidth/2 &&
-                pos.y > backBtnY && pos.y < backBtnY + ui.btnHeight) {
-                window.location.href = '../index.html';
-                return;
-            }
-
-
-            state.activeInput = null;
-            hiddenInput.blur();
-        }
-
-        let lastTouchTime = 0;
-
-        window.addEventListener('mousemove', handlePointerMove);
-        window.addEventListener('mousedown', (e) => {
-            if (Date.now() - lastTouchTime < 500) {
-                return; 
-            }
-            checkHitbox(getMousePos(e));
-        });
-
-        window.addEventListener('touchstart', handlePointerMove, {passive: true});
-
-        window.addEventListener('touchend', (e) => {
-            lastTouchTime = Date.now();
-            checkHitbox(getMousePos(e));
-        });
-
-        // PERBAIKAN: Ganti dari 'input' ke 'keyup' untuk sinkronisasi yang lebih baik di mobile.
-        // Event 'keyup' lebih konsisten dieksekusi per-ketukan tombol daripada 'input'
-        // yang kadang bisa 'batching' (menumpuk) input di beberapa browser mobile.
-        window.addEventListener('keyup', (e) => {
-            if (state.activeInput) {
-                state[state.activeInput] = hiddenInput.value;
-            }
-        });
-
-        window.addEventListener('keydown', (e) => {
-            if (!state.activeInput) return;
-
-            if (e.key === 'Enter') {
-                e.preventDefault(); 
-                processLogin();
-                return;
-            }
-            if (e.key === 'Tab') {
-                e.preventDefault();
-                state.activeInput = state.activeInput === 'username' ? 'password' : 'username';
-                hiddenInput.type = state.activeInput === 'password' ? 'password' : 'text';
-                hiddenInput.value = state[state.activeInput];
-                hiddenInput.focus(); 
-                return;
-            }
-        });
-
-        function stringToBinary(str) {
-            return str.split('').map(char => {
+        // Fungsi untuk mengubah teks biasa menjadi string biner
+        function textToBinary(text) {
+            return text.split('').map(function (char) {
+                // Mengambil nilai ASCII dari karakter, ubah ke biner (basis 2), lalu pad(tambahkan) 0 di depan jika panjangnya kurang dari 8
                 return char.charCodeAt(0).toString(2).padStart(8, '0');
-            }).join('');
+            }).join(' '); // Pisahkan dengan spasi antar karakter
         }
 
-        function processLogin() {
-            const usernameAsBinary = stringToBinary(state.username);
-            const passwordAsBinary = stringToBinary(state.password);
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const messageBox = document.getElementById('messageBox');
+            const submitBtn = document.getElementById('submitBtn');
 
-            if (usernameAsBinary === VALID_USERNAME && passwordAsBinary === VALID_PASSWORD) {
-                state.message = "Login Berhasil! Memuat data...";
-                state.messageType = "success";
-                setTimeout(() => {
-                    window.location.href = 'aplikasi pembayaran/pembayaran.html';
-                }, 1500); 
-            } else {
-                state.message = "Username atau password salah!"; 
-                state.messageType = "error";
-            }
-            state.messageTimer = 180; 
-            state.activeInput = null;
-            hiddenInput.blur();
+            submitBtn.innerText = 'Memproses...';
+            submitBtn.disabled = true;
+
+            setTimeout(() => {
+                submitBtn.innerText = 'Masuk';
+                submitBtn.disabled = false;
+
+                // 1. Username yang ditentukan
+                const u = "bosacarya";
+                
+                // 2. Password yang ditentukan dalam bentuk BINER. 
+                // Ini adalah representasi biner untuk kata: "bos123"
+                // b = 01100010, o = 01101111, s = 01110011, 1 = 00110001, 2 = 00110010, 3 = 00110011
+                const passwordBinerTarget = "01100010 01101111 01110011 00110001 00110010 00110011";
+
+                // 3. Konversi password yang diketik pengguna (teks biasa) menjadi biner
+                const passwordBinerInput = textToBinary(password);
+
+                // 4. Bandingkan username (teks) DAN password (biner vs biner)
+                if (username === u && passwordBinerInput === passwordBinerTarget) {
+                    showMessage('Login berhasil! Mengalihkan...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'aplikasi pembayaran/pembayaran.html';
+                    }, 1000);
+                } else {
+                    showMessage('Username atau password salah.', 'error');
+                }
+            }, 800);
         }
 
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Latar belakang hitam pekat
-            ctx.fillStyle = '#000000';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Gradien radial dari sudut kiri atas (hijau)
-            const gradientRadius = Math.max(canvas.width, canvas.height) * 0.9;
-            const grad1 = ctx.createRadialGradient(0, 0, 0, 0, 0, gradientRadius);
-            grad1.addColorStop(0, 'rgba(22, 163, 74, 0.25)'); // Warna hijau tema Acarya
-            grad1.addColorStop(1, 'rgba(22, 163, 74, 0)');
-            ctx.fillStyle = grad1;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Gradien radial dari sudut kanan bawah (ungu)
-            const grad2 = ctx.createRadialGradient(canvas.width, canvas.height, 0, canvas.width, canvas.height, gradientRadius);
-            grad2.addColorStop(0, 'rgba(79, 70, 229, 0.2)'); // Warna ungu/indigo
-            grad2.addColorStop(1, 'rgba(79, 70, 229, 0)');
-            ctx.fillStyle = grad2;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            state.particles.forEach(p => {
-                p.x += p.vx;
-                p.y += p.vy;
-                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fillStyle = p.color;
-                ctx.fill();
-            });
-
-            const isMobile = window.innerWidth <= 768;
-            const targetOffset = (state.activeInput && isMobile) ? -120 : 0;
-            state.uiOffset += (targetOffset - state.uiOffset) * 0.1; 
-
-            const cx = canvas.width / 2;
-            const cy = (canvas.height / 2) + state.uiOffset; 
+        function showMessage(text, type) {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.innerText = text;
+            messageBox.className = `mt-4 p-3 rounded-lg text-sm text-center font-medium ${type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`;
+            messageBox.classList.remove('hidden');
             
-            const cardWidth = Math.min(ui.cardWidth, canvas.width - 40); 
-            const inputWidth = Math.min(ui.inputWidth, cardWidth - 40); 
-
-            ctx.save();
-            roundRect(ctx, cx - cardWidth/2, cy - ui.cardHeight/2, cardWidth, ui.cardHeight, ui.radius);
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
-            ctx.fill();
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-            ctx.stroke();
-            ctx.restore();
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 28px "Segoe UI", sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText("Login Acarya", cx, cy - 140);
-
-            const startY = cy - 80;
-
-            drawInputBox(cx, startY, "Username", state.username, state.activeInput === 'username', false, inputWidth);
-            drawInputBox(cx, startY + 80, "Password", state.password, state.activeInput === 'password', true, inputWidth);
-
-            const btnY = startY + 170;
-            state.hoveredButton = (state.mouseX > cx - inputWidth/2 && state.mouseX < cx + inputWidth/2 &&
-                                   state.mouseY > btnY && state.mouseY < btnY + ui.btnHeight);
-
-            ctx.beginPath();
-            roundRect(ctx, cx - inputWidth/2, btnY, inputWidth, ui.btnHeight, 10);
-            ctx.fillStyle = state.hoveredButton ? '#ffffff' : 'rgba(255,255,255,0.9)';
-            ctx.fill();
-            
-            ctx.fillStyle = '#0f172a';
-            ctx.font = 'bold 18px "Segoe UI", sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText("Login", cx, btnY + ui.btnHeight/2);
-
-            // Tombol Kembali ke Website
-            const backBtnY = btnY + ui.btnHeight + 10;
-            state.hoveredBackButton = (state.mouseX > cx - inputWidth/2 && state.mouseX < cx + inputWidth/2 &&
-                                       state.mouseY > backBtnY && state.mouseY < backBtnY + ui.btnHeight);
-            
-            ctx.beginPath();
-            roundRect(ctx, cx - inputWidth/2, backBtnY, inputWidth, ui.btnHeight, 10);
-            ctx.strokeStyle = state.hoveredBackButton ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.4)';
-            ctx.lineWidth = 1.5;
-            ctx.stroke();
-
-            ctx.fillStyle = state.hoveredBackButton ? 'rgba(255, 255, 255, 0.9)' : 'rgba(255, 255, 255, 0.7)';
-            ctx.font = '16px "Segoe UI", sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText("Kembali ke Website", cx, backBtnY + ui.btnHeight/2);
-
-            if (state.messageTimer > 0) {
-                ctx.fillStyle = state.messageType === 'success' ? '#4ade80' : '#f87171';
-                ctx.font = '14px "Segoe UI", sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText(state.message, cx, backBtnY + ui.btnHeight + 30);
-                state.messageTimer--;
-            }
+            setTimeout(() => messageBox.classList.add('hidden'), 3000);
         }
-
-        function drawInputBox(cx, y, label, text, isActive, isPassword, inputWidth) {
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-            ctx.font = '14px "Segoe UI", sans-serif';
-            ctx.textAlign = 'left';
-            ctx.textBaseline = 'bottom';
-            ctx.fillText(label, cx - inputWidth/2, y - 8);
-
-            ctx.beginPath();
-            roundRect(ctx, cx - inputWidth/2, y, inputWidth, ui.inputHeight, 10);
-            ctx.fillStyle = isActive ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.05)';
-            ctx.fill();
-            
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = isActive ? 'rgba(255, 255, 255, 0.6)' : 'rgba(255, 255, 255, 0.2)';
-            ctx.stroke();
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = '16px "Segoe UI", sans-serif';
-            ctx.textBaseline = 'middle';
-            
-            const displayText = isPassword ? '*'.repeat(text.length) : text;
-            
-            const textX = cx - inputWidth/2 + 15;
-            const textY = y + ui.inputHeight/2;
-            
-            if (displayText === "" && !isActive) {
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-                ctx.fillText(`Masukkan ${label.toLowerCase()}`, textX, textY);
-            } else {
-                ctx.fillText(displayText, textX, textY);
-            }
-
-            if (isActive && state.cursorVisible) {
-                const textWidth = ctx.measureText(displayText).width;
-                ctx.beginPath();
-                ctx.moveTo(textX + textWidth + 2, textY - 8);
-                ctx.lineTo(textX + textWidth + 2, textY + 8);
-                ctx.strokeStyle = '#ffffff';
-                ctx.stroke();
-            }
-        }
-
-        function update(timestamp) {
-            if (timestamp - state.lastCursorToggle > 500) {
-                state.cursorVisible = !state.cursorVisible;
-                state.lastCursorToggle = timestamp;
-            }
-            draw();
-            requestAnimationFrame(update);
-        }
-
-        requestAnimationFrame(update);
     </script>
 </body>
 </html>
