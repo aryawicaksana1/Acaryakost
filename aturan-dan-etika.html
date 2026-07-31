@@ -17,18 +17,11 @@
             font-family: 'Poppins', sans-serif;
             scroll-behavior: smooth;
         }
-        .card-shadow {
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
-        }
-        
-        /* Background Header sama seperti Index */
-        .hero-gradient { 
-            background: rgba(255, 255, 255, 0.5);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
+        .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01); }
+        .hero-gradient { background: rgba(255, 255, 255, 0.5); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
         .hero-gradient::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 200px; background: linear-gradient(to bottom, transparent, rgba(15, 23, 42, 0.8)); }
 
-        .glass { background: rgba(15, 23, 42, 0.7); border-color: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .glass { background: rgba(255, 255, 255, 0.7); border-color: rgba(0, 0, 0, 0.05); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
 
         /* Gaya dari baru.html */
         .top-glow {
@@ -61,7 +54,7 @@
                     <span class="font-bold text-xl tracking-tight text-gray-900">Kost<span class="text-green-600">Acarya</span></span>
                 </div>
                 <div class="hidden 2xl:flex space-x-10">
-                    <a href="index.html" class="text-sm font-semibold text-gray-700 hover:text-green-600 transition">Beranda</a>
+                    <a href="index.html" class="bg-green-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-green-700 transition-all shadow-sm">Beranda</a>
                 </div>
                 <!-- Mobile Menu Button -->
                 <button id="mobileMenuButton" onclick="toggleMobileMenu()" class="2xl:hidden p-2 rounded-lg text-gray-800 hover:bg-gray-100 transition mr-3" aria-label="Toggle menu">
@@ -73,7 +66,7 @@
             <!-- Mobile Dropdown Menu -->
             <div id="mobileMenu" class="2xl:hidden hidden absolute right-6 top-full mt-2 w-64 rounded-2xl bg-white/95 border border-gray-200 shadow-xl overflow-hidden z-50" style="backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
                 <div class="px-4 py-3 space-y-2">
-                    <a href="index.html" class="block text-gray-800 font-semibold py-3 px-3 rounded-lg hover:bg-gray-100 hover:text-green-700 transition">Beranda</a>
+                    <a href="index.html" class="block text-white bg-green-600 text-center rounded-lg py-3 font-bold hover:bg-green-700 transition">Beranda</a>
                 </div>
             </div>
         </div>
