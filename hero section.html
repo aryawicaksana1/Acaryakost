@@ -1,134 +1,203 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dream Home Hero Section</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>Dynamic Hero Section</title>
     
+    <!-- Memuat font Inter dari Google Fonts untuk tampilan modern -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Memuat Tailwind CSS untuk styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Konfigurasi Font Tailwind -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            green: '#1a7042', // Hijau yang identik dengan gambar
-                            dark: '#111827',
-                            light: '#4b5563'
-                        }
                     }
                 }
             }
         }
     </script>
-</head>
-<body class="font-sans antialiased bg-white">
 
-    <section class="relative w-full min-h-screen flex items-center overflow-hidden">
-        
-        <!-- Background Image Container -->
-        <!-- Menggunakan gambar rumah mewah modern dari Unsplash -->
-        <div class="absolute inset-0 z-0">
-            <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2000&auto=format&fit=crop" 
-                 alt="Modern Luxury Home" 
-                 class="w-full h-full object-cover object-center md:object-right">
-        </div>
-
-        <!-- Gradient Overlay: Putih pekat di kiri, memudar transparan ke kanan -->
-        <!-- Pada mode mobile, warnanya lebih dominan putih agar teks mudah dibaca -->
-        <div class="absolute inset-0 z-0 bg-gradient-to-b md:bg-gradient-to-r from-white from-40% md:from-30% via-white/90 md:via-white/70 to-white/30 md:to-transparent"></div>
-
-        <!-- Content Container -->
-        <div class="container mx-auto px-6 relative z-10 w-full">
-            <div class="max-w-2xl pt-20 pb-16 md:py-0">
-                
-                <!-- Headline -->
-                <h1 class="text-5xl sm:text-6xl md:text-[4rem] font-extrabold text-brand-dark leading-[1.1] mb-4 tracking-tight">
-                    Find Your Dream Home <br />
-                    <span class="text-brand-green">Live Your Best Life</span>
-                </h1>
-
-                <!-- Subheadline -->
-                <p class="text-lg md:text-xl text-brand-light mb-10 max-w-lg leading-relaxed font-medium">
-                    Explore thousands of verified properties and find a place you'll love to call home.
-                </p>
-
-                <!-- Action Buttons -->
-                <div class="flex flex-col sm:flex-row gap-4 mb-12">
-                    <!-- Primary Button (Green) -->
-                    <button class="flex items-center justify-center gap-2 bg-brand-green hover:bg-green-800 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-lg shadow-brand-green/30 hover:-translate-y-1">
-                        Explore Properties
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </button>
-                    
-                    <!-- Secondary Button (White with Border) -->
-                    <button class="flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-brand-dark px-8 py-4 rounded-xl font-semibold border border-gray-200 transition-all duration-300 shadow-sm hover:shadow-md">
-                        How It Works
-                        <div class="w-6 h-6 rounded-full border border-gray-400 flex items-center justify-center">
-                            <svg class="w-3 h-3 text-brand-dark ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
-                        </div>
-                    </button>
-                </div>
-
-                <!-- Trusted By Section -->
-                <div class="flex items-center gap-4">
-                    <div class="flex -space-x-3">
-                        <img class="w-10 h-10 rounded-full border-2 border-white object-cover shadow-sm" src="https://i.pravatar.cc/150?img=47" alt="Client 1">
-                        <img class="w-10 h-10 rounded-full border-2 border-white object-cover shadow-sm" src="https://i.pravatar.cc/150?img=11" alt="Client 2">
-                        <img class="w-10 h-10 rounded-full border-2 border-white object-cover shadow-sm" src="https://i.pravatar.cc/150?img=32" alt="Client 3">
-                        <div class="w-10 h-10 rounded-full border-2 border-white bg-brand-green text-white flex items-center justify-center text-sm font-bold shadow-sm z-10">
-                            +
-                        </div>
-                    </div>
-                    <p class="text-sm font-medium text-gray-600">
-                        Trusted by <span class="font-bold text-gray-900">10,000+</span> happy clients
-                    </p>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- Floating Card Widget (Visible on Desktop & Tablet) -->
-        <!-- Diposisikan absolut di sudut kanan bawah -->
-        <div class="hidden md:flex absolute bottom-12 right-12 z-20 bg-white rounded-2xl p-5 shadow-2xl border border-gray-100 items-center gap-4 transform transition-transform hover:scale-105 cursor-pointer animate-fade-in-up">
-            
-            <!-- Icon -->
-            <div class="w-14 h-14 bg-brand-green rounded-full flex items-center justify-center flex-shrink-0 text-white shadow-inner">
-                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                </svg>
-            </div>
-            
-            <!-- Card Text -->
-            <div class="pr-6">
-                <h4 class="text-sm font-bold text-gray-900 leading-tight">Modern House</h4>
-                <p class="text-xs text-gray-500 mb-1">Beverly Hills, CA</p>
-                <p class="text-base font-extrabold text-brand-green">$2,450,000</p>
-            </div>
-
-            <!-- Arrow Indicator -->
-            <div class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-            </div>
-        </div>
-
-    </section>
-
-    <!-- Style for floating card animation -->
     <style>
+        /* Mengatasi transisi background-image agar halus */
+        #bg-layer {
+            transition: background-image 0.5s ease-in-out, opacity 0.5s ease-in-out;
+        }
+        
+        /* Animasi masuk untuk konten teks pertama kali dimuat */
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         .animate-fade-in-up {
             animation: fadeInUp 0.8s ease-out forwards;
-            animation-delay: 0.5s;
-            opacity: 0;
+        }
+
+        /* Styling spesifik untuk interaksi thumbnail */
+        .thumbnail-active {
+            border-color: white !important;
+            opacity: 1 !important;
+            transform: scale(1.1) !important;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.6) !important;
         }
     </style>
+</head>
+<body class="bg-gray-900 overflow-hidden font-sans">
+
+    <!-- Kontainer Utama -->
+    <main class="relative w-full h-screen flex flex-col justify-between items-center">
+        
+        <!-- Layer Background Gambar Utama (Default gambar Rumah) -->
+        <div id="bg-layer" class="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat" style="background-image: url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2000&auto=format&fit=crop');"></div>
+        
+        <!-- Overlay Gelap agar teks selalu terbaca kontras -->
+        <div class="absolute inset-0 bg-black/60 z-10 transition-opacity duration-500 hover:bg-black/50"></div>
+
+        <!-- Konten Teks Rata Kiri Sesuai Referensi Gambar -->
+        <div class="relative z-20 flex-1 flex flex-col justify-center items-start text-left px-6 md:px-16 lg:px-24 w-full max-w-7xl mx-auto animate-fade-in-up">
+            
+            <!-- Badge / Subtitle Hijau -->
+            <span id="hero-subtitle" class="bg-[#15a34a] text-white font-semibold px-5 py-2 rounded-full mb-6 text-sm md:text-base transition-all duration-300 shadow-lg">
+                Hunian Premium Tahun 2025/2026
+            </span>
+            
+            <!-- Judul Utama (Sebagian teks berwarna hijau) -->
+            <h1 id="hero-title" class="text-white text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 drop-shadow-xl transition-all duration-300 tracking-tight leading-tight">
+                Temukan Kenyamanan <br>
+                <span class="text-[#22c55e]">Rumah Kedua Anda</span>
+            </h1>
+            
+            <!-- Deskripsi -->
+            <p id="hero-desc" class="text-gray-200 text-lg md:text-xl font-normal mb-8 max-w-2xl drop-shadow-md transition-all duration-300 leading-relaxed">
+                Solusi hunian modern yang dikelilingi oleh kenyamanan dan akses strategis. Langkah pertama menuju gaya hidup berkualitas dimulai dari sini.
+            </p>
+            
+            <!-- Bagian Avatar "Dipercaya oleh..." -->
+            <div class="flex items-center gap-4 mt-2">
+                <div class="flex -space-x-3">
+                    <img class="w-10 h-10 rounded-full border-2 border-gray-800 object-cover" src="https://i.pravatar.cc/100?img=11" alt="Penghuni 1">
+                    <img class="w-10 h-10 rounded-full border-2 border-gray-800 object-cover" src="https://i.pravatar.cc/100?img=12" alt="Penghuni 2">
+                    <img class="w-10 h-10 rounded-full border-2 border-gray-800 object-cover" src="https://i.pravatar.cc/100?img=13" alt="Penghuni 3">
+                    <div class="w-10 h-10 rounded-full border-2 border-gray-800 bg-[#15a34a] flex items-center justify-center text-white text-lg font-bold z-10">
+                        +
+                    </div>
+                </div>
+                <p class="text-gray-300 text-sm md:text-base">
+                    Dipercaya oleh <span class="font-bold text-white">ratusan</span> penghuni
+                </p>
+            </div>
+        </div>
+
+        <!-- Kontainer Thumbnail di Bawah (Rata Kiri mengikuti teks) -->
+        <div class="relative z-20 w-full pb-12 px-4 md:px-16 lg:px-24">
+            <div class="flex justify-start items-center gap-4 md:gap-6 flex-wrap max-w-7xl mx-auto">
+                
+                <!-- Thumbnail 1 (Aktif) -->
+                <button onclick="changeBg(this, 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2000&auto=format&fit=crop', 'Hunian Premium Tahun 2025/2026', 'Temukan Kenyamanan <br><span class=\'text-[#22c55e]\'>Rumah Kedua Anda</span>', 'Solusi hunian modern yang dikelilingi oleh kenyamanan dan akses strategis. Langkah pertama menuju gaya hidup berkualitas dimulai dari sini.')" 
+                        class="thumbnail thumbnail-active group relative w-24 h-16 md:w-36 md:h-24 rounded-xl overflow-hidden border-2 border-transparent opacity-70 transition-all duration-300 focus:outline-none">
+                    <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=400&auto=format&fit=crop" alt="Fasad" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-black/30 group-hover:bg-transparent transition-all"></div>
+                </button>
+
+                <!-- Thumbnail 2 -->
+                <button onclick="changeBg(this, 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=2000&auto=format&fit=crop', 'Interior Mewah', 'Desain Ruangan <br><span class=\'text-[#22c55e]\'>Elegan & Modern</span>', 'Nikmati ruang keluarga yang luas dengan pencahayaan alami maksimal, dirancang untuk kehangatan keluarga Anda.')" 
+                        class="thumbnail group relative w-24 h-16 md:w-36 md:h-24 rounded-xl overflow-hidden border-2 border-transparent hover:border-white/50 opacity-70 hover:opacity-100 hover:scale-105 transition-all duration-300 focus:outline-none">
+                    <img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=400&auto=format&fit=crop" alt="Interior" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-all"></div>
+                </button>
+
+                <!-- Thumbnail 3 -->
+                <button onclick="changeBg(this, 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=2000&auto=format&fit=crop', 'Fasilitas Eksklusif', 'Kolam Renang <br><span class=\'text-[#22c55e]\'>Pribadi Anda</span>', 'Bersantai di akhir pekan dengan fasilitas premium layaknya resor bintang lima tepat di halaman belakang rumah Anda.')" 
+                        class="thumbnail group relative w-24 h-16 md:w-36 md:h-24 rounded-xl overflow-hidden border-2 border-transparent hover:border-white/50 opacity-70 hover:opacity-100 hover:scale-105 transition-all duration-300 focus:outline-none">
+                    <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=400&auto=format&fit=crop" alt="Kolam Renang" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-all"></div>
+                </button>
+
+                <!-- Thumbnail 4 -->
+                <button onclick="changeBg(this, 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=2000&auto=format&fit=crop', 'Dapur Idaman', 'Fungsionalitas <br><span class=\'text-[#22c55e]\'>Tanpa Batas</span>', 'Dapur modern terintegrasi dengan perabotan kelas atas untuk pengalaman memasak yang menyenangkan setiap hari.')" 
+                        class="thumbnail group relative w-24 h-16 md:w-36 md:h-24 rounded-xl overflow-hidden border-2 border-transparent hover:border-white/50 opacity-70 hover:opacity-100 hover:scale-105 transition-all duration-300 focus:outline-none">
+                    <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=400&auto=format&fit=crop" alt="Dapur" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-all"></div>
+                </button>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Array berisi URL gambar background bertema perumahan
+        const bgImages = [
+            'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2000&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=2000&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=2000&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=2000&auto=format&fit=crop'
+        ];
+
+        // FUNGSI PRELOAD
+        function preloadImages(urls) {
+            urls.forEach(url => {
+                const img = new Image();
+                img.src = url;
+            });
+        }
+        
+        window.onload = () => {
+            preloadImages(bgImages);
+        };
+
+        function changeBg(element, imageUrl, newSubtitle, newTitle, newDesc) {
+            const bgLayer = document.getElementById('bg-layer');
+            const subtitleEl = document.getElementById('hero-subtitle');
+            const titleEl = document.getElementById('hero-title');
+            const descEl = document.getElementById('hero-desc');
+            
+            // Fade out
+            subtitleEl.style.opacity = 0;
+            titleEl.style.opacity = 0;
+            descEl.style.opacity = 0;
+            
+            titleEl.style.transform = 'translateY(-10px)';
+            descEl.style.transform = 'translateY(10px)';
+
+            setTimeout(() => {
+                bgLayer.style.backgroundImage = `url('${imageUrl}')`;
+                
+                // Menggunakan innerHTML (bukan textContent) agar efek warna hijau <span class="text-[#22c55e]"> bisa muncul!
+                subtitleEl.innerHTML = newSubtitle;
+                titleEl.innerHTML = newTitle;
+                descEl.innerHTML = newDesc;
+
+                // Fade in
+                subtitleEl.style.opacity = 1;
+                titleEl.style.opacity = 1;
+                descEl.style.opacity = 1;
+                
+                titleEl.style.transform = 'translateY(0)';
+                descEl.style.transform = 'translateY(0)';
+            }, 300);
+
+            // Ganti status aktif thumbnail
+            const thumbnails = document.querySelectorAll('.thumbnail');
+            thumbnails.forEach(thumb => {
+                thumb.classList.remove('thumbnail-active');
+            });
+
+            element.classList.add('thumbnail-active');
+        }
+    </script>
 </body>
 </html>
